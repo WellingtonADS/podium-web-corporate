@@ -1,70 +1,88 @@
-# Getting Started with Create React App
+# Web Admin - Podium Serviços
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Painel administrativo moderno desenvolvido com React para gerenciamento de serviços Podium.
 
-## Available Scripts
+**Versão:** 0.1.0
 
-In the project directory, you can run:
+## 📋 Sobre o Projeto
+
+Este é um painel administrativo profissional construído com:
+- **React 18.3** - Framework principal
+- **Chakra UI 2.8** - Componentes de UI acessíveis
+- **Framer Motion 10.18** - Animações suaves
+- **Jest & React Testing Library** - Testes automatizados
+
+## 🚀 Começando
+
+### Pré-requisitos
+- Node.js (v14 ou superior)
+- npm ou yarn
+
+### Instalação
+
+1. Clone o repositório:
+```bash
+git clone <repository-url>
+cd web-admin
+```
+
+2. Instale as dependências:
+```bash
+npm install
+```
+
+## 📝 Scripts Disponíveis
+
+No diretório do projeto, você pode executar:
 
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Inicia o aplicativo em modo de desenvolvimento.
+- Abra [http://localhost:3000](http://localhost:3000) no navegador
+- A página será recarregada ao fazer alterações
+- Erros de lint aparecerão no console
 
 ### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Inicia o runner de testes em modo interativo.
+Confira a [documentação de testes](https://facebook.github.io/create-react-app/docs/running-tests) para mais informações.
 
 ### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Constrói o aplicativo para produção na pasta `build`.
+- A compilação é otimizada para melhor performance
+- Arquivo minificado com hashes nos nomes
+- Pronto para deploy
 
 ### `npm run eject`
+**⚠️ Aviso: Esta é uma operação irreversível!**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Ejeta as configurações do Create React App para controle total.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 📂 Estrutura do Projeto
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+web-admin/
+├── public/              # Arquivos estáticos
+│   ├── index.html
+│   ├── manifest.json
+│   └── robots.txt
+├── src/                 # Código-fonte
+│   ├── App.js
+│   ├── App.css
+│   ├── index.js
+│   ├── index.css
+│   ├── App.test.js
+│   ├── reportWebVitals.js
+│   └── setupTests.js
+├── package.json
+└── README.md
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## 🔗 Recursos Úteis
 
-## Learn More
+- [Documentação Create React App](https://facebook.github.io/create-react-app/docs/getting-started)
+- [Documentação React](https://reactjs.org/)
+- [Chakra UI Docs](https://chakra-ui.com/getting-started)
+- [Framer Motion Docs](https://www.framer.com/motion/)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 📄 Licença
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Propriedade de Podium Serviços
