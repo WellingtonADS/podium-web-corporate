@@ -67,8 +67,13 @@ def seed_driver(email: str, full_name: str, password: str, vehicle_model: str,
             session.add(user)
             session.flush()  # Obtém o ID
             
+            # Type narrowing para garantir que user.id não é None
+            user_id: int = user.id or 0
+            if user_id == 0:
+                raise ValueError("Falha ao obter ID do usuário")
+            
             driver_profile = DriverProfile(
-                user_id=user.id,
+                user_id=user_id,
                 vehicle_model=vehicle_model,
                 vehicle_plate=vehicle_plate,
                 cnh_number=cnh_number,
@@ -85,7 +90,7 @@ def seed_driver(email: str, full_name: str, password: str, vehicle_model: str,
 
 
 def seed_employee(email: str, full_name: str, password: str, company_id: int, 
-                  department: str = None) -> User:
+                  department: str | None = None) -> User:
     """Cria funcionário (User + EmployeeProfile)"""
     with Session(engine) as session:
         # Verificar se usuário já existe
@@ -107,8 +112,13 @@ def seed_employee(email: str, full_name: str, password: str, company_id: int,
             session.add(user)
             session.flush()  # Obtém o ID
             
+            # Type narrowing para garantir que user.id não é None
+            user_id: int = user.id or 0
+            if user_id == 0:
+                raise ValueError("Falha ao obter ID do usuário")
+            
             employee_profile = EmployeeProfile(
-                user_id=user.id,
+                user_id=user_id,
                 company_id=company_id,
                 department=department,
             )
@@ -136,6 +146,9 @@ def main():
     company = seed_company(args.company_name, args.company_cnpj)
     
     # 2. Criar centro de custo
+    if company.id is None:
+        raise ValueError("Company ID não pode ser None")
+    
     cost_center = seed_cost_center(company.id, "Operações", "CC-001")
     
     # 3. Criar motorista
@@ -186,8 +199,8 @@ def main():
     print("\n=== SEED COMPLETADO ===\n")
     print(f"Empresa: {company.name} (ID: {company.id})")
     print(f"Centro de Custo: {cost_center.name} (ID: {cost_center.id})")
-    print(f"\nCredenciais:")
-    print(f"  Admin:      admin@podium.com / Admin123!")
+    print("\nCredenciais:")
+    print("  Admin:      admin@podium.com / Admin123!")
     print(f"  Motorista:  driver1@podium.com / {args.password}")
     print(f"  Motorista:  driver2@podium.com / {args.password}")
     print(f"  Func.:      employee1@podium.com / {args.password}")
