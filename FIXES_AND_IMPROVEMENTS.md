@@ -435,6 +435,38 @@ if company.id is None:
 
 ---
 
+### 15. **Adicionar CORS e Endpoints de Saúde** ✅
+**Arquivo:** `app/main.py`  
+**O que fez:**
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+origins = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/")
+def read_root():
+    return {"message": "Podium Serviços API"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "ok"}
+```
+
+**Impacto:** Permite chamadas do frontend local (React) sem bloqueio por CORS; adiciona endpoints simples para verificação de disponibilidade da API.
+
+---
+
 ## Commits Realizados
 
 ### Commit 1: `sec: enforce roles via Enum/Literal and auth deps`
@@ -520,6 +552,8 @@ if company.id is None:
 - ✅ Autenticação e autorização implementadas.
 - ✅ Signup de driver/employee protegidos por role admin.
 - ✅ Login funcionando com 200 OK.
+- ✅ CORS habilitado para `localhost:3000` e `127.0.0.1:3000`.
+- ✅ Endpoints `/` e `/health` ativos para verificação rápida.
 
 ### Segurança
 - ✅ Senhas hashadas com bcrypt nativo (sem passlib).

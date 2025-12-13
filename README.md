@@ -111,6 +111,43 @@ Após iniciar o servidor, acesse:
 - **Swagger UI**: http://127.0.0.1:8000/docs
 - **ReDoc**: http://127.0.0.1:8000/redoc
 
+## 🌐 CORS
+
+O backend está configurado com `CORSMiddleware` permitindo chamadas do frontend local:
+
+- http://localhost:3000
+- http://127.0.0.1:3000
+
+Para adicionar novas origens, edite `app/main.py` e inclua os domínios no array `origins`.
+
+Exemplo:
+```python
+origins = [
+	"http://localhost:3000",
+	"http://127.0.0.1:3000",
+	"https://seu-dominio.com",
+]
+```
+
+## ❤️ Health Check
+
+Endpoints de verificação rápida para confirmar disponibilidade da API:
+
+```bash
+curl -s http://127.0.0.1:8000/ | jq
+curl -s http://127.0.0.1:8000/health | jq
+```
+
+Respostas esperadas:
+
+```json
+{"message": "Podium Serviços API"}
+```
+
+```json
+{"status": "ok"}
+```
+
 ## 🔑 Endpoints Principais
 
 ### Autenticação
