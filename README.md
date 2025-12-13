@@ -1,87 +1,96 @@
 # Web Admin - Podium Serviços
 
-Painel administrativo moderno desenvolvido com React para gerenciamento de serviços Podium.
+Painel administrativo moderno desenvolvido com React + TypeScript para gerenciamento de serviços Podium.
 
 **Versão:** 0.1.0
 
 ## 📋 Sobre o Projeto
 
-Este é um painel administrativo profissional construído com:
-- **React 18.3** - Framework principal
-- **Chakra UI 2.8** - Componentes de UI acessíveis
-- **Framer Motion 10.18** - Animações suaves
-- **Jest & React Testing Library** - Testes automatizados
+Tecnologias principais:
+- React 18.3
+- TypeScript 5.9
+- Chakra UI 2.8 (UI)
+- Framer Motion 10.18 (animações)
+- Axios (HTTP)
+- React Router DOM (navegação)
+- Jest + React Testing Library (testes)
 
-## 🚀 Começando
+## 🚀 Setup Rápido
 
 ### Pré-requisitos
-- Node.js (v14 ou superior)
+- Node.js 18+
 - npm ou yarn
 
 ### Instalação
 
-1. Clone o repositório:
 ```bash
-git clone <repository-url>
+git clone https://github.com/WellingtonADS/web-admin.git
 cd web-admin
+yarn install
 ```
 
-2. Instale as dependências:
+### Desenvolvimento
+
 ```bash
-npm install
+yarn start
+```
+Abra http://localhost:3000.
+
+### Build de Produção
+
+```bash
+yarn build
 ```
 
-## 📝 Scripts Disponíveis
+### Testes
 
-No diretório do projeto, você pode executar:
-
-### `npm start`
-Inicia o aplicativo em modo de desenvolvimento.
-- Abra [http://localhost:3000](http://localhost:3000) no navegador
-- A página será recarregada ao fazer alterações
-- Erros de lint aparecerão no console
-
-### `npm test`
-Inicia o runner de testes em modo interativo.
-Confira a [documentação de testes](https://facebook.github.io/create-react-app/docs/running-tests) para mais informações.
-
-### `npm run build`
-Constrói o aplicativo para produção na pasta `build`.
-- A compilação é otimizada para melhor performance
-- Arquivo minificado com hashes nos nomes
-- Pronto para deploy
-
-### `npm run eject`
-**⚠️ Aviso: Esta é uma operação irreversível!**
-
-Ejeta as configurações do Create React App para controle total.
+```bash
+yarn test
+```
 
 ## 📂 Estrutura do Projeto
 
 ```
 web-admin/
-├── public/              # Arquivos estáticos
-│   ├── index.html
-│   ├── manifest.json
-│   └── robots.txt
-├── src/                 # Código-fonte
-│   ├── App.js
+├── public/
+├── src/
+│   ├── contexts/
+│   │   └── AuthContext.tsx        # Contexto de autenticação tipado
+│   ├── services/
+│   │   └── api.ts                 # Cliente HTTP axios com interceptor
+│   ├── App.tsx                    # App com Chakra UI
 │   ├── App.css
-│   ├── index.js
+│   ├── index.tsx                  # Entrada (React 18 + TS)
 │   ├── index.css
 │   ├── App.test.js
-│   ├── reportWebVitals.js
-│   └── setupTests.js
+│   ├── reportWebVitals.ts
+│   └── setupTests.ts
 ├── package.json
+├── tsconfig.json
 └── README.md
 ```
 
-## 🔗 Recursos Úteis
+## 🔐 Autenticação
 
-- [Documentação Create React App](https://facebook.github.io/create-react-app/docs/getting-started)
-- [Documentação React](https://reactjs.org/)
-- [Chakra UI Docs](https://chakra-ui.com/getting-started)
-- [Framer Motion Docs](https://www.framer.com/motion/)
+- Contexto em `src/contexts/AuthContext.tsx` com tipos `User`, `LoginCredentials` e `AuthContextData`.
+- Persistência de `@Podium:user` e `@Podium:token` via `localStorage`.
+- Interceptor em `src/services/api.ts` injeta `Authorization: Bearer <token>` automaticamente.
+
+Exemplo de uso:
+
+```tsx
+import { useAuth } from './contexts/AuthContext';
+
+function LoginButton() {
+	const { signIn, signed } = useAuth();
+	// ...
+}
+```
+
+## 🔗 Endpoints e Cliente HTTP
+
+- Base URL: `http://localhost:8000/api/v1`
+- `api.post('/login', formData)` com `Content-Type: application/x-www-form-urlencoded`.
 
 ## 📄 Licença
 
