@@ -1,6 +1,7 @@
 from typing import Optional, List
 from datetime import datetime, timezone
 from sqlmodel import Field, SQLModel, Relationship  # type: ignore[attr-defined]
+from enum import Enum
 
 # --- 1. EMPRESAS (CLIENTE B2B) ---
 class Company(SQLModel, table=True):
@@ -61,7 +62,12 @@ class User(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     hashed_password: str
     full_name: str
-    role: str  # "admin", "driver", "employee"
+    class Role(str, Enum):
+        admin = "admin"
+        driver = "driver"
+        employee = "employee"
+
+    role: Role  # papéis suportados
     is_active: bool = True
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 

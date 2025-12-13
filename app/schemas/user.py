@@ -1,5 +1,5 @@
 from pydantic import BaseModel, EmailStr
-from typing import Optional
+from typing import Optional, Literal
 
 # --- BASE (Comum a todos) ---
 class UserBase(BaseModel):
@@ -34,7 +34,7 @@ class UserRead(UserBase):
 # --- Schemas genéricos usados em rotas básicas ---
 class UserCreate(UserBase):
     password: str
-    role: str
+    role: Literal["admin", "driver", "employee"]
 
 class Token(BaseModel):
     access_token: str

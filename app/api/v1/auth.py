@@ -5,6 +5,7 @@ from sqlmodel import Session, select
 from app.core.database import get_session
 from app.core.security import create_access_token, get_password_hash, verify_password
 from app.models.domain import User, DriverProfile, EmployeeProfile
+from app.api.v1.deps import require_role
 from app.schemas.user import AdminCreate, DriverCreate, EmployeeCreate, UserRead
 
 router = APIRouter()
@@ -31,13 +32,13 @@ def create_base_user(db: Session, user_in: Union[AdminCreate, DriverCreate, Empl
 
 # --- ROTA 1: CADASTRO DE ADMIN ---
 @router.post("/signup/admin", response_model=UserRead)
-def signup_admin(user_in: AdminCreate, db: Session = Depends(get_session)):
+def signup_admin(user_in: AdminCreate, db: Session = Depends(get_session), _=Depends(require_role("admin"))):
     """Cria um Administrador do Sistema (Backoffice)."""
     return create_base_user(db, user_in, role="admin")
 
 # --- ROTA 2: CADASTRO DE MOTORISTA ---
 @router.post("/signup/driver", response_model=UserRead)
-def signup_driver(user_in: DriverCreate, db: Session = Depends(get_session)):
+def signup_driver(user_in: DriverCreate, db: Session = Depends(get_session), _=Depends(require_role("admin"))):
     """Cria um Motorista e seu perfil veicular."""
     # 1. Cria o User
     new_user = create_base_user(db, user_in, role="driver")
@@ -46,20 +47,24 @@ def signup_driver(user_in: DriverCreate, db: Session = Depends(get_session)):
     if new_user.id is None:
         raise HTTPException(status_code=500, detail="Erro ao criar usuário")
     
-    driver_profile = DriverProfile(
-        user_id=new_user.id,
-        vehicle_model=user_in.vehicle_model,
-        vehicle_plate=user_in.vehicle_plate,
-        cnh_number=user_in.cnh_number
-    )
-    db.add(driver_profile)
-    db.commit()
+    try:
+        driver_profile = DriverProfile(
+            user_id=new_user.id,
+            vehicle_model=user_in.vehicle_model,
+            vehicle_plate=user_in.vehicle_plate,
+            cnh_number=user_in.cnh_number
+        )
+        db.add(driver_profile)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Falha ao criar perfil de motorista")
     
     return new_user
 
 # --- ROTA 3: CADASTRO DE FUNCIONÁRIO (APP PASSAGEIRO) ---
 @router.post("/signup/employee", response_model=UserRead)
-def signup_employee(user_in: EmployeeCreate, db: Session = Depends(get_session)):
+def signup_employee(user_in: EmployeeCreate, db: Session = Depends(get_session), _=Depends(require_role("admin"))):
     """Cria um Funcionário vinculado a uma empresa."""
     # 1. Cria o User
     new_user = create_base_user(db, user_in, role="employee")
@@ -68,13 +73,17 @@ def signup_employee(user_in: EmployeeCreate, db: Session = Depends(get_session))
     if new_user.id is None:
         raise HTTPException(status_code=500, detail="Erro ao criar usuário")
     
-    emp_profile = EmployeeProfile(
-        user_id=new_user.id,
-        company_id=user_in.company_id,
-        department=user_in.department
-    )
-    db.add(emp_profile)
-    db.commit()
+    try:
+        emp_profile = EmployeeProfile(
+            user_id=new_user.id,
+            company_id=user_in.company_id,
+            department=user_in.department
+        )
+        db.add(emp_profile)
+        db.commit()
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Falha ao criar perfil de funcionário")
     
     return new_user
 
