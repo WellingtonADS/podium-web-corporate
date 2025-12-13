@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from app.core.config import settings
 from app.core.database import create_db_and_tables
 from app.models import domain  # Importa os modelos para o SQLModel registrá-los
-from app.api.v1 import auth
+from app.api.api import router as api_router
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -14,7 +14,8 @@ app = FastAPI(
 def on_startup():
     create_db_and_tables()
 
-app.include_router(auth.router, prefix=settings.API_V1_STR, tags=["Autenticação"])
+# Agregador de rotas (v1): inclui todas as rotas versionadas
+app.include_router(api_router)
 
 @app.get("/")
 def root():

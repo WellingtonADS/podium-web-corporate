@@ -30,3 +30,12 @@ class UserRead(UserBase):
     id: int
     role: str
     is_active: bool
+
+# --- Schemas genéricos usados em rotas básicas ---
+class UserCreate(UserBase):
+    password: str
+    role: str
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
