@@ -1,5 +1,4 @@
-// src/App.js
-import React from 'react';
+import React, { FC, ReactNode } from 'react';
 import { ChakraProvider, Box, Flex, Text, SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText, extendTheme } from '@chakra-ui/react';
 
 // 1. Configuração do Tema "Podium Dark"
@@ -20,8 +19,15 @@ const theme = extendTheme({
   },
 });
 
-// Componente de Cartão (Card)
-const Card = ({ title, value, footer }) => (
+// Interface do Props do Card
+interface CardProps {
+  title: string;
+  value: string;
+  footer: string;
+}
+
+// Componente de Cartão (Card) Tipado
+const Card: FC<CardProps> = ({ title, value, footer }) => (
   <Box bg="#111c44" p={5} borderRadius="20px" boxShadow="lg">
     <Stat>
       <StatLabel color="gray.400">{title}</StatLabel>
@@ -31,7 +37,20 @@ const Card = ({ title, value, footer }) => (
   </Box>
 );
 
-function App() {
+// Interface para dados de corrida
+interface RideRecord {
+  passenger: string;
+  value: string;
+  status: string;
+  statusColor: string;
+}
+
+const App: FC = () => {
+  const recentRides: RideRecord[] = [
+    { passenger: 'João Silva (Samsung)', value: 'R$ 45,00', status: 'Finalizada', statusColor: 'green.400' },
+    { passenger: 'Maria Souza (Honda)', value: 'R$ 22,50', status: 'Em Rota', statusColor: 'blue.400' },
+  ];
+
   return (
     <ChakraProvider theme={theme}>
       <Flex h="100vh" flexDirection="column">
@@ -74,16 +93,13 @@ function App() {
                    <Text color="gray.400">Valor</Text>
                    <Text color="gray.400">Status</Text>
                  </Flex>
-                 <Flex justify="space-between" mb={2}>
-                   <Text>João Silva (Samsung)</Text>
-                   <Text fontWeight="bold">R$ 45,00</Text>
-                   <Text color="green.400">Finalizada</Text>
-                 </Flex>
-                 <Flex justify="space-between" mb={2}>
-                   <Text>Maria Souza (Honda)</Text>
-                   <Text fontWeight="bold">R$ 22,50</Text>
-                   <Text color="blue.400">Em Rota</Text>
-                 </Flex>
+                 {recentRides.map((ride, index) => (
+                   <Flex key={index} justify="space-between" mb={2}>
+                     <Text>{ride.passenger}</Text>
+                     <Text fontWeight="bold">{ride.value}</Text>
+                     <Text color={ride.statusColor}>{ride.status}</Text>
+                   </Flex>
+                 ))}
                </Box>
             </Box>
           </SimpleGrid>
@@ -92,6 +108,6 @@ function App() {
       </Flex>
     </ChakraProvider>
   );
-}
+};
 
 export default App;
