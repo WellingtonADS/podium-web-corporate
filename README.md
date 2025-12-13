@@ -85,6 +85,26 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 uvicorn app.main:app --reload
 ```
 
+### Seed do primeiro admin (necessário para usar rotas protegidas de signup)
+
+Com o venv ativo e variáveis de ambiente carregadas:
+
+```bash
+python -m app.scripts.seed_admin \
+	--email admin@podium.com \
+	--name "Admin" \
+	--password "TroqueEstaSenha!"
+```
+
+Você também pode definir via ambiente:
+
+```bash
+set SEED_ADMIN_EMAIL=admin@podium.com
+set SEED_ADMIN_NAME=Admin
+set SEED_ADMIN_PASSWORD=TroqueEstaSenha!
+python -m app.scripts.seed_admin
+```
+
 ## 📚 Documentação da API
 
 Após iniciar o servidor, acesse:
