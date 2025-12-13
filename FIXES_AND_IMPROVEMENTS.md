@@ -117,6 +117,20 @@ could not find table 'companies' with which to generate a foreign key to target 
 
 ---
 
+### 9. **Problemas de Tipagem no Script de Seed**
+**Severidade:** Média  
+**Descrição:**  
+- Type hints incorretos: `department: str = None` (deveria ser `str | None = None`).
+- `user.id` e `company.id` potencialmente None, causando type errors.
+- f-strings desnecessárias sem placeholders em alguns pontos.
+- Import `Optional` não utilizado.
+
+**Causa Raiz:**
+- Script criado rapidamente sem passar por type checking.
+- Falta de validação de tipos com Pylance/Mypy.
+
+---
+
 ## Correções Aplicadas
 
 ### 1. **Criar Agregador de Rotas** ✅
@@ -359,6 +373,68 @@ python -m app.scripts.seed_admin \
 
 ---
 
+### 14. **Corrigir Type Annotations no seed_data.py** ✅
+**Arquivo:** `app/scripts/seed_data.py`  
+**O que fez:**
+
+1. **Type hint correto para Optional:**
+```python
+# Antes:
+def seed_employee(email: str, full_name: str, password: str, company_id: int, 
+                  department: str = None) -> User:
+
+# Depois:
+def seed_employee(email: str, full_name: str, password: str, company_id: int, 
+                  department: str | None = None) -> User:
+```
+
+2. **Type narrowing para user.id:**
+```python
+# Antes:
+driver_profile = DriverProfile(
+    user_id=user.id,  # user.id pode ser None!
+    ...
+)
+
+# Depois:
+user_id: int = user.id or 0
+if user_id == 0:
+    raise ValueError("Falha ao obter ID do usuário")
+
+driver_profile = DriverProfile(
+    user_id=user_id,  # Agora garantidamente int
+    ...
+)
+```
+
+3. **Remover import não utilizado:**
+```python
+# Removido:
+from typing import Optional
+```
+
+4. **f-strings sem placeholders:**
+```python
+# Antes:
+print(f"\nCredenciais:")
+print(f"  Admin:      admin@podium.com / Admin123!")
+
+# Depois:
+print("\nCredenciais:")
+print("  Admin:      admin@podium.com / Admin123!")
+```
+
+5. **Validação de company.id:**
+```python
+# Adicionado:
+if company.id is None:
+    raise ValueError("Company ID não pode ser None")
+```
+
+**Impacto:** Código type-safe, compatível com Pylance/Mypy, sem avisos de tipo.
+
+---
+
 ## Commits Realizados
 
 ### Commit 1: `sec: enforce roles via Enum/Literal and auth deps`
@@ -397,6 +473,37 @@ python -m app.scripts.seed_admin \
 - Test login endpoint returns 200 OK
 ```
 **Hash:** `c6e8512`
+
+### Commit 5: `feat: add seed_data script to populate initial data (company, drivers, employees)`
+```
+- Create seed_data.py with company, cost_center, driver, employee seeds
+- Support CLI args: --password, --company-name, --company-cnpj
+- Create 1 company, 1 cost center, 2 drivers, 3 employees
+- All with password="teste123"
+- Idempotent: doesn't recreate if users already exist
+```
+**Hash:** `aac6058`
+
+### Commit 6: `docs: add comprehensive TEST_DATA.md with all test credentials`
+```
+- Create TEST_DATA.md with all test user credentials
+- Include login examples (Swagger, cURL, Python)
+- Document 6 recommended tests with examples
+- Add notes on security, roles, and API endpoints
+- Recommended test flow for validating implementation
+```
+**Hash:** `c935978`
+
+### Commit 7: `fix: resolve type annotations and f-string warnings in seed_data.py`
+```
+- Fix type hint: department: str | None = None
+- Add type narrowing for user.id (avoid None issues)
+- Add validation for company.id
+- Remove unused Optional import
+- Remove f-strings without placeholders
+- All type checking now passes (0 errors)
+```
+**Hash:** `a506993`
 
 ---
 
@@ -509,20 +616,40 @@ curl -X POST "http://127.0.0.1:8000/api/v1/signup/driver" \
 | Sem autenticação | Alta | ✅ Resolvido | <20min |
 | Sem seed de admin | Média | ✅ Resolvido | <25min |
 | passlib vs bcrypt | Crítica | ✅ Resolvido | <30min |
+| Type annotations | Média | ✅ Resolvido | <15min |
 
-**Total:** ~2,5 horas de trabalho concentrado.
+**Total:** ~3 horas de trabalho concentrado.
 
 ---
 
 ## Conclusão
 
-O backend agora está **seguro, consistente e totalmente funcional** (v0.1.0). Todos os 13 problemas críticos foram resolvidos, e as boas práticas de Clean Architecture foram implementadas. 
+O backend agora está **seguro, consistente e totalmente funcional** (v0.1.0). Todos os **9 problemas críticos** foram resolvidos, e as boas práticas de Clean Architecture foram implementadas. 
 
 **Status da produção:**
-- ✅ Banco de dados funcionando.
-- ✅ Autenticação e autorização implementadas.
+- ✅ Banco de dados funcionando com integridade referencial.
+- ✅ Autenticação e autorização implementadas e testadas.
 - ✅ Login testado e validado (200 OK).
-- ✅ Todas as dependências sincronizadas.
-- ✅ Documentação completa.
+- ✅ Todas as dependências sincronizadas e compatíveis.
+- ✅ Documentação completa (README, CONTRIBUTING, TEST_DATA, FIXES_AND_IMPROVEMENTS).
+- ✅ Código limpo com type checking (0 erros Pylance).
+- ✅ Scripts de seed funcionais e reutilizáveis.
+- ✅ Dados de teste populados (1 empresa, 2 motoristas, 3 funcionários).
 
 A branch `release/v0.1.0` está sincronizada com `main` no GitHub e pronta para deploy.
+
+### Arquivos Modificados/Criados
+- ✅ `app/core/security.py` - bcrypt nativo
+- ✅ `app/core/database.py` - configuração do banco
+- ✅ `app/models/domain.py` - models com FKs corretos
+- ✅ `app/schemas/user.py` - validação de role
+- ✅ `app/api/v1/deps.py` - autenticação e autorização
+- ✅ `app/api/v1/auth.py` - rotas protegidas
+- ✅ `app/api/api.py` - agregador de rotas
+- ✅ `app/main.py` - integração de rotas
+- ✅ `app/scripts/seed_admin.py` - seed do admin
+- ✅ `app/scripts/seed_data.py` - seed de dados teste
+- ✅ `README.md` - instruções de setup
+- ✅ `CONTRIBUTING.md` - política de contribuição
+- ✅ `TEST_DATA.md` - guia de dados de teste
+- ✅ `FIXES_AND_IMPROVEMENTS.md` - este documento
