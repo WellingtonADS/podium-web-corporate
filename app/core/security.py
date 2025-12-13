@@ -1,12 +1,9 @@
 # app/core/security.py
 from datetime import datetime, timedelta, timezone
 from typing import Any, Union, Optional
-from jose import jwt # Se der erro, use 'import jwt' (PyJWT) dependendo do que instalou
-from passlib.context import CryptContext
+from jose import jwt
+import bcrypt
 from app.core.config import settings
-
-# Configuração do Hashing de Senha (Bcrypt)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def create_access_token(subject: Union[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     if expires_delta:
@@ -19,7 +16,11 @@ def create_access_token(subject: Union[str, Any], expires_delta: Optional[timede
     return encoded_jwt
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verifica se a senha em texto plano corresponde ao hash bcrypt"""
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
 
 def get_password_hash(password: str) -> str:
-    return pwd_context.hash(password)
+    """Gera hash bcrypt da senha"""
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed.decode('utf-8')
