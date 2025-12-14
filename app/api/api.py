@@ -4,7 +4,7 @@ from fastapi import APIRouter
 # V1 Routers
 from app.api.v1.auth import router as auth_router
 from app.api.v1.stats import router as stats_router
-from app.api.v1 import auth, stats, users
+from app.api.v1 import users
 
 router = APIRouter()
 

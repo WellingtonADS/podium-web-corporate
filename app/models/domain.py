@@ -27,7 +27,7 @@ class CostCenter(SQLModel, table=True):
 
 # --- 3. PERFIL DO MOTORISTA (Dados que só motorista tem) ---
 class DriverProfile(SQLModel, table=True):
-    __tablename__ = "driver_profiles"
+    __tablename__ = "driver_profiles"  # type: ignore[assignment]
     
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="users.id")
@@ -42,7 +42,7 @@ class DriverProfile(SQLModel, table=True):
 
 # --- 4. PERFIL DO FUNCIONÁRIO/PASSAGEIRO (Dados B2B) ---
 class EmployeeProfile(SQLModel, table=True):
-    __tablename__ = "employee_profiles"
+    __tablename__ = "employee_profiles"  # type: ignore[assignment]
     
     id: Optional[int] = Field(default=None, primary_key=True)
     user_id: int = Field(foreign_key="users.id")
@@ -56,7 +56,7 @@ class EmployeeProfile(SQLModel, table=True):
 
 # --- 5. USUÁRIO BASE (Login e Acesso) ---
 class User(SQLModel, table=True):
-    __tablename__ = "users"
+    __tablename__ = "users"  # type: ignore[assignment]
 
     id: Optional[int] = Field(default=None, primary_key=True)
     email: str = Field(unique=True, index=True)

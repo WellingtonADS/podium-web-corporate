@@ -6,32 +6,46 @@ class UserBase(BaseModel):
     email: EmailStr
     full_name: str
 
-# --- INPUTS (O que o Front envia) ---
+# --- INPUTS (Inputs não precisam de ORM Mode) ---
 
-# 1. Criar ADMIN (Simples)
 class AdminCreate(UserBase):
     password: str
 
-# 2. Criar MOTORISTA (Exige carro)
 class DriverCreate(UserBase):
     password: str
     vehicle_model: str
     vehicle_plate: str
     cnh_number: str
 
-# 3. Criar FUNCIONÁRIO (Exige empresa)
 class EmployeeCreate(UserBase):
     password: str
     company_id: int
     department: Optional[str] = None
 
-# --- OUTPUTS (O que a API devolve) ---
+# --- OUTPUTS (Aqui está a correção!) ---
+
+class DriverProfileRead(BaseModel):
+    vehicle_model: str
+    vehicle_plate: str
+    cnh_number: str
+    
+    # Habilita leitura de objeto ORM (SQLAlchemy/SQLModel)
+    class Config:
+        from_attributes = True # Pydantic V2
+        orm_mode = True        # Pydantic V1 (Legacy)
+
 class UserRead(UserBase):
     id: int
     role: str
     is_active: bool
+    driver_profile: Optional[DriverProfileRead] = None
 
-# --- Schemas genéricos usados em rotas básicas ---
+    # Habilita leitura de objeto ORM (SQLAlchemy/SQLModel)
+    class Config:
+        from_attributes = True # Pydantic V2
+        orm_mode = True        # Pydantic V1 (Legacy)
+
+# --- Schemas genéricos ---
 class UserCreate(UserBase):
     password: str
     role: Literal["admin", "driver", "employee"]

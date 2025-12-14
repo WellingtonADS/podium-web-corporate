@@ -11,7 +11,7 @@ from app.schemas.user import AdminCreate, DriverCreate, EmployeeCreate, UserRead
 router = APIRouter()
 
 # --- FUNÇÃO AUXILIAR PARA CRIAR O USUÁRIO BASE ---
-def create_base_user(db: Session, user_in: Union[AdminCreate, DriverCreate, EmployeeCreate], role: str) -> User:
+def create_base_user(db: Session, user_in: Union[AdminCreate, DriverCreate, EmployeeCreate], role: User.Role) -> User:
     # Verifica email duplicado
     query = select(User).where(User.email == user_in.email)
     if db.exec(query).first():
@@ -34,14 +34,14 @@ def create_base_user(db: Session, user_in: Union[AdminCreate, DriverCreate, Empl
 @router.post("/signup/admin", response_model=UserRead)
 def signup_admin(user_in: AdminCreate, db: Session = Depends(get_session), _=Depends(require_role("admin"))):
     """Cria um Administrador do Sistema (Backoffice)."""
-    return create_base_user(db, user_in, role="admin")
+    return create_base_user(db, user_in, role=User.Role.admin)
 
 # --- ROTA 2: CADASTRO DE MOTORISTA ---
 @router.post("/signup/driver", response_model=UserRead)
 def signup_driver(user_in: DriverCreate, db: Session = Depends(get_session), _=Depends(require_role("admin"))):
     """Cria um Motorista e seu perfil veicular."""
     # 1. Cria o User
-    new_user = create_base_user(db, user_in, role="driver")
+    new_user = create_base_user(db, user_in, role=User.Role.driver)
     
     # 2. Cria o Perfil de Motorista
     if new_user.id is None:
@@ -56,6 +56,7 @@ def signup_driver(user_in: DriverCreate, db: Session = Depends(get_session), _=D
         )
         db.add(driver_profile)
         db.commit()
+        db.refresh(new_user)
     except Exception:
         db.rollback()
         raise HTTPException(status_code=500, detail="Falha ao criar perfil de motorista")
@@ -67,7 +68,7 @@ def signup_driver(user_in: DriverCreate, db: Session = Depends(get_session), _=D
 def signup_employee(user_in: EmployeeCreate, db: Session = Depends(get_session), _=Depends(require_role("admin"))):
     """Cria um Funcionário vinculado a uma empresa."""
     # 1. Cria o User
-    new_user = create_base_user(db, user_in, role="employee")
+    new_user = create_base_user(db, user_in, role=User.Role.employee)
     
     # 2. Cria o Perfil de Funcionário
     if new_user.id is None:

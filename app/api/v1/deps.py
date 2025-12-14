@@ -22,14 +22,23 @@ def get_current_user(db: Session = Depends(get_session), token: str = Depends(oa
     )
     try:
         payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
+        user_id_raw = payload.get("sub")
+        if user_id_raw is None:
             raise credentials_exception
-        token_data = TokenData(id=user_id)
+        if not isinstance(user_id_raw, (str, int)):
+            raise credentials_exception
+        token_data = TokenData(id=str(user_id_raw))
     except JWTError:
         raise credentials_exception
-    
-    stmt = select(User).where(User.id == int(token_data.id))
+
+    try:
+        user_id_int = int(token_data.id) if token_data.id is not None else None
+    except (TypeError, ValueError):
+        raise credentials_exception
+    if user_id_int is None:
+        raise credentials_exception
+
+    stmt = select(User).where(User.id == user_id_int)
     user = db.exec(stmt).first()
     if not user:
         raise credentials_exception
