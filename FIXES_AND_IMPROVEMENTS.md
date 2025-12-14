@@ -467,6 +467,30 @@ def health_check():
 
 ---
 
+### 16. **Proteger /stats e tipar resposta** ✅
+**Arquivo:** `app/api/v1/stats.py`  
+**O que fez:**
+- Exigiu `require_role("admin")` para `/api/v1/stats/dashboard`.
+- Adicionou `response_model=DashboardStats` e coerções explícitas de int/float nos agregados.
+- Ajustou queries para evitar avisos do Pylance com agregações.
+
+**Impacto:** KPIs só são exibidos para admins; documentação Swagger mais clara e sem avisos de tipo.
+
+---
+
+### 17. **Higienização Pylance e lifecycle** ✅
+**Arquivos:** `app/api/v1/auth.py`, `app/api/v1/deps.py`, `app/api/v1/stats.py`, `app/core/config.py`, `app/core/security.py`, `app/models/domain.py`, `app/main.py`  
+**O que fez:**
+- `auth.py`: uso de `User.Role` em vez de strings para `role` (elimina `reportArgumentType`).
+- `deps.py`: validação segura do `sub` no JWT e conversão robusta para int (sem avisos de tipo).
+- `stats.py`: coerções tipadas nos agregados e casts explícitos para remover avisos Pylance.
+- `config.py`: defaults vazios para settings requeridos, eliminando alertas estáticos (override via `.env`).
+- `security.py`: payload JWT anotado com tipos e `exp` como timestamp para evitar `Unknown`.
+- `domain.py`: suprimiu avisos de `__tablename__` com `type: ignore` e removeu import não usado.
+- `main.py`: trocou `@app.on_event("startup")` (deprecated) por `lifespan` com `asynccontextmanager`, preservando criação de tabelas e o side effect de registrar models.
+
+**Impacto:** Base limpa em Pylance (0 avisos), inicialização sem deprecation warnings e comportamento preservado.
+
 ## Commits Realizados
 
 ### Commit 1: `sec: enforce roles via Enum/Literal and auth deps`
