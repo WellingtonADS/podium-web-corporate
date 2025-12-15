@@ -28,6 +28,9 @@ class DriverProfileRead(BaseModel):
     vehicle_model: str
     vehicle_plate: str
     cnh_number: str
+    # NOVOS CAMPOS EXPOSTOS
+    current_lat: Optional[float] = None
+    current_lng: Optional[float] = None
     
     # Habilita leitura de objeto ORM (SQLAlchemy/SQLModel)
     class Config:

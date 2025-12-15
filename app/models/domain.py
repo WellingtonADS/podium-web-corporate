@@ -36,6 +36,11 @@ class DriverProfile(SQLModel, table=True):
     vehicle_plate: str
     cnh_number: str
     rating: float = 5.0
+
+    # NOVOS CAMPOS DE TELEMETRIA
+    current_lat: Optional[float] = None
+    current_lng: Optional[float] = None
+    last_location_at: Optional[datetime] = None
     
     # Relacionamento Reverso
     user: "User" = Relationship(back_populates="driver_profile")

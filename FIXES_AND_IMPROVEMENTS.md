@@ -476,6 +476,19 @@ def health_check():
 
 **Impacto:** KPIs só são exibidos para admins; documentação Swagger mais clara e sem avisos de tipo.
 
+**Validação Runtime:**
+Executado com token do `admin@podium.com` na mesma instância do servidor. Resposta obtida:
+
+```json
+{
+    "drivers_online": 3,
+    "rides_today": 0,
+    "revenue_today": 0.0,
+    "average_ticket": 0.0
+}
+```
+Observação: Tokens devem ser gerados e consumidos na mesma instância (mesma porta) para evitar 401 por `SECRET_KEY` divergente.
+
 ---
 
 ### 17. **Higienização Pylance e lifecycle** ✅
@@ -633,6 +646,25 @@ curl -X POST "http://127.0.0.1:8000/api/v1/signup/driver" \
     "vehicle_plate": "ABC1D23",
     "cnh_number": "12345678900"
   }'
+```
+
+### 4. Consultar Stats (PowerShell)
+```powershell
+Set-Location -Path "D:\Users\well\Projetos\Desenvolvimento\Podium Servicos\backend-api"
+$body = 'username=admin@podium.com&password=Admin123!'
+$tokenObj = Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8000/api/v1/login -ContentType 'application/x-www-form-urlencoded' -Body $body
+$token = $tokenObj.access_token
+Invoke-RestMethod -Uri http://127.0.0.1:8000/api/v1/stats/dashboard -Headers @{ Authorization = "Bearer $token" }
+```
+
+Exemplo de resposta:
+```json
+{
+    "drivers_online": 3,
+    "rides_today": 0,
+    "revenue_today": 0.0,
+    "average_ticket": 0.0
+}
 ```
 
 ---
