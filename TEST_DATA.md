@@ -292,6 +292,69 @@ curl -X POST "http://127.0.0.1:8000/api/v1/signup/driver" \
 
 ---
 
+### Teste 7: Atualizar Localização do Motorista
+
+```bash
+# 1. Login como motorista (get token)
+TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/api/v1/login" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=driver1@podium.com&password=teste123" | jq -r '.access_token')
+
+# 2. Enviar coordenadas GPS
+curl -X PATCH "http://127.0.0.1:8000/api/v1/users/me/location" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lat": -23.5505,
+    "lng": -46.6333
+  }'
+```
+
+**Esperado:** 200 OK com `{"status": "updated", "timestamp": "2025-12-16T..."}`
+
+**Nota:** Coordenadas usadas são da Avenida Paulista, São Paulo.
+
+---
+
+### Teste 8: Admin Ver Localização dos Motoristas
+
+```bash
+# 1. Login como admin (get token)
+TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/api/v1/login" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=admin@podium.com&password=Admin123!" | jq -r '.access_token')
+
+# 2. Listar motoristas com localização
+curl -X GET "http://127.0.0.1:8000/api/v1/users?role=driver" \
+  -H "Authorization: Bearer $TOKEN"
+```
+
+**Esperado:** 200 OK com array de motoristas incluindo `driver_profile.current_lat`, `driver_profile.current_lng`, `driver_profile.last_location_at`
+
+---
+
+### Teste 9: Funcionário Tentar Atualizar Localização (deve ignorar)
+
+```bash
+# 1. Login como funcionário (get token)
+TOKEN=$(curl -s -X POST "http://127.0.0.1:8000/api/v1/login" \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=employee1@podium.com&password=teste123" | jq -r '.access_token')
+
+# 2. Tentar enviar coordenadas (será ignorado)
+curl -X PATCH "http://127.0.0.1:8000/api/v1/users/me/location" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "lat": -23.5505,
+    "lng": -46.6333
+  }'
+```
+
+**Esperado:** 200 OK com `{"status": "ignored"}` (funcionário não tem perfil de motorista)
+
+---
+
 ## 🔄 Scripts de Seed
 
 ### Reexecutar Seed de Admin
@@ -340,8 +403,16 @@ python -m app.scripts.seed_data \
    - Signup Admin: `POST /api/v1/signup/admin` (requer admin)
    - Signup Driver: `POST /api/v1/signup/driver` (requer admin)
    - Signup Employee: `POST /api/v1/signup/employee` (requer admin)
+   - Update Location: `PATCH /api/v1/users/me/location` (apenas motoristas)
+   - List Users: `GET /api/v1/users?role=driver` (requer admin)
    - Docs: `GET /docs` (Swagger UI)
    - OpenAPI: `GET /api/v1/openapi.json`
+
+6. **Telemetria GPS:**
+   - Motoristas podem enviar coordenadas via `PATCH /me/location`
+   - Admins podem visualizar localização em tempo real via `GET /users?role=driver`
+   - Campos: `current_lat`, `current_lng`, `last_location_at`
+   - Atualizações recomendadas: a cada 10-30 segundos
 
 ---
 
@@ -353,7 +424,10 @@ python -m app.scripts.seed_data \
 4. ✅ Teste criar novo motorista (como admin)
 5. ✅ Teste criar novo funcionário (como admin)
 6. ✅ Teste tentar criar usuário sem ser admin (deve falhar)
-7. ✅ Teste rotas futuras com tokens de diferentes papéis
+7. ✅ Teste atualizar localização do motorista
+8. ✅ Teste admin visualizar localização dos motoristas
+9. ✅ Teste funcionário tentar atualizar localização (deve ignorar)
+10. ✅ Teste rotas futuras com tokens de diferentes papéis
 
 ---
 
@@ -366,6 +440,6 @@ Para dúvidas sobre os dados de teste, consulte:
 
 ---
 
-**Última atualização:** 13 de dezembro de 2025  
+**Última atualização:** 16 de dezembro de 2025  
 **Versão:** v0.1.0  
-**Status:** ✅ Produção
+**Status:** ✅ Produção (com telemetria GPS)

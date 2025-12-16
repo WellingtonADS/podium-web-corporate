@@ -157,6 +157,11 @@ Respostas esperadas:
 - `POST /api/v1/signup/employee` - Cadastrar funcionário
 - `POST /api/v1/login` - Login (retorna JWT)
 
+### Telemetria GPS (Motoristas)
+
+- `PATCH /api/v1/users/me/location` - Atualizar localização do motorista
+- `GET /api/v1/users?role=driver` - Listar motoristas com localização (admin only)
+
 ## 🗄️ Modelos de Dados
 
 ### Entidades Principais
@@ -178,12 +183,14 @@ Respostas esperadas:
 
 ## 📝 Roadmap
 
-- [ ] CRUD completo de empresas
-- [ ] Gestão de corridas
-- [ ] Sistema de matching motorista-passageiro
+- [x] CRUD completo de usuários (admin, motoristas, funcionários)
+- [x] Sistema de telemetria GPS para motoristas
+- [x] Exposição de coordenadas para visualização em dashboards
+- [ ] Gestão completa de corridas
+- [ ] Sistema de matching motorista-passageiro por proximidade
 - [ ] Notificações em tempo real
-- [ ] Relatórios e dashboards
-- [ ] Integração com mapas
+- [ ] Relatórios e dashboards com mapas
+- [ ] Integração com APIs de mapas (Google Maps, OpenStreetMap)
 
 ## 👥 Autores
 
@@ -195,4 +202,5 @@ Projeto proprietário - Todos os direitos reservados
 
 ---
 
-**Última atualização:** Dezembro 2025
+**Última atualização:** Dezembro 2025  
+**Versão:** v0.1.0 (com telemetria GPS)

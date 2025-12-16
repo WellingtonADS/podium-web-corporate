@@ -504,6 +504,81 @@ Observação: Tokens devem ser gerados e consumidos na mesma instância (mesma p
 
 **Impacto:** Base limpa em Pylance (0 avisos), inicialização sem deprecation warnings e comportamento preservado.
 
+---
+
+### 18. **Adicionar Telemetria GPS para Motoristas** ✅
+**Arquivos:** `app/models/domain.py`, `app/api/v1/users.py`, database migration  
+**O que fez:**
+
+**Modelo DriverProfile:**
+```python
+class DriverProfile(SQLModel, table=True):
+    __tablename__ = "driver_profiles"
+    # ... campos existentes ...
+    # NOVOS CAMPOS DE TELEMETRIA
+    current_lat: Optional[float] = None
+    current_lng: Optional[float] = None
+    last_location_at: Optional[datetime] = None
+```
+
+**Migração do Banco:**
+```sql
+ALTER TABLE driver_profiles ADD COLUMN current_lat FLOAT;
+ALTER TABLE driver_profiles ADD COLUMN current_lng FLOAT;
+ALTER TABLE driver_profiles ADD COLUMN last_location_at TIMESTAMP;
+```
+
+**Endpoint de Atualização (app/api/v1/users.py):**
+```python
+class LocationUpdate(BaseModel):
+    lat: float
+    lng: float
+
+@router.patch("/me/location")
+def update_location(
+    loc: LocationUpdate,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_session)
+):
+    """Recebe a telemetria do motorista e atualiza seu perfil."""
+    if current_user.role != "driver" or not current_user.driver_profile:
+        return {"status": "ignored"}
+    
+    current_user.driver_profile.current_lat = loc.lat
+    current_user.driver_profile.current_lng = loc.lng
+    current_user.driver_profile.last_location_at = datetime.now(timezone.utc)
+    
+    db.add(current_user.driver_profile)
+    db.commit()
+    
+    return {"status": "updated", "timestamp": current_user.driver_profile.last_location_at}
+```
+
+**Impacto:** Backend preparado para receber pings GPS do app mobile dos motoristas a cada 10-30 segundos; base para sistema de matching geoespacial e rastreamento em tempo real.
+
+---
+
+### 19. **Expor Coordenadas GPS nos Schemas de Resposta** ✅
+**Arquivo:** `app/schemas/user.py`  
+**O que fez:**
+```python
+class DriverProfileRead(BaseModel):
+    vehicle_model: str
+    vehicle_plate: str
+    cnh_number: str
+    # NOVOS CAMPOS EXPOSTOS
+    current_lat: Optional[float] = None
+    current_lng: Optional[float] = None
+    
+    class Config:
+        from_attributes = True
+        orm_mode = True
+```
+
+**Impacto:** Admins podem ver localização em tempo real ao listar motoristas via `GET /api/v1/users?role=driver`; permite construção de dashboards com mapa e visualização da frota.
+
+---
+
 ## Commits Realizados
 
 ### Commit 1: `sec: enforce roles via Enum/Literal and auth deps`
@@ -707,14 +782,15 @@ Exemplo de resposta:
 | Sem seed de admin | Média | ✅ Resolvido | <25min |
 | passlib vs bcrypt | Crítica | ✅ Resolvido | <30min |
 | Type annotations | Média | ✅ Resolvido | <15min |
+| Telemetria GPS (backend) | Alta | ✅ Resolvido | <40min |
 
-**Total:** ~3 horas de trabalho concentrado.
+**Total:** ~3.5 horas de trabalho concentrado.
 
 ---
 
 ## Conclusão
 
-O backend agora está **seguro, consistente e totalmente funcional** (v0.1.0). Todos os **9 problemas críticos** foram resolvidos, e as boas práticas de Clean Architecture foram implementadas. 
+O backend agora está **seguro, consistente e totalmente funcional** (v0.1.0). Todos os **10 problemas críticos** foram resolvidos, e as boas práticas de Clean Architecture foram implementadas. Sistema de telemetria GPS implementado para rastreamento de motoristas em tempo real. 
 
 **Status da produção:**
 - ✅ Banco de dados funcionando com integridade referencial.
