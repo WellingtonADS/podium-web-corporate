@@ -1,7 +1,14 @@
 {
   "name": "mobile-driver",
   "version": "1.0.0",
+  "description": "App mobile para motoristas da plataforma Podium com rastreamento GPS em tempo real",
+  "author": "Wellington ADS",
+  "license": "PROPRIETARY",
   "main": "index.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/WellingtonADS/mobile-driver.git"
+  },
   "scripts": {
     "start": "expo start",
     "android": "expo start --android",
