@@ -26,6 +26,8 @@ app = FastAPI(
 origins = [
     "http://localhost:3000",      # React Local
     "http://127.0.0.1:3000",      # Alternativa Local
+    "http://192.168.15.18:3000", # <--- ADICIONE SEU IP DA REDE AQUI
+    "http://192.168.15.18:8081", # (Opcional) Expo Metro Bundler
 ]
 
 app.add_middleware(
