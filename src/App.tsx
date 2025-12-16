@@ -5,8 +5,10 @@ import { AuthProvider } from './contexts/AuthContext';
 import { theme } from './theme';
 
 import { Dashboard } from './pages/Dashboard';
+import { Drivers } from './pages/Drivers';
 import { Login } from './pages/Login';
 import { PrivateRoute } from './routes/PrivateRoute';
+import { MainLayout } from './layouts/MainLayout'; // <--- Novo Import
 
 const App: React.FC = () => {
   return (
@@ -14,17 +16,22 @@ const App: React.FC = () => {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            {/* Rota Pública */}
             <Route path="/login" element={<Login />} />
 
-            {/* Rotas Privadas (Protegidas) */}
             <Route element={<PrivateRoute />}>
-              <Route path="/dashboard" element={<Dashboard />} />
-              {/* Redirecionar raiz para dashboard */}
+              {/* O MainLayout envolve as rotas internas */}
+              <Route element={<MainLayout />}>
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/drivers" element={<Drivers />} />
+                
+                {/* Rotas Futuras (Placeholders) */}
+                <Route path="/rides" element={<Dashboard />} /> 
+                <Route path="/pricing" element={<Dashboard />} />
+              </Route>
+              
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
             </Route>
             
-            {/* Rota 404 - Opcional */}
             <Route path="*" element={<Navigate to="/login" />} />
           </Routes>
         </BrowserRouter>

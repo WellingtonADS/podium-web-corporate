@@ -1,11 +1,5 @@
 import React, { createContext, useState, useEffect, useContext, ReactNode } from 'react';
-import api from '../services/api';
-
-// Definição dos Tipos
-interface User {
-  email: string;
-  role: 'admin' | 'driver' | 'employee';
-}
+import api, { User } from '../services/api';
 
 interface AuthContextData {
   signed: boolean;
@@ -59,14 +53,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
       });
 
       const { access_token } = response.data;
-
-      // Simulando decode do user (num app real usaríamos jwt-decode)
-      const userData: User = { email, role: 'admin' };
-
-      localStorage.setItem('@Podium:user', JSON.stringify(userData));
+      
+      // Define o token no header ANTES de outras requisições
+      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
       localStorage.setItem('@Podium:token', access_token);
 
-      api.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+      // Cria objeto de usuário com dados básicos
+      // Nota: Substitua com chamada ao endpoint correto quando disponível
+      const userData: User = {
+        id: 1,
+        email: email,
+        full_name: email.split('@')[0],
+        role: 'admin',
+        is_active: true
+      };
+
+      localStorage.setItem('@Podium:user', JSON.stringify(userData));
       setUser(userData);
       
     } catch (error) {
@@ -76,7 +78,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }
 
   function signOut() {
-    localStorage.clear();
+    // 1. Remove chaves específicas do LocalStorage (mais seguro que clear())
+    localStorage.removeItem('@Podium:token');
+    localStorage.removeItem('@Podium:user');
+
+    // 2. IMPORTANTE: Remove o Token do cabeçalho padrão do Axios
+    // Isso impede que requisições futuras enviem um token "sujo"
+    api.defaults.headers.common['Authorization'] = undefined;
+    delete api.defaults.headers.common['Authorization']; // Garante a remoção
+
+    // 3. Zera o estado da aplicação React
     setUser(null);
   }
 

@@ -1,13 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react'; // <--- useEffect adicionado
 import { Flex, Box, Heading, FormControl, FormLabel, Input, Button, Text, useToast } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom'; // <--- Importação Crítica
 import { useAuth } from '../contexts/AuthContext';
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const { signIn } = useAuth();
+  const { signIn, signed } = useAuth(); // <--- Pegamos 'signed' também
   const toast = useToast();
+  const navigate = useNavigate(); // <--- Instância do navegador
   const [isLoading, setIsLoading] = useState(false);
+
+  // Efeito de Segurança: Se já estiver logado, joga pro Dashboard
+  // (Evita que o usuário acesse /login se já tiver token)
+  useEffect(() => {
+    if (signed) {
+      navigate('/dashboard');
+    }
+  }, [signed, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +25,9 @@ export const Login: React.FC = () => {
 
     try {
       await signIn({ email, password });
-      // O redirecionamento ocorre automaticamente pelo AuthContext/Router
+      // O useEffect acima vai perceber a mudança de 'signed' e redirecionar.
+      // Mas por garantia/rapidez, podemos forçar aqui também:
+      navigate('/dashboard'); 
     } catch (error) {
       toast({
         title: 'Erro no login.',
