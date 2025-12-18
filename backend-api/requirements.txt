@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+sqlmodel
+psycopg2-binary
+jose
+passlib[bcrypt]
+geoalchemy2
+pydantic-settings
+email-validator
+python-multipart
+httpx
+pytest
