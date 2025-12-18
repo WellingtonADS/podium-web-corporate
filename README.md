@@ -85,6 +85,28 @@ ACCESS_TOKEN_EXPIRE_MINUTES=30
 uvicorn app.main:app --reload
 ```
 
+## ✅ Testes
+
+### Requisitos de teste
+- As dependências `pytest` e `httpx` já estão no `requirements.txt`.
+
+### Executar suíte de testes (FastAPI + integração)
+```bash
+python -m pytest -q
+```
+
+### Rodar somente os testes de múltiplos motoristas
+```bash
+python -m pytest app/tests/test_multi_drivers_integration.py -q
+```
+
+### Teste manual (requer servidor rodando)
+```bash
+uvicorn app.main:app --reload
+python -m app.tests.test_multi_drivers
+```
+Resultado esperado inclui mensagem de sucesso mostrando os dois motoristas com coordenadas válidas.
+
 ### Seed do primeiro admin (necessário para usar rotas protegidas de signup)
 
 Com o venv ativo e variáveis de ambiente carregadas:
@@ -161,6 +183,10 @@ Respostas esperadas:
 
 - `PATCH /api/v1/users/me/location` - Atualizar localização do motorista
 - `GET /api/v1/users?role=driver` - Listar motoristas com localização (admin only)
+
+Notas de implementação:
+- A listagem de usuários usa eager loading com `selectinload` para evitar N+1 e garantir o carregamento de `driver_profile` durante a serialização.
+- Os schemas usam Pydantic v2 (`model_config=ConfigDict(from_attributes=True)`).
 
 ## 🗄️ Modelos de Dados
 

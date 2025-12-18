@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from typing import Optional, Literal
 
 # --- BASE (Comum a todos) ---
@@ -31,11 +31,9 @@ class DriverProfileRead(BaseModel):
     # NOVOS CAMPOS EXPOSTOS
     current_lat: Optional[float] = None
     current_lng: Optional[float] = None
-    
-    # Habilita leitura de objeto ORM (SQLAlchemy/SQLModel)
-    class Config:
-        from_attributes = True # Pydantic V2
-        orm_mode = True        # Pydantic V1 (Legacy)
+
+    # Pydantic v2: leitura de objetos ORM/SQLModel
+    model_config = ConfigDict(from_attributes=True)
 
 class UserRead(UserBase):
     id: int
@@ -43,10 +41,8 @@ class UserRead(UserBase):
     is_active: bool
     driver_profile: Optional[DriverProfileRead] = None
 
-    # Habilita leitura de objeto ORM (SQLAlchemy/SQLModel)
-    class Config:
-        from_attributes = True # Pydantic V2
-        orm_mode = True        # Pydantic V1 (Legacy)
+    # Pydantic v2: leitura de objetos ORM/SQLModel
+    model_config = ConfigDict(from_attributes=True)
 
 # --- Schemas genéricos ---
 class UserCreate(UserBase):

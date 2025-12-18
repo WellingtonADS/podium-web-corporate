@@ -8,3 +8,5 @@ geoalchemy2
 pydantic-settings
 email-validator
 python-multipart
+httpx
+pytest

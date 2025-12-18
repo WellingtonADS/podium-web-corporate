@@ -6,6 +6,53 @@
 
 ---
 
+## 20. Correção: Telemetria com múltiplos motoristas (eager loading)
+**Data:** 18 de dezembro de 2025  
+**Severidade:** Alta  
+**Arquivos:**
+- `app/api/v1/users.py` (listagem com `selectinload` nos relacionamentos)
+- `app/schemas/user.py` (Pydantic v2: `model_config=ConfigDict(from_attributes=True)`)
+
+**Sintoma:** Ao logar um segundo motorista, localizações desapareciam da listagem de drivers (admin) e do mapa em tempo real.
+
+**Causa raiz:** A listagem usava lazy loading para `driver_profile`, e a sessão fechava antes da serialização; também havia padrão N+1 queries.
+
+**Correção aplicada:**
+- Eager loading com `selectinload(User.driver_profile, User.employee_profile)` na query de usuários.
+- `db.refresh()` após atualizar localização para garantir retorno com dados persistidos.
+
+**Validação:**
+- Teste manual: [app/tests/test_multi_drivers.py](app/tests/test_multi_drivers.py) (filtra somente os motoristas do cenário, evitando falso negativo).
+- Testes de integração: [app/tests/test_multi_drivers_integration.py](app/tests/test_multi_drivers_integration.py).
+
+**Resultado:**
+- Ambos os motoristas mantêm localização simultaneamente; N+1 eliminado (2 queries com eager load).
+
+---
+
+## 21. Migração Pydantic v2 (Config e Schemas)
+**Data:** 18 de dezembro de 2025  
+**Arquivos:**
+- `app/core/config.py` → uso de `SettingsConfigDict` em `model_config`.
+- `app/schemas/user.py` → `model_config = ConfigDict(from_attributes=True)`; remoção de `orm_mode` (deprecado).
+
+**Motivação:** Remover avisos de depreciação e alinhar com Pydantic v2.
+
+---
+
+## 22. Ambiente de testes padronizado
+**Data:** 18 de dezembro de 2025  
+**Arquivos:**
+- `requirements.txt` → adição de `httpx` e `pytest`.
+
+**Instruções rápidas:**
+```bash
+python -m pip install -r requirements.txt
+python -m pytest -q
+```
+
+---
+
 ## Resumo Executivo
 
 Durante esta sessão, identificamos e corrigimos **problemas críticos de segurança, lógica e consistência** no backend API. O projeto foi refatorado para seguir Clean Architecture corretamente e implementadas proteções de autenticação e autorização.

@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 from app.core.database import get_session
 # CORREÇÃO: Removemos a importação errada de 'security'
 # get_current_user e require_role vêm ambos de 'deps'
@@ -25,7 +26,11 @@ def read_users(
     Lista usuários do sistema com paginação e filtro opcional por Role.
     Apenas para Administradores.
     """
-    query = select(User)
+    # ✨ CORREÇÃO: Eager load dos relacionamentos para evitar lazy loading
+    query = select(User).options(
+        selectinload(User.driver_profile),
+        selectinload(User.employee_profile)
+    )
     
     if role:
         query = query.where(User.role == role)
@@ -62,5 +67,13 @@ def update_location(
     
     db.add(current_user.driver_profile)
     db.commit()
+    db.refresh(current_user.driver_profile)  # ✨ CORREÇÃO: Refresh para garantir dados salvos
+    
+    return {
+        "status": "updated", 
+        "timestamp": current_user.driver_profile.last_location_at,
+        "lat": current_user.driver_profile.current_lat,
+        "lng": current_user.driver_profile.current_lng
+    }
     
     return {"status": "updated", "timestamp": current_user.driver_profile.last_location_at}
