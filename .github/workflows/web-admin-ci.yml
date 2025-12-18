@@ -1,0 +1,51 @@
+name: CI Web Admin
+
+on:
+  push:
+    paths:
+      - 'web-admin/**'
+      - '.github/workflows/web-admin-ci.yml'
+  pull_request:
+    paths:
+      - 'web-admin/**'
+      - '.github/workflows/web-admin-ci.yml'
+
+concurrency:
+  group: web-admin-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web-admin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: web-admin/yarn.lock
+
+      - name: Install dependencies (yarn)
+        run: yarn install --frozen-lockfile
+
+      - name: Test
+        run: yarn test --watch=false --ci
+
+      - name: Build
+        run: yarn build
+
+      - name: Upload build artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-admin-build
+          path: web-admin/build

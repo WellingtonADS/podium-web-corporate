@@ -1,0 +1,41 @@
+name: Typecheck Mobile Driver
+
+on:
+  push:
+    paths:
+      - 'mobile-driver/**'
+      - '.github/workflows/mobile-driver-typecheck.yml'
+  pull_request:
+    paths:
+      - 'mobile-driver/**'
+      - '.github/workflows/mobile-driver-typecheck.yml'
+
+concurrency:
+  group: mobile-driver-typecheck-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CI: true
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile-driver
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: yarn
+          cache-dependency-path: mobile-driver/yarn.lock
+
+      - name: Install dependencies (yarn)
+        run: yarn install --frozen-lockfile
+
+      - name: Typecheck
+        run: yarn tsc --noEmit
