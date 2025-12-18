@@ -13,7 +13,10 @@
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "lint": "eslint \"src/**/*.{ts,tsx,js,jsx}\" --max-warnings=0",
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,js,jsx,json,md}\"",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
@@ -41,6 +44,7 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-native": "^5.0.0",
+    "prettier": "^3.3.3",
     "typescript": "~5.9.2"
   },
   "private": true
