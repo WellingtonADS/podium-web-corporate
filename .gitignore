@@ -1,0 +1,23 @@
+# Node
+node_modules/
+*.log
+coverage/
+dist/
+build/
+.expo/
+
+# Python
+backend-api/venv/
+backend-api/.venv/
+**/__pycache__/
+*.py[cod]
+
+# Editor/OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Env
+.env
+.env.*
