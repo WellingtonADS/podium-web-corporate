@@ -17,6 +17,13 @@
     "typecheck:mobile": "npm run -w mobile-driver typecheck || tsc -p mobile-driver/tsconfig.json --noEmit",
     "lint:web": "npm run -w web-admin lint || echo \"lint web-admin skipped\"",
     "lint:mobile": "npm run -w mobile-driver lint || echo \"lint mobile-driver skipped\""
+    ,
+    "sync:pull:backend-api": "git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash",
+    "sync:pull:web-admin": "git subtree pull --prefix=web-admin web-admin release/v0.1.0 --squash",
+    "sync:pull:mobile-driver": "git subtree pull --prefix=mobile-driver mobile-driver release/v1.0.0 --squash",
+    "sync:push:backend-api": "git subtree push --prefix=backend-api backend-api release/v0.1.0",
+    "sync:push:web-admin": "git subtree push --prefix=web-admin web-admin release/v0.1.0",
+    "sync:push:mobile-driver": "git subtree push --prefix=mobile-driver mobile-driver release/v1.0.0"
   },
   "devDependencies": {
     "concurrently": "^9.0.0"

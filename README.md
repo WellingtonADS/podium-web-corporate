@@ -1,4 +1,18 @@
+
 # Podium Monorepo
+
+<!-- Badges de Status de CI -->
+<p align="left">
+   <a href="https://github.com/WellingtonADS/podium-monorepo/actions/workflows/web-admin-ci.yml">
+      <img alt="web-admin CI" src="https://github.com/WellingtonADS/podium-monorepo/actions/workflows/web-admin-ci.yml/badge.svg" />
+   </a>
+   <a href="https://github.com/WellingtonADS/podium-monorepo/actions/workflows/backend-api-ci.yml">
+      <img alt="backend-api CI" src="https://github.com/WellingtonADS/podium-monorepo/actions/workflows/backend-api-ci.yml/badge.svg" />
+   </a>
+   <a href="https://github.com/WellingtonADS/podium-monorepo/actions/workflows/mobile-driver-typecheck.yml">
+      <img alt="mobile-driver Typecheck" src="https://github.com/WellingtonADS/podium-monorepo/actions/workflows/mobile-driver-typecheck.yml/badge.svg" />
+   </a>
+</p>
 
 Monorepo central que orquestra e sincroniza os projetos da plataforma Podium:
 
@@ -83,6 +97,22 @@ podium-monorepo/
 ```
 
 ## 🚀 Instalação e Setup
+
+## 📦 Estado dos Repositórios
+
+Os subprojetos deste monorepo e seus estados atuais/default são:
+
+| Projeto         | Default Branch   | Branch Atual      | Último Commit (SHA, Data, Mensagem) |
+|-----------------|-----------------|-------------------|--------------------------------------|
+| [podium-monorepo](https://github.com/WellingtonADS/podium-monorepo) | main            | main              | 7f951ae<br>2025-12-19<br>docs: update README with full structure and detailed workflows |
+| [backend-api](https://github.com/WellingtonADS/backend-api)         | release/v0.1.0  | release/v0.1.0    | 02ba6da<br>2025-12-18<br>feat: add install and pytest modules with basic functionality |
+| [web-admin](https://github.com/WellingtonADS/web-admin)             | release/v0.1.0  | release/v0.1.0    | 8ecfd8b<br>2025-12-18<br>ci: add lint jobs (web, mobile, api) |
+| [mobile-driver](https://github.com/WellingtonADS/mobile-driver)     | main            | release/v1.0.0    | 80aafaf<br>2025-12-16<br>docs: atualizar README e .gitignore para padrão main/release |
+
+> Para o mobile-driver, também existe branch main:<br>
+> Último commit: 6b6c48e (2025-12-16) docs: atualizar README e .gitignore para padrão main/release
+
+Essas referências orientam os comandos de `git subtree` descritos adiante.
 
 ### 1. Clonar e entrar no monorepo
 
@@ -252,4 +282,4 @@ Proprietário: WellingtonADS
 
 ---
 
-**Última atualização:** 18 de dezembro de 2025
+**Última atualização:** 19 de dezembro de 2025
