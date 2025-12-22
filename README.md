@@ -1,4 +1,3 @@
-
 # Podium Monorepo
 
 <!-- Badges de Status de CI -->
@@ -102,12 +101,12 @@ podium-monorepo/
 
 Os subprojetos deste monorepo e seus estados atuais/default são:
 
-| Projeto         | Default Branch   | Branch Atual      | Último Commit (SHA, Data, Mensagem) |
-|-----------------|-----------------|-------------------|--------------------------------------|
-| [podium-monorepo](https://github.com/WellingtonADS/podium-monorepo) | main            | main              | 7f951ae<br>2025-12-19<br>docs: update README with full structure and detailed workflows |
-| [backend-api](https://github.com/WellingtonADS/backend-api)         | release/v0.1.0  | release/v0.1.0    | 02ba6da<br>2025-12-18<br>feat: add install and pytest modules with basic functionality |
-| [web-admin](https://github.com/WellingtonADS/web-admin)             | release/v0.1.0  | release/v0.1.0    | 8ecfd8b<br>2025-12-18<br>ci: add lint jobs (web, mobile, api) |
-| [mobile-driver](https://github.com/WellingtonADS/mobile-driver)     | main            | release/v1.0.0    | 80aafaf<br>2025-12-16<br>docs: atualizar README e .gitignore para padrão main/release |
+| Projeto                                                             | Default Branch | Branch Atual   | Último Commit (SHA, Data, Mensagem)                                                     |
+| ------------------------------------------------------------------- | -------------- | -------------- | --------------------------------------------------------------------------------------- |
+| [podium-monorepo](https://github.com/WellingtonADS/podium-monorepo) | main           | main           | 7f951ae<br>2025-12-19<br>docs: update README with full structure and detailed workflows |
+| [backend-api](https://github.com/WellingtonADS/backend-api)         | release/v0.1.0 | release/v0.1.0 | 02ba6da<br>2025-12-18<br>feat: add install and pytest modules with basic functionality  |
+| [web-admin](https://github.com/WellingtonADS/web-admin)             | release/v0.1.0 | release/v0.1.0 | 8ecfd8b<br>2025-12-18<br>ci: add lint jobs (web, mobile, api)                           |
+| [mobile-driver](https://github.com/WellingtonADS/mobile-driver)     | main           | release/v1.0.0 | b33b455<br>2025-12-22<br>fix: resolve subtree push conflicts and update branch          |
 
 > Para o mobile-driver, também existe branch main:<br>
 > Último commit: 6b6c48e (2025-12-16) docs: atualizar README e .gitignore para padrão main/release
@@ -157,6 +156,7 @@ npm run dev          # Todos os três em paralelo (concurrently)
 ### Scripts por Workspace
 
 **web-admin (yarn):**
+
 ```bash
 cd web-admin
 yarn start           # Dev server
@@ -167,6 +167,7 @@ yarn format:check    # Prettier check
 ```
 
 **mobile-driver (yarn):**
+
 ```bash
 cd mobile-driver
 yarn start           # Expo dev server
@@ -179,6 +180,7 @@ yarn typecheck       # tsc --noEmit
 ```
 
 **backend-api (Python):**
+
 ```bash
 cd backend-api
 pip install -r requirements.txt
@@ -221,11 +223,13 @@ git subtree push --prefix=web-admin web-admin release/v0.1.0
 ### Fluxo Recomendado
 
 1. **Sempre trabalhe em branches do monorepo:**
+
    ```bash
    git checkout -b feature/xyz
    ```
 
 2. **Antes de começar, sincronize os subtrees:**
+
    ```bash
    git fetch --all
    git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash
@@ -247,11 +251,11 @@ git subtree push --prefix=web-admin web-admin release/v0.1.0
 
 Workflows GitHub Actions automatizados:
 
-| Workflow | Trigger | Teste |
-|----------|---------|-------|
-| **web-admin-ci.yml** | Push/PR em web-admin/ | Lint (ESLint) → Build → Test (React) |
-| **backend-api-ci.yml** | Push/PR em backend-api/ | Lint (Ruff, Flake8) → Test (pytest) |
-| **mobile-driver-typecheck.yml** | Push/PR em mobile-driver/ | Lint (ESLint) → Typecheck (tsc) |
+| Workflow                        | Trigger                   | Teste                                |
+| ------------------------------- | ------------------------- | ------------------------------------ |
+| **web-admin-ci.yml**            | Push/PR em web-admin/     | Lint (ESLint) → Build → Test (React) |
+| **backend-api-ci.yml**          | Push/PR em backend-api/   | Lint (Ruff, Flake8) → Test (pytest)  |
+| **mobile-driver-typecheck.yml** | Push/PR em mobile-driver/ | Lint (ESLint) → Typecheck (tsc)      |
 
 Todos os workflows rodam em paralelo com cache, resultando em CI rápido.
 
@@ -262,6 +266,7 @@ Visualize status em: https://github.com/WellingtonADS/podium-monorepo/actions
 ## 📊 GitHub Project
 
 Kanban board para planejamento e acompanhamento:
+
 - **URL:** https://github.com/users/WellingtonADS/projects/1
 - **Campos:** Status, Area (API/Web/Mobile), Priority (P0-P3), Estimate, T-Shirt (XS-XL)
 - **Issues:** Criadas no monorepo com referência aos subprojetos
