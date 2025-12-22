@@ -200,35 +200,8 @@ mobile-driver/
 ## 📝 Versionamento
 
 - **Versão Atual:** 1.0.0
-- **Branch Principal:** `main`
-- **Branch de Release:** `release/v1.0.0`
-- **Tags Git:** `release/v1.0.0` (primeiro release)
+- **Tags Git:** `v1.0.0` (primeiro release)
 - Siga [Semantic Versioning](https://semver.org/)
-
-### Workflow de Branches
-
-- `main`: Branch principal com código estável
-- `release/vX.Y.Z`: Branches de release para cada versão
-- `feature/*`: Branches de desenvolvimento de novas funcionalidades
-- `fix/*`: Branches para correções de bugs
-
-### Comandos Git Úteis
-
-```bash
-# Clonar e mudar para branch de desenvolvimento
-git clone https://github.com/WellingtonADS/mobile-driver.git
-git checkout -b feature/minha-feature
-
-# Publicar mudanças
-git add .
-git commit -m "feat: descrição da feature"
-git push origin feature/minha-feature
-
-# Criar release
-git checkout -b release/v1.1.0 main
-git tag -a release/v1.1.0 -m "Release v1.1.0"
-git push origin release/v1.1.0 --tags
-```
 
 ## 🚀 Deployment
 
