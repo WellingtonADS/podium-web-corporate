@@ -8,7 +8,7 @@ API REST para gerenciar corridas corporativas, usuários (admin, motoristas, fun
 
 ## 🚀 Versão Atual
 
-**v0.1.0** - Versão inicial com estrutura base
+**v0.1.0** - Versão inicial com estrutura base atualizada
 
 ## 🏗️ Arquitetura
 
@@ -17,18 +17,34 @@ backend-api/
 ├── app/
 │   ├── api/
 │   │   └── v1/           # Rotas versionadas
-│   │       └── auth.py   # Autenticação e cadastro
+│   │       ├── auth.py   # Autenticação e cadastro
+│   │       ├── deps.py   # Dependências compartilhadas
+│   │       ├── stats.py  # Estatísticas
+│   │       ├── users.py  # Gerenciamento de usuários
+│   │       └── pricing.py # Regras de precificação
 │   ├── core/             # Configurações
 │   │   ├── config.py     # Settings
 │   │   ├── database.py   # Conexão DB
 │   │   └── security.py   # JWT e hash de senhas
 │   ├── models/           # Modelos SQLModel
-│   │   └── domain.py     # Entidades do domínio
+│   │   ├── domain.py     # Entidades do domínio
+│   │   └── pricing.py    # Regras de precificação
 │   ├── schemas/          # Pydantic schemas
-│   │   └── user.py       # DTOs de usuário
+│   │   ├── user.py       # DTOs de usuário
+│   │   └── pricing.py    # DTOs de precificação
+│   ├── scripts/          # Scripts utilitários
+│   │   ├── seed_admin.py # Seed do admin
+│   │   └── seed_data.py  # Seed de dados
 │   ├── services/         # Regras de negócio
-│   ├── __init__.py
-│   └── main.py           # Aplicação FastAPI
+│   ├── tests/            # Testes automatizados
+│   │   ├── conftest.py   # Configuração de testes
+│   │   ├── test_multi_drivers.py # Testes unitários
+│   │   └── test_multi_drivers_integration.py # Testes de integração
+├── docs/                 # Documentação
+│   ├── API_IMPROVEMENT_PLAN.md # Plano de melhorias
+│   ├── FIXES_AND_IMPROVEMENTS.md # Correções e melhorias
+│   ├── MULTI_DRIVER_BUG_ANALYSIS.md # Análise de bugs
+│   └── TEST_DATA.md      # Dados de teste
 ├── .env                  # Variáveis de ambiente
 ├── .gitignore
 ├── requirements.txt      # Dependências
