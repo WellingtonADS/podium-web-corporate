@@ -21,3 +21,8 @@ Thumbs.db
 # Env
 .env
 .env.*
+
+# Additional folders to ignore
+tests/
+shared/
+scripts/

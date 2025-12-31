@@ -95,7 +95,23 @@ podium-monorepo/
     └── workflows/                    # Workflows de CI/CD
 ```
 
+## 🆕 Atualizações Recentes
+
+- **Shared Library**: Adicionada a pasta `shared` para reutilização de utilitários, constantes e tipos entre os projetos.
+- **Scripts Automatizados**: Criado o script `update-dependencies.js` para atualizar dependências automaticamente em todos os subprojetos.
+- **Testes End-to-End**: Configurados testes E2E utilizando Playwright na pasta `tests/e2e`.
+
 ## 🚀 Instalação e Setup
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/WellingtonADS/podium-monorepo.git
+   ```
+2. Instale as dependências na raiz do monorepo:
+   ```bash
+   yarn install
+   ```
+3. Execute os scripts de setup específicos para cada subprojeto, se necessário.
 
 ## 📦 Estado dos Repositórios
 

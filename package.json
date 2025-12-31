@@ -2,21 +2,27 @@
   "name": "podium-monorepo",
   "private": true,
   "version": "0.1.0",
+  "packageManager": "yarn@1.22.19",
   "workspaces": [
+    "backend-api",
+    "mobile-driver",
     "web-admin",
-    "mobile-driver"
+    "web-corporate",
+    "web-site",
+    "shared"
   ],
   "scripts": {
     "postinstall": "npm run install:api",
     "install:api": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"if (Test-Path backend-api/requirements.txt) { Write-Output 'Skipping Python auto-install to avoid env issues' }\"",
-    "dev:web": "npm run -w web-admin start",
-    "dev:mobile": "npm run -w mobile-driver start",
+    "dev:web": "yarn workspace web-admin dev",
+    "dev:mobile": "yarn workspace mobile-driver start",
+    "dev:corporate": "yarn workspace web-corporate dev",
     "dev:api": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Push-Location backend-api; if (Test-Path venv/Scripts/Activate.ps1) { . venv/Scripts/Activate.ps1 }; python -m app.main\"",
-    "dev": "concurrently -n web,api,mobile -c blue,green,magenta \"npm run dev:web\" \"npm run dev:api\" \"npm run dev:mobile\"",
-    "build:web": "npm run -w web-admin build",
-    "typecheck:mobile": "npm run -w mobile-driver typecheck || tsc -p mobile-driver/tsconfig.json --noEmit",
-    "lint:web": "npm run -w web-admin lint || echo \"lint web-admin skipped\"",
-    "lint:mobile": "npm run -w mobile-driver lint || echo \"lint mobile-driver skipped\""
+    "dev": "concurrently -n web,api,mobile -c blue,green,magenta \"yarn run dev:web\" \"yarn run dev:api\" \"yarn run dev:mobile\"",
+    "build:web": "yarn workspace web-admin build",
+    "typecheck:mobile": "yarn workspace mobile-driver typecheck || tsc -p mobile-driver/tsconfig.json --noEmit",
+    "lint:web": "yarn workspace web-admin lint || echo \"lint web-admin skipped\"",
+    "lint:mobile": "yarn workspace mobile-driver lint || echo \"lint mobile-driver skipped\""
     ,
     "sync:pull:backend-api": "git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash",
     "sync:pull:web-admin": "git subtree pull --prefix=web-admin web-admin release/v0.1.0 --squash",
