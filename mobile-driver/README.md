@@ -57,7 +57,135 @@ yarn tsc --noEmit
 
 # Validar código com ESLint
 yarn eslint .
+
+# Executar testes
+yarn test
+
+# Executar testes em modo watch
+yarn test:watch
+
+# Executar testes com cobertura
+yarn test:coverage
 ```
+
+## 🧪 Testes
+
+O projeto utiliza **Jest** e **React Native Testing Library** para testes automatizados.
+
+### Estrutura de Testes
+
+Os testes estão organizados em subdiretórios `__tests__` dentro de cada módulo:
+
+```
+src/
+├── components/
+│   ├── __tests__/
+│   │   ├── PodiumButton.test.tsx
+│   │   └── PodiumInput.test.tsx
+│   ├── PodiumButton.tsx
+│   └── PodiumInput.tsx
+├── contexts/
+│   ├── __tests__/
+│   │   └── AuthContext.test.tsx
+│   └── AuthContext.tsx
+├── services/
+│   ├── __tests__/
+│   │   └── api.test.ts
+│   └── api.ts
+└── theme/
+    ├── __tests__/
+    │   └── index.test.ts
+    └── index.ts
+```
+
+### Executando Testes
+
+```bash
+# Executar todos os testes
+npm test
+
+# Executar testes em modo watch (útil durante desenvolvimento)
+npm run test:watch
+
+# Executar testes com relatório de cobertura
+npm run test:coverage
+```
+
+### Escrevendo Novos Testes
+
+1. **Testes de Componentes**: Crie arquivos `.test.tsx` em `__tests__/` dentro do diretório do componente
+
+```typescript
+import React from 'react';
+import { render, fireEvent } from '@testing-library/react-native';
+import { MeuComponente } from '../MeuComponente';
+
+describe('MeuComponente', () => {
+  it('deve renderizar corretamente', () => {
+    const { getByText } = render(<MeuComponente title="Teste" />);
+    expect(getByText('Teste')).toBeTruthy();
+  });
+
+  it('deve chamar função ao clicar', () => {
+    const onPress = jest.fn();
+    const { getByText } = render(
+      <MeuComponente title="Click" onPress={onPress} />
+    );
+    
+    fireEvent.press(getByText('Click'));
+    expect(onPress).toHaveBeenCalledTimes(1);
+  });
+});
+```
+
+2. **Testes de Contextos**: Use `renderHook` para testar hooks e contextos
+
+```typescript
+import { renderHook, act } from '@testing-library/react-native';
+import { MeuProvider, useMeuContexto } from '../MeuContexto';
+
+describe('MeuContexto', () => {
+  const wrapper = ({ children }) => <MeuProvider>{children}</MeuProvider>;
+
+  it('deve fornecer valores iniciais', () => {
+    const { result } = renderHook(() => useMeuContexto(), { wrapper });
+    expect(result.current.valor).toBe('inicial');
+  });
+});
+```
+
+3. **Testes de Serviços**: Teste funções e lógica de negócio
+
+```typescript
+import { minhaFuncao } from '../meuServico';
+
+describe('meuServico', () => {
+  it('deve processar dados corretamente', () => {
+    const resultado = minhaFuncao('input');
+    expect(resultado).toBe('esperado');
+  });
+});
+```
+
+### Mocks Disponíveis
+
+Os seguintes módulos já estão mockados em `jest.setup.js`:
+
+- `expo-secure-store`: Armazenamento seguro
+- `expo-location`: GPS e localização
+- `react-native-maps`: Mapas
+- `@react-navigation/native`: Navegação
+
+Para adicionar novos mocks, edite o arquivo `jest.setup.js` na raiz do projeto.
+
+### Interpretando Resultados
+
+- ✅ **PASS**: Todos os testes do arquivo passaram
+- ❌ **FAIL**: Um ou mais testes falharam
+- **Cobertura**: Mostra % de código testado (Stmts, Branch, Funcs, Lines)
+
+Meta de cobertura: Manter > 80% para código crítico (componentes, contextos, serviços).
+
 
 ## ⚙️ Configuração do Backend
 

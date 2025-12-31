@@ -7,7 +7,7 @@
     "mobile-driver"
   ],
   "scripts": {
-    "postinstall": "npm run install:api",
+    "postinstall": "echo 'Skipping postinstall on non-Windows'",
     "install:api": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"if (Test-Path backend-api/requirements.txt) { Write-Output 'Skipping Python auto-install to avoid env issues' }\"",
     "dev:web": "npm run -w web-admin start",
     "dev:mobile": "npm run -w mobile-driver start",
