@@ -12,7 +12,7 @@
     "shared"
   ],
   "scripts": {
-    "postinstall": "npm run install:api",
+    "postinstall": "echo 'Skipping postinstall on non-Windows'",
     "install:api": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"if (Test-Path backend-api/requirements.txt) { Write-Output 'Skipping Python auto-install to avoid env issues' }\"",
     "dev:web": "yarn workspace web-admin dev",
     "dev:mobile": "yarn workspace mobile-driver start",
