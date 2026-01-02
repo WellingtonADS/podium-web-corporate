@@ -17,6 +17,8 @@ Monorepo central que orquestra e sincroniza os projetos da plataforma Podium:
 
 - **backend-api** (Python/FastAPI) — API REST
 - **web-admin** (React/TypeScript) — Dashboard administrativo
+- **web-corporate** (React/TypeScript/Vite) — Portal corporativo para empresas
+- **web-site** (React/TypeScript/Vite) — Site institucional e landing page
 - **mobile-driver** (React Native/Expo) — App mobile para motoristas
 - **docs-assets** — Materiais de suporte e documentação
 
@@ -83,6 +85,36 @@ podium-monorepo/
 │   ├── app.json                      # Expo config
 │   └── README.md
 │
+├── web-corporate/                    # 🏢 React/TypeScript/Vite - Portal Corporativo
+│   ├── src/
+│   │   ├── components/               # Componentes React
+│   │   ├── contexts/                 # Auth context
+│   │   ├── hooks/                    # Custom hooks
+│   │   ├── layouts/                  # Layouts
+│   │   ├── pages/                    # Páginas (Dashboard, CostCenters, etc)
+│   │   ├── routes/                   # PrivateRoute, routing
+│   │   ├── services/                 # API client
+│   │   ├── theme/                    # MUI theme customizado
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── README.md
+│
+├── web-site/                         # 🌐 React/TypeScript/Vite - Site Institucional
+│   ├── src/
+│   │   ├── components/               # Componentes React
+│   │   ├── layouts/                  # Header, Footer, Navbar
+│   │   ├── pages/                    # Home, News, etc
+│   │   ├── theme/                    # MUI theme
+│   │   ├── App.tsx
+│   │   └── main.tsx
+│   ├── public/
+│   │   └── images/                   # Imagens do site
+│   ├── package.json
+│   ├── vite.config.ts
+│   └── README.md
+│
 ├── docs-assets/                      # 📚 Materiais de suporte
 │   ├── Stack Tecnológica.md
 │   ├── Referências Open Source.md
@@ -97,6 +129,8 @@ podium-monorepo/
 
 ## 🆕 Atualizações Recentes
 
+- **Novos Subrepos**: Adicionados `web-corporate` (portal para empresas) e `web-site` (site institucional) como repositórios independentes.
+- **Scripts de Sincronização**: Criados scripts PowerShell automatizados (`sync-subtrees-pull.ps1` e `sync-subtrees-push.ps1`) para facilitar a sincronização de todos os 5 subrepos.
 - **Shared Library**: Adicionada a pasta `shared` para reutilização de utilitários, constantes e tipos entre os projetos.
 - **Scripts Automatizados**: Criado o script `update-dependencies.js` para atualizar dependências automaticamente em todos os subprojetos.
 - **Testes End-to-End**: Configurados testes E2E utilizando Playwright na pasta `tests/e2e`.
@@ -117,12 +151,14 @@ podium-monorepo/
 
 Os subprojetos deste monorepo e seus estados atuais/default são:
 
-| Projeto                                                             | Default Branch | Branch Atual   | Último Commit (SHA, Data, Mensagem)                                                     |
-| ------------------------------------------------------------------- | -------------- | -------------- | --------------------------------------------------------------------------------------- |
-| [podium-monorepo](https://github.com/WellingtonADS/podium-monorepo) | main           | main           | 7f951ae<br>2025-12-19<br>docs: update README with full structure and detailed workflows |
-| [backend-api](https://github.com/WellingtonADS/backend-api)         | release/v0.1.0 | release/v0.1.0 | 02ba6da<br>2025-12-18<br>feat: add install and pytest modules with basic functionality  |
-| [web-admin](https://github.com/WellingtonADS/web-admin)             | release/v0.1.0 | release/v0.1.0 | 8ecfd8b<br>2025-12-18<br>ci: add lint jobs (web, mobile, api)                           |
-| [mobile-driver](https://github.com/WellingtonADS/mobile-driver)     | main           | release/v1.0.0 | b33b455<br>2025-12-22<br>fix: resolve subtree push conflicts and update branch          |
+| Projeto                                                             | Default Branch | Branch Atual   | Descrição                                      |
+| ------------------------------------------------------------------- | -------------- | -------------- | ---------------------------------------------- |
+| [podium-monorepo](https://github.com/WellingtonADS/podium-monorepo) | main           | main           | Monorepo central da plataforma Podium          |
+| [backend-api](https://github.com/WellingtonADS/backend-api)         | release/v0.1.0 | release/v0.1.0 | API REST em Python/FastAPI                     |
+| [web-admin](https://github.com/WellingtonADS/web-admin)             | release/v0.1.0 | release/v0.1.0 | Dashboard administrativo React/TypeScript      |
+| [web-corporate](https://github.com/WellingtonADS/web-corporate)     | main           | main           | Portal corporativo para empresas               |
+| [web-site](https://github.com/WellingtonADS/podium-website)         | main           | main           | Site institucional e landing page              |
+| [mobile-driver](https://github.com/WellingtonADS/mobile-driver)     | main           | release/v1.0.0 | App mobile React Native para motoristas        |
 
 > Para o mobile-driver, também existe branch main:<br>
 > Último commit: 6b6c48e (2025-12-16) docs: atualizar README e .gitignore para padrão main/release
@@ -207,13 +243,15 @@ pytest --cov           # Com cobertura
 
 ## 🔄 Fluxo Git e Subtrees
 
-Este monorepo sincroniza com repositórios independentes via **git subtree**, preservando histórico completo.
+Este monorepo sincroniza com **5 repositórios independentes** via **git subtree**, preservando histórico completo e permitindo desenvolvimento tanto no monorepo quanto nos subrepos de forma independente.
 
 ### Remotes Configurados
 
 - `origin` → WellingtonADS/podium-monorepo (principal)
 - `backend-api` → WellingtonADS/backend-api (branch: release/v0.1.0)
 - `web-admin` → WellingtonADS/web-admin (branch: release/v0.1.0)
+- `web-corporate` → WellingtonADS/web-corporate (branch: main)
+- `web-site` → WellingtonADS/podium-website (branch: main)
 - `mobile-driver` → WellingtonADS/mobile-driver (branch: release/v1.0.0)
 
 ### Puxar Mudanças de um Subprojeto
@@ -227,6 +265,9 @@ git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash
 
 # Ou sem squash (preserva todos commits)
 git subtree pull --prefix=backend-api backend-api release/v0.1.0
+
+# Sincronizar TODOS os subrepos automaticamente
+.\scripts\sync-subtrees-pull.ps1
 ```
 
 ### Enviar Mudanças para um Subprojeto
@@ -234,6 +275,12 @@ git subtree pull --prefix=backend-api backend-api release/v0.1.0
 ```bash
 # Exportar mudanças do monorepo (exemplo web-admin)
 git subtree push --prefix=web-admin web-admin release/v0.1.0
+
+# Exportar para web-site
+git subtree push --prefix=web-site web-site main
+
+# Sincronizar TODOS os subrepos automaticamente
+.\scripts\sync-subtrees-push.ps1
 ```
 
 ### Fluxo Recomendado
@@ -250,7 +297,14 @@ git subtree push --prefix=web-admin web-admin release/v0.1.0
    git fetch --all
    git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash
    git subtree pull --prefix=web-admin web-admin release/v0.1.0 --squash
+   git subtree pull --prefix=web-corporate web-corporate main --squash
+   git subtree pull --prefix=web-site web-site main --squash
    git subtree pull --prefix=mobile-driver mobile-driver release/v1.0.0 --squash
+   ```
+
+   **Ou use o script automatizado:**
+   ```powershell
+   .\scripts\sync-subtrees-pull.ps1
    ```
 
 3. **Faça mudanças e teste localmente.**
@@ -261,6 +315,14 @@ git subtree push --prefix=web-admin web-admin release/v0.1.0
    ```bash
    git subtree push --prefix=backend-api backend-api release/v0.1.0
    git subtree push --prefix=web-admin web-admin release/v0.1.0
+   git subtree push --prefix=web-corporate web-corporate main
+   git subtree push --prefix=web-site web-site main
+   git subtree push --prefix=mobile-driver mobile-driver release/v1.0.0
+   ```
+
+   **Ou use o script automatizado:**
+   ```powershell
+   .\scripts\sync-subtrees-push.ps1
    ```
 
 ## 🧪 CI/CD
@@ -303,4 +365,6 @@ Proprietário: WellingtonADS
 
 ---
 
-**Última atualização:** 19 de dezembro de 2025
+**Última atualização:** 2 de janeiro de 2026
+
+**Total de Subrepos Independentes:** 5 (backend-api, web-admin, web-corporate, web-site, mobile-driver)
