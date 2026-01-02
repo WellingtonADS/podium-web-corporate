@@ -151,14 +151,14 @@ podium-monorepo/
 
 Os subprojetos deste monorepo e seus estados atuais/default são:
 
-| Projeto                                                             | Default Branch | Branch Atual   | Descrição                                      |
-| ------------------------------------------------------------------- | -------------- | -------------- | ---------------------------------------------- |
-| [podium-monorepo](https://github.com/WellingtonADS/podium-monorepo) | main           | main           | Monorepo central da plataforma Podium          |
-| [backend-api](https://github.com/WellingtonADS/backend-api)         | release/v0.1.0 | release/v0.1.0 | API REST em Python/FastAPI                     |
-| [web-admin](https://github.com/WellingtonADS/web-admin)             | release/v0.1.0 | release/v0.1.0 | Dashboard administrativo React/TypeScript      |
-| [web-corporate](https://github.com/WellingtonADS/web-corporate)     | main           | main           | Portal corporativo para empresas               |
-| [web-site](https://github.com/WellingtonADS/podium-website)         | main           | main           | Site institucional e landing page              |
-| [mobile-driver](https://github.com/WellingtonADS/mobile-driver)     | main           | release/v1.0.0 | App mobile React Native para motoristas        |
+| Projeto                                                             | Default Branch | Branch Atual   | Descrição                                 |
+| ------------------------------------------------------------------- | -------------- | -------------- | ----------------------------------------- |
+| [podium-monorepo](https://github.com/WellingtonADS/podium-monorepo) | main           | main           | Monorepo central da plataforma Podium     |
+| [backend-api](https://github.com/WellingtonADS/backend-api)         | release/v0.1.0 | release/v0.1.0 | API REST em Python/FastAPI                |
+| [web-admin](https://github.com/WellingtonADS/web-admin)             | release/v0.1.0 | release/v0.1.0 | Dashboard administrativo React/TypeScript |
+| [web-corporate](https://github.com/WellingtonADS/web-corporate)     | main           | main           | Portal corporativo para empresas          |
+| [web-site](https://github.com/WellingtonADS/podium-website)         | main           | main           | Site institucional e landing page         |
+| [mobile-driver](https://github.com/WellingtonADS/mobile-driver)     | main           | release/v1.0.0 | App mobile React Native para motoristas   |
 
 > Para o mobile-driver, também existe branch main:<br>
 > Último commit: 6b6c48e (2025-12-16) docs: atualizar README e .gitignore para padrão main/release
@@ -248,11 +248,11 @@ Este monorepo sincroniza com **5 repositórios independentes** via **git subtree
 ### Remotes Configurados
 
 - `origin` → WellingtonADS/podium-monorepo (principal)
-- `backend-api` → WellingtonADS/backend-api (branch: release/v0.1.0)
-- `web-admin` → WellingtonADS/web-admin (branch: release/v0.1.0)
-- `web-corporate` → WellingtonADS/web-corporate (branch: main)
-- `web-site` → WellingtonADS/podium-website (branch: main)
-- `mobile-driver` → WellingtonADS/mobile-driver (branch: release/v1.0.0)
+- `podium-backend-api` → WellingtonADS/podium-backend-api (branch: release/v0.1.0)
+- `podium-web-admin` → WellingtonADS/podium-web-admin (branch: release/v0.1.0)
+- `podium-web-corporate` → WellingtonADS/podium-web-corporate (branch: main)
+- `podium-web-site` → WellingtonADS/podium-web-site (branch: main)
+- `podium-mobile-driver` → WellingtonADS/podium-mobile-driver (branch: release/v1.0.0)
 
 ### Puxar Mudanças de um Subprojeto
 
@@ -261,10 +261,10 @@ Este monorepo sincroniza com **5 repositórios independentes** via **git subtree
 git fetch --all --prune
 
 # Puxar mudanças (exemplo backend-api)
-git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash
+git subtree pull --prefix=backend-api podium-backend-api release/v0.1.0 --squash
 
 # Ou sem squash (preserva todos commits)
-git subtree pull --prefix=backend-api backend-api release/v0.1.0
+git subtree pull --prefix=backend-api podium-backend-api release/v0.1.0
 
 # Sincronizar TODOS os subrepos automaticamente
 .\scripts\sync-subtrees-pull.ps1
@@ -274,10 +274,10 @@ git subtree pull --prefix=backend-api backend-api release/v0.1.0
 
 ```bash
 # Exportar mudanças do monorepo (exemplo web-admin)
-git subtree push --prefix=web-admin web-admin release/v0.1.0
+git subtree push --prefix=web-admin podium-web-admin release/v0.1.0
 
 # Exportar para web-site
-git subtree push --prefix=web-site web-site main
+git subtree push --prefix=web-site podium-web-site main
 
 # Sincronizar TODOS os subrepos automaticamente
 .\scripts\sync-subtrees-push.ps1
@@ -295,14 +295,15 @@ git subtree push --prefix=web-site web-site main
 
    ```bash
    git fetch --all
-   git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash
-   git subtree pull --prefix=web-admin web-admin release/v0.1.0 --squash
-   git subtree pull --prefix=web-corporate web-corporate main --squash
-   git subtree pull --prefix=web-site web-site main --squash
-   git subtree pull --prefix=mobile-driver mobile-driver release/v1.0.0 --squash
+   git subtree pull --prefix=backend-api podium-backend-api release/v0.1.0 --squash
+   git subtree pull --prefix=web-admin podium-web-admin release/v0.1.0 --squash
+   git subtree pull --prefix=web-corporate podium-web-corporate main --squash
+   git subtree pull --prefix=web-site podium-web-site main --squash
+   git subtree pull --prefix=mobile-driver podium-mobile-driver release/v1.0.0 --squash
    ```
 
    **Ou use o script automatizado:**
+
    ```powershell
    .\scripts\sync-subtrees-pull.ps1
    ```
@@ -312,15 +313,17 @@ git subtree push --prefix=web-site web-site main
 4. **Abra PR contra `main` do monorepo.**
 
 5. **Após merge, sincronize com os subrepos (se necessário):**
+
    ```bash
-   git subtree push --prefix=backend-api backend-api release/v0.1.0
-   git subtree push --prefix=web-admin web-admin release/v0.1.0
-   git subtree push --prefix=web-corporate web-corporate main
-   git subtree push --prefix=web-site web-site main
-   git subtree push --prefix=mobile-driver mobile-driver release/v1.0.0
+   git subtree push --prefix=backend-api podium-backend-api release/v0.1.0
+   git subtree push --prefix=web-admin podium-web-admin release/v0.1.0
+   git subtree push --prefix=web-corporate podium-web-corporate main
+   git subtree push --prefix=web-site podium-web-site main
+   git subtree push --prefix=mobile-driver podium-mobile-driver release/v1.0.0
    ```
 
    **Ou use o script automatizado:**
+
    ```powershell
    .\scripts\sync-subtrees-push.ps1
    ```
@@ -367,4 +370,4 @@ Proprietário: WellingtonADS
 
 **Última atualização:** 2 de janeiro de 2026
 
-**Total de Subrepos Independentes:** 5 (backend-api, web-admin, web-corporate, web-site, mobile-driver)
+**Total de Subrepos Independentes:** 5 (podium-backend-api, podium-web-admin, podium-web-corporate, podium-web-site, podium-mobile-driver)
