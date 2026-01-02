@@ -1,7 +1,9 @@
-import axios, { InternalAxiosRequestConfig } from 'axios';
+import axios, { InternalAxiosRequestConfig } from "axios";
 
-// ATENÇÃO: Use o mesmo IP que você configurou no Mobile e no CORS do Backend
-const API_URL = 'http://192.168.15.18:8000/api/v1'; 
+// Base da API configurável via env, com fallback para localhost
+const API_BASE =
+  (import.meta as any).env?.VITE_API_URL ?? "http://localhost:8000";
+const API_URL = `${API_BASE}/api/v1`;
 
 const api = axios.create({
   baseURL: API_URL,
@@ -11,7 +13,7 @@ export interface User {
   id: number;
   email: string;
   full_name: string;
-  role: 'admin' | 'driver' | 'employee';
+  role: "admin" | "driver" | "employee";
   is_active: boolean;
   driver_profile?: {
     vehicle_model: string;
@@ -33,7 +35,7 @@ export interface CreateDriverData {
   email: string;
   password: string;
   full_name: string;
-  role: 'driver'; 
+  role: "driver";
   vehicle_model: string;
   vehicle_plate: string;
   cnh_number: string;
@@ -41,12 +43,12 @@ export interface CreateDriverData {
 
 // Interceptor tipado
 api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem('@Podium:token');
-  
+  const token = localStorage.getItem("@Podium:token");
+
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
-  
+
   return config;
 });
 

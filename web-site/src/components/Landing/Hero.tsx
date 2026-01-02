@@ -1,4 +1,12 @@
-import { Box, Button, Container, Heading, HStack, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Container,
+  Heading,
+  HStack,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 
 const Hero = () => {
   const handleScroll = () => {
@@ -11,13 +19,14 @@ const Hero = () => {
   return (
     <Box
       position="relative"
-      minH="100vh"
+      minH={{ base: "80vh", md: "90vh" }}
       pt={20}
       pb={{ base: 12, md: 20 }}
       overflow="hidden"
-      bgImage="url(/images/hero.jpg)"
+      bgImage="url(/images/heropodium.jpg)"
       bgSize="cover"
-      bgPosition="center"
+      bgPosition={{ base: "center", md: "center top" }}
+      bgRepeat="no-repeat"
       bgAttachment={{ base: "scroll", md: "fixed" }}
     >
       {/* Overlay Gradient */}
@@ -29,8 +38,19 @@ const Hero = () => {
       />
 
       {/* Content */}
-      <Container maxW="1200px" position="relative" zIndex={10} h="full" display="flex" alignItems="center">
-        <VStack spacing={{ base: 6, md: 8 }} align="flex-start" maxW={{ base: "full", lg: "55%" }}>
+      <Container
+        maxW="1200px"
+        position="relative"
+        zIndex={10}
+        h="full"
+        display="flex"
+        alignItems="center"
+      >
+        <VStack
+          spacing={{ base: 6, md: 8 }}
+          align="flex-start"
+          maxW={{ base: "full", lg: "55%" }}
+        >
           <Text
             fontSize="xs"
             color="gold.600"
@@ -40,16 +60,17 @@ const Hero = () => {
           >
             Há 17 anos em mobilidade executiva
           </Text>
-          <Heading
-            textStyle="h1"
-            color="white"
-            lineHeight={1.2}
-          >
-            SUA MOBILIDADE COM <Text as="span" color="gold.600">CONFIANÇA</Text> E PRATICIDADE
+          <Heading textStyle="h1" color="white" lineHeight={1.2}>
+            SUA MOBILIDADE COM{" "}
+            <Text as="span" color="gold.600">
+              CONFIANÇA
+            </Text>{" "}
+            E PRATICIDADE
           </Heading>
 
           <Text textStyle="subtitle" maxW="md">
-            Elimine imprevistos e priorize segurança: frota própria premium, motoristas treinados em protocolo e tabela fixa por KM e zona.
+            Elimine imprevistos e priorize segurança: frota própria premium,
+            motoristas treinados em protocolo e tabela fixa por KM e zona.
           </Text>
 
           <HStack spacing={4} flexWrap="wrap">

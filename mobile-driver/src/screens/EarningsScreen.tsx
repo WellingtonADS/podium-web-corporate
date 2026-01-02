@@ -1,8 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { COLORS, GLOBAL_STYLES } from '../theme';
-
-const { width } = Dimensions.get('window');
 
 // Mock Data
 const TRANSACTIONS = [

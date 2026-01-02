@@ -1,8 +1,9 @@
-import { ChakraProvider } from '@chakra-ui/react';
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Home from './pages/Home';
-import ThankYou from './pages/ThankYou';
-import theme from './theme';
+import { ChakraProvider } from "@chakra-ui/react";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import News from "./pages/News";
+import ThankYou from "./pages/ThankYou";
+import theme from "./theme";
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/novidades" element={<News />} />
           <Route path="/thank-you" element={<ThankYou />} />
         </Routes>
       </Router>

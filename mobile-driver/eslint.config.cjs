@@ -34,14 +34,21 @@ module.exports = [
     rules: {
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
-      "import/no-unresolved": "error",
+      "import/no-unresolved": ["error", { ignore: ["^@testing-library/"] }],
       "no-console": ["warn", { allow: ["warn", "error", "log"] }],
       "no-unused-vars": "off",
-      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        { argsIgnorePattern: "^_" },
+      ],
     },
   },
   {
-    files: ["**/__tests__/**/*.{ts,tsx,js,jsx}", "**/*.test.{ts,tsx,js,jsx}", "**/*.spec.{ts,tsx,js,jsx}"],
+    files: [
+      "**/__tests__/**/*.{ts,tsx,js,jsx}",
+      "**/*.test.{ts,tsx,js,jsx}",
+      "**/*.spec.{ts,tsx,js,jsx}",
+    ],
     languageOptions: {
       globals: {
         describe: "readonly",

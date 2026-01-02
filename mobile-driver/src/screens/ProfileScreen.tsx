@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
-import { COLORS, GLOBAL_STYLES } from '../theme';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useAuth } from '../contexts/AuthContext';
+import { COLORS, GLOBAL_STYLES } from '../theme';
 
 export default function ProfileScreen() {
   const { signOut } = useAuth();

@@ -1,16 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, StatusBar, Switch } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { COLORS, MAP_STYLE_DARK, GLOBAL_STYLES } from '../theme';
-import * as Location from 'expo-location';
 import { useNavigation } from '@react-navigation/native';
-
-const { width } = Dimensions.get('window');
+import * as Location from 'expo-location';
+import React, { useEffect, useState } from 'react';
+import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { COLORS, GLOBAL_STYLES, MAP_STYLE_DARK } from '../theme';
 
 export default function HomeScreen() {
   const navigation = useNavigation<any>();
-  const [location, setLocation] = useState<any>(null);
-  const [isOnline, setIsOnline] = useState(true);
+  const [, setLocation] = useState<any>(null);
+  const [isOnline] = useState(true);
   const [hasRequest, setHasRequest] = useState(false); // Simulação de estado
 
   useEffect(() => {

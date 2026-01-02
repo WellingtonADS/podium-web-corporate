@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
-import { useAuth } from '../contexts/AuthContext';
 import { AxiosError } from 'axios';
+import { StatusBar } from 'expo-status-bar';
+import React, { useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { PodiumButton } from '../components/PodiumButton';
 import { PodiumInput } from '../components/PodiumInput';
-import { StatusBar } from 'expo-status-bar';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');

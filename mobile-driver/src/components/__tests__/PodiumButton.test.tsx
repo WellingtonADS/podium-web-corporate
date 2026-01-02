@@ -1,5 +1,5 @@
+import { fireEvent, render } from '@testing-library/react-native';
 import React from 'react';
-import { render, fireEvent } from '@testing-library/react-native';
 import { PodiumButton } from '../PodiumButton';
 
 describe('PodiumButton', () => {
@@ -24,7 +24,7 @@ describe('PodiumButton', () => {
   });
 
   it('should show loading indicator when loading is true', () => {
-    const { queryByText, getByTestId } = render(
+    const { queryByText } = render(
       <PodiumButton title="Submit" loading={true} testID="button" />
     );
     

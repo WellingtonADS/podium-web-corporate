@@ -1,6 +1,14 @@
-import { Box, Container, Heading, Icon, SimpleGrid, Text, VStack } from "@chakra-ui/react";
-import { MdBusinessCenter, MdDirectionsCar, MdSecurity } from "react-icons/md";
+import {
+  Box,
+  Container,
+  Heading,
+  Icon,
+  SimpleGrid,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 import { IconType } from "react-icons";
+import { MdBusinessCenter, MdDirectionsCar, MdSecurity } from "react-icons/md";
 
 interface ServiceCardProps {
   icon: IconType;
@@ -10,11 +18,7 @@ interface ServiceCardProps {
 
 const ServiceCard = ({ icon, title, description }: ServiceCardProps) => (
   <Box role="group" h="full">
-    <VStack
-      layerStyle="card"
-      align="flex-start"
-      h="full"
-    >
+    <VStack layerStyle="card" align="flex-start" h="full">
       <Box
         w={14}
         h={14}
@@ -45,17 +49,20 @@ const Services = () => {
     {
       icon: MdDirectionsCar,
       title: "Gestão Corporativa (B2B)",
-      description: "Elimine a tarifa dinâmica. Utilizamos tabela de preço fixa por KM e Zona , garantindo previsibilidade total e fim das glosas no seu centro de custo.",
+      description:
+        "Elimine a tarifa dinâmica. Utilizamos tabela de preço fixa por KM e Zona , garantindo previsibilidade total e fim das glosas no seu centro de custo.",
     },
     {
       icon: MdSecurity,
-      title: "Transporte Executivo & Blindado",
-      description: "Segurança máxima para autoridades. Frota própria de blindados e sedans premium, conduzida por motoristas especializados em direção defensiva e protocolo.",
+      title: "Transporte Executivo Premium",
+      description:
+        "Segurança e conforto para autoridades e executivos. Frota própria de veículos premium conduzida por motoristas especializados em direção defensiva e protocolo.",
     },
     {
       icon: MdBusinessCenter,
       title: "Terceirização de Frotas",
-      description: "Há 17 anos liderando a logística em Manaus. Gerenciamos sua frota e motoristas para que sua empresa foque apenas no core business, sem passivo trabalhista.",
+      description:
+        "Há 17 anos liderando a logística em Manaus. Gerenciamos sua frota e motoristas para que sua empresa foque apenas no core business, sem passivo trabalhista.",
     },
   ];
 
@@ -67,7 +74,12 @@ const Services = () => {
             <Heading textStyle="h2" color="white" textAlign="center">
               NOSSOS SERVIÇOS
             </Heading>
-            <Text textStyle="subtitle" color="gold.600" fontSize="sm" letterSpacing="0.1em">
+            <Text
+              textStyle="subtitle"
+              color="gold.600"
+              fontSize="sm"
+              letterSpacing="0.1em"
+            >
               Soluções Premium para Sua Mobilidade
             </Text>
           </VStack>

@@ -1,4 +1,12 @@
-import { Box, Container, Heading, Image, SimpleGrid, Text, VStack } from "@chakra-ui/react";
+import {
+  Box,
+  Container,
+  Heading,
+  Image,
+  SimpleGrid,
+  Text,
+  VStack,
+} from "@chakra-ui/react";
 
 interface VehicleCardProps {
   title: string;
@@ -13,24 +21,36 @@ const VehicleCard = ({ title, image }: VehicleCardProps) => (
       overflow="hidden"
       p={0}
       height="100%"
+      transition="all 0.3s"
+      _groupHover={{ transform: "translateY(-8px)", boxShadow: "2xl" }}
+      borderRadius="lg"
     >
       <Box
         overflow="hidden"
-        height="250px"
+        height={{ base: "200px", md: "250px", lg: "280px" }}
         position="relative"
+        bg="gray.900"
+        flexShrink={0}
+        borderTopRadius="lg"
       >
         <Image
           src={image}
           alt={title}
           w="full"
           h="full"
-          objectFit="cover"
-          transition="all 0.3s"
-          _groupHover={{ transform: "scale(1.05)" }}
+          objectFit="contain"
+          objectPosition="center"
+          transition="all 0.3s ease"
+          loading="lazy"
+          bg="gray.800"
         />
       </Box>
-      <VStack p={6} align="flex-start" spacing={2} flex={1}>
-        <Heading textStyle="h3" color="white">
+      <VStack p={6} align="flex-start" spacing={2} flex={1} justify="center">
+        <Heading
+          textStyle="h3"
+          color="white"
+          fontSize={{ base: "lg", md: "xl" }}
+        >
           {title}
         </Heading>
       </VStack>
@@ -42,15 +62,15 @@ const FleetGallery = () => {
   const vehicles = [
     {
       title: "Sedan Executivo",
-      image: "https://images.unsplash.com/photo-1552820728-8ac41f1ce891?w=600&h=400&fit=crop",
+      image: "/images/sedan-executivo.jpg",
     },
     {
-      title: "SUV Blindado",
-      image: "https://images.unsplash.com/photo-1605559424843-9e4c3ca4628d?w=600&h=400&fit=crop",
+      title: "SUV Executivo",
+      image: "/images/suv-executivo.jpg",
     },
     {
       title: "Van Corporativa",
-      image: "https://images.unsplash.com/photo-1533473359331-35b3c054d2d7?w=600&h=400&fit=crop",
+      image: "/images/van-corporativa.jpg",
     },
   ];
 
@@ -62,7 +82,12 @@ const FleetGallery = () => {
             <Heading textStyle="h2" color="white" textAlign="center">
               NOSSA FROTA
             </Heading>
-            <Text textStyle="subtitle" color="gold.600" fontSize="sm" letterSpacing="0.1em">
+            <Text
+              textStyle="subtitle"
+              color="gold.600"
+              fontSize="sm"
+              letterSpacing="0.1em"
+            >
               Veículos de Luxo Renovados
             </Text>
           </VStack>

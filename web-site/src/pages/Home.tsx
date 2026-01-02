@@ -1,10 +1,12 @@
-import { Box } from '@chakra-ui/react';
-import FleetGallery from '../components/Landing/FleetGallery';
-import Hero from '../components/Landing/Hero';
-import LeadForm from '../components/Landing/LeadForm';
-import Services from '../components/Landing/Services';
-import Footer from '../components/Layout/Footer';
-import Header from '../components/Layout/Header';
+import { Box } from "@chakra-ui/react";
+import {
+  FleetGallery,
+  Hero,
+  LeadForm,
+  PromoCarousel,
+  Services,
+} from "../components";
+import { Header, Footer } from "../layouts";
 
 const Home = () => {
   return (
@@ -12,6 +14,7 @@ const Home = () => {
       <Header />
       <Hero />
       <Services />
+      <PromoCarousel />
       <FleetGallery />
       <LeadForm />
       <Footer />

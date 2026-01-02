@@ -89,7 +89,7 @@ export default function MapScreen() {
           }
         );
 
-      } catch (error) {
+      } catch {
         Alert.alert('Erro GPS', 'Não foi possível obter a localização.');
         setLoading(false);
       }

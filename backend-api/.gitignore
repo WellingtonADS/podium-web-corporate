@@ -48,6 +48,11 @@ ENV/
 .pytest_cache/
 .coverage
 htmlcov/
+tests/
+
+# Monorepo specific
+scripts/
+shared/
 .tox/
 
 # Jupyter Notebook
