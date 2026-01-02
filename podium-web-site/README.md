@@ -5,6 +5,7 @@ Site institucional e landing page da plataforma Podium Serviços para captação
 ## 📋 Descrição
 
 O Podium Web Site é a porta de entrada da plataforma, responsável por:
+
 - **Apresentação da marca** - Showcasing dos serviços de transporte executivo
 - **Captação de leads** - Formulário de contato integrado com a API backend
 - **Promoções e serviços** - Galeria de frotas e informações sobre tipos de transporte
@@ -12,14 +13,14 @@ O Podium Web Site é a porta de entrada da plataforma, responsável por:
 
 ## 🛠️ Tecnologias
 
-| Tecnologia | Versão | Propósito |
-|-----------|--------|----------|
-| **React** | 18+ | UI Framework |
-| **TypeScript** | 5+ | Type Safety |
-| **Vite** | 5+ | Build tool e dev server |
-| **Chakra UI** | 2+ | Design system e componentes |
-| **Axios** | 1+ | HTTP client |
-| **React Router** | 6+ | Navegação e routing |
+| Tecnologia       | Versão | Propósito                   |
+| ---------------- | ------ | --------------------------- |
+| **React**        | 18+    | UI Framework                |
+| **TypeScript**   | 5+     | Type Safety                 |
+| **Vite**         | 5+     | Build tool e dev server     |
+| **Chakra UI**    | 2+     | Design system e componentes |
+| **Axios**        | 1+     | HTTP client                 |
+| **React Router** | 6+     | Navegação e routing         |
 
 ## 📁 Estrutura de Diretórios
 
@@ -70,6 +71,7 @@ podium-web-site/
 ## 🚀 Início Rápido
 
 ### Pré-requisitos
+
 - Node.js 18+ (npm 9+)
 - Git
 
@@ -115,15 +117,15 @@ npm run preview
 
 ## 📝 Scripts Disponíveis
 
-| Script | Descrição |
-|--------|-----------|
-| `npm run dev` | Inicia dev server com hot reload |
-| `npm run build` | Build otimizado para produção |
-| `npm run preview` | Visualiza build localmente |
-| `npm run lint` | Executa ESLint |
-| `npm run type-check` | Verifica tipos TypeScript |
-| `npm run format` | Formata código com Prettier |
-| `npm run format:check` | Verifica formatação |
+| Script                 | Descrição                        |
+| ---------------------- | -------------------------------- |
+| `npm run dev`          | Inicia dev server com hot reload |
+| `npm run build`        | Build otimizado para produção    |
+| `npm run preview`      | Visualiza build localmente       |
+| `npm run lint`         | Executa ESLint                   |
+| `npm run type-check`   | Verifica tipos TypeScript        |
+| `npm run format`       | Formata código com Prettier      |
+| `npm run format:check` | Verifica formatação              |
 
 ## 🔌 Integração com Backend
 
@@ -131,35 +133,38 @@ O site se comunica com o `podium-backend-api` através de:
 
 ```typescript
 // Exemplo: Enviar lead
-const response = await api.post('/v1/leads', {
-  name: 'João Silva',
-  email: 'joao@example.com',
-  phone: '11999999999',
-  service: 'sedan-executivo'
+const response = await api.post("/v1/leads", {
+  name: "João Silva",
+  email: "joao@example.com",
+  phone: "11999999999",
+  service: "sedan-executivo",
 });
 ```
 
 **Endpoints utilizados:**
+
 - `POST /v1/leads` - Criar novo lead
 - `GET /v1/pricing` - Obter preços/serviços
 
 ## 🎨 Customização
 
 ### Tema
+
 Os cores e estilos são definidos em `src/theme/index.ts`:
 
 ```typescript
 const colors = {
-  primary: '#1a365d',   // Azul Podium
-  secondary: '#f6ad55', // Laranja destaque
+  primary: "#1a365d", // Azul Podium
+  secondary: "#f6ad55", // Laranja destaque
 };
 ```
 
 ### Componentes
+
 Utilize os componentes do Chakra UI e os componentes customizados:
 
 ```tsx
-import { PodiumButton, FormInput } from '@/components/UI';
+import { PodiumButton, FormInput } from "@/components/UI";
 
 export function MyComponent() {
   return (
@@ -174,15 +179,15 @@ export function MyComponent() {
 ## 📱 Responsividade
 
 O site é otimizado para:
+
 - 📱 Mobile (320px - 768px)
 - 📱 Tablet (768px - 1024px)
 - 🖥️ Desktop (1024px+)
 
 Utilize as utilities do Chakra:
+
 ```tsx
-<Box display={{ base: 'block', md: 'flex' }}>
-  Mobile: block | Desktop: flex
-</Box>
+<Box display={{ base: "block", md: "flex" }}>Mobile: block | Desktop: flex</Box>
 ```
 
 ## 🧪 Testes
@@ -195,13 +200,13 @@ npm install --save-dev jest @testing-library/react
 
 ```tsx
 // __tests__/components/Hero.test.tsx
-import { render, screen } from '@testing-library/react';
-import { Hero } from '@/components/Landing/Hero';
+import { render, screen } from "@testing-library/react";
+import { Hero } from "@/components/Landing/Hero";
 
-describe('Hero', () => {
-  it('renderiza heading', () => {
+describe("Hero", () => {
+  it("renderiza heading", () => {
     render(<Hero />);
-    expect(screen.getByRole('heading')).toBeInTheDocument();
+    expect(screen.getByRole("heading")).toBeInTheDocument();
   });
 });
 ```
@@ -216,6 +221,7 @@ VITE_APP_NAME=Podium
 ```
 
 Acesse no código:
+
 ```typescript
 const apiUrl = import.meta.env.VITE_API_URL;
 ```
@@ -238,6 +244,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
 ## 📞 Suporte
 
 Para dúvidas ou issues, abra uma issue no repositório principal:
+
 - [podium-monorepo Issues](https://github.com/WellingtonADS/podium-monorepo/issues)
 
 ## 📄 Licença
