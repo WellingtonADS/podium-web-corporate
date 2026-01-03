@@ -1,42 +1,43 @@
 
-
 ### 1. Referências Open Source & Assets (O que importar)
 
-Não clonaremos projetos inteiros para não herdar "lixo". Importaremos apenas ativos específicos (Assets) e lógica visual.
+Não clonaremos projetos inteiros para não herdar "lixo". Importaremos apenas ativos específicos (Assets) e lógica
+visual.
 
 #### A. Do Repositório "Uber Clone" (Adrian Hajdin)
 
 * **Fonte:** [github.com/adrianhajdin/uber](https://github.com/adrianhajdin/uber)
 
-* **O que importar (Cópia Manual):**
-  
+#### **O que importar (Cópia Manual):*
+
   1. **Imagens da Frota:** Copie a pasta `assets/images` (arquivos `uber-x.png`, `uber-black.png`).
-     
-     * _Ação:_ Renomeie para `podium-executive.png` e `podium-luxury.png`.
-  
-  2. **Lógica Visual de Lista:** Estude o arquivo `components/RideOptionsCard.tsx` apenas para copiar a lógica de como ele seleciona o item na lista (o efeito de borda colorida ao clicar).
+
+     * *Ação:* Renomeie para `podium-executive.png` e `podium-luxury.png`.
+
+  1. **Lógica Visual de Lista:** Estude o arquivo `components/RideOptionsCard.tsx` apenas para copiar a lógica de como
+  1. ele seleciona o item na lista (o efeito de borda colorida ao clicar).
 
 #### B. Estilo de Mapa (Snazzy Maps)
 
 * **Fonte:** [snazzymaps.com](https://snazzymaps.com/style/151/midnight-commander)
 
-* **O que importar:**
-  
-  * O arquivo JSON **"Midnight Commander"**.
-  
-  * _Uso:_ Será importado no componente `<MapView />` do Mobile para dar o visual "Dark/Gold" corporativo.
+#### **O que importar:*
+
+  *O arquivo JSON**"Midnight Commander"**.
+
+  * *Uso:* Será importado no componente `<MapView />` do Mobile para dar o visual "Dark/Gold" corporativo.
 
 #### C. Bibliotecas de UI (Web Admin)
 
 * **Fonte:** Chakra UI (Versão 2)
 
-* **O que importar:**
-  
-  * Componentes prontos: `Card`, `Stat`, `Table`, `Badge`, `SimpleGrid`.
-  
-  * _Motivo:_ Acelera o desenvolvimento do painel sem precisar escrever CSS para responsividade.
+#### **O que importar:*
 
-* * *
+* Componentes prontos: `Card`, `Stat`, `Table`, `Badge`, `SimpleGrid`.
+
+  * *Motivo:* Acelera o desenvolvimento do painel sem precisar escrever CSS para responsividade.
+
+#### *
 
 ### 2. Componentes a Serem Instalados (Stack Real)
 
@@ -67,11 +68,12 @@ Plaintext
     python-jose[cryptography] # Para gerar Tokens de Login (JWT)
     passlib[bcrypt]      # Para criptografar senhas
 
-* * *
+#### *
 
 ### 3. Modelos de Dados (Database Schema)
 
-Estes são os **Modelos Definitivos** que você deve criar no seu `backend-api/models.py`. Eles representam as regras de negócio B2B da Podium.
+Estes são os **Modelos Definitivos** que você deve criar no seu `backend-api/models.py`. Eles representam as regras de
+negócio B2B da Podium.
 
 #### A. Usuário (User)
 
@@ -131,8 +133,9 @@ Python
 
 1. **Mobile:** Use as imagens do Adrian + JSON do Snazzy Maps.
 
-2. **Backend:** Implemente as classes `User`, `Company` e `Ride` usando SQLModel (código acima).
+1. **Backend:** Implemente as classes `User`, `Company` e `Ride` usando SQLModel (código acima).
 
-3. **Integração:** O App Mobile envia `POST /rides` preenchendo o modelo `Ride` no banco.
+1. **Integração:** O App Mobile envia `POST /rides` preenchendo o modelo `Ride` no banco.
 
-Quer que eu escreva o arquivo `database.py` completo que conecta esses modelos ao **SQLite** (para teste imediato) ou **PostgreSQL** (para produção)?
+Quer que eu escreva o arquivo `database.py` completo que conecta esses modelos ao **SQLite** (para teste imediato) ou
+**PostgreSQL** (para produção)?

@@ -40,10 +40,10 @@ A integração entre `podium-web-corporate` (frontend) e `podium-backend-api` fo
 
 📖 **Documentação completa:**
 
-- [INTEGRATION_COMPLETE.md](INTEGRATION_COMPLETE.md) - Resumo visual
-- [INTEGRATION_SUMMARY.md](INTEGRATION_SUMMARY.md) - Análise técnica
-- [VALIDATION_CHECKLIST.md](VALIDATION_CHECKLIST.md) - Validações
-- [TESTING_GUIDE.md](TESTING_GUIDE.md) - Guia de testes
+- [podium-docs-assets/technical/integracao-completa.md](podium-docs-assets/technical/integracao-completa.md) - Resumo visual
+- [podium-docs-assets/technical/resumo-integracao.md](podium-docs-assets/technical/resumo-integracao.md) - Análise técnica
+- [podium-docs-assets/technical/checklist-validacao.md](podium-docs-assets/technical/checklist-validacao.md) - Validações
+- [podium-docs-assets/technical/guia-testes.md](podium-docs-assets/technical/guia-testes.md) - Guia de testes
 
 ---
 

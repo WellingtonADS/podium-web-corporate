@@ -36,7 +36,7 @@ Alterações implementadas:
 - ✅ Função `signIn()` agora chama `/users/me` **após login** para buscar dados reais
 - ✅ Fallback com tratamento de erro se falhar o fetch de profile
 
-**Antes:**
+#### Antes
 
 ```typescript
 const userData: User = {
@@ -44,14 +44,16 @@ const userData: User = {
   full_name: email.split("@")[0], // Falsificava dados!
   // ...
 };
-```
 
-**Depois:**
+```json
+
+#### Depois
 
 ```typescript
 const profileResponse = await api.get("/users/me");
 const userData: User = profileResponse.data;
-```
+
+```bash
 
 ---
 
@@ -95,19 +97,25 @@ Mudanças implementadas:
 - ✅ Remover importação de `api` direto, usar `CorporateService`
 - ✅ Importar tipos unificados
 - ✅ Carregar dados em paralelo com `Promise.all()`:
+
   ```typescript
   const [empData, ccData] = await Promise.all([
     CorporateService.getEmployees(),
     CorporateService.getCostCenters(),
   ]);
-  ```
+
+  ```bash
+
 - ✅ Dropdown Centro de Custo agora **dinâmico**:
+
   ```typescript
   ...costCenters.map((cc) => ({
     value: String(cc.id),
     label: `${cc.code} - ${cc.name}`,
   }))
-  ```
+
+  ```bash
+
 - ✅ **Removido** mock data do catch block (linhas 47-61)
 - ✅ Mensagens de erro reais com toast
 
@@ -135,9 +143,10 @@ Mudanças implementadas:
 
 Novo endpoint criado:
 
-```
+```bash
 GET /stats/corporate/dashboard
-```
+
+```python
 
 Schema:
 
@@ -147,7 +156,8 @@ class CorporateDashboardStats(BaseModel):
     active_employees: int           # Funcionários ativos
     rides_completed: int            # Corridas completadas
     remaining_budget: float         # Orçamento restante
-```
+
+```bash
 
 Implementação:
 
@@ -178,7 +188,7 @@ Mudanças:
 
 ### Data Flow
 
-```
+```bash
 User Login
     ↓
 AuthContext.signIn()
@@ -196,11 +206,13 @@ CorporateService → api.get/post/put/delete
 Backend filters by company_id (soberania)
     ↓
 Response typed with unified interfaces
-```
+
+```bash
 
 ### Camadas
 
-```
+```bash
+
 ┌─────────────────────────────────────┐
 │      React Components               │
 │  (Employees.tsx, CostCenters.tsx)   │
@@ -225,11 +237,12 @@ Response typed with unified interfaces
 │    (/api/v1/users/...)              │
 │    (/api/v1/stats/corporate/...)    │
 └─────────────────────────────────────┘
-```
+
+```bash
 
 ### Tipos Compartilhados
 
-```
+```bash
 Frontend (src/types/index.ts)
     ↕ (1:1 mapping)
 Backend (Pydantic schemas)
@@ -237,7 +250,8 @@ Backend (Pydantic schemas)
 CostCenter ↔ CostCenterRead
 CreateEmployeeInput ↔ EmployeeCreate
 CorporateDashboardStats ↔ CorporateDashboardStats
-```
+
+```bash
 
 ---
 
@@ -246,9 +260,9 @@ CorporateDashboardStats ↔ CorporateDashboardStats
 Todos os endpoints respeitam **soberania de empresa**:
 
 1. **Token JWT** contém `employee_profile.company_id`
-2. **Backend** valida company_id automaticamente
-3. **Frontend** armazena user context com company_id
-4. **Criação** de recursos vinculada automaticamente à empresa do usuário
+1. **Backend** valida company_id automaticamente
+1. **Frontend** armazena user context com company_id
+1. **Criação** de recursos vinculada automaticamente à empresa do usuário
 
 Exemplo (criação de funcionário):
 
@@ -258,14 +272,15 @@ const payload = {
   company_id: user?.employee_profile?.company_id || 1, // ← Sempre da empresa do usuário
 };
 await CorporateService.createEmployee(payload);
-```
+
+```bash
 
 ---
 
 ## ✨ Melhorias Implementadas
 
 | Problema                      | Solução                                     | Status          |
-| ----------------------------- | ------------------------------------------- | --------------- |
+| --- | --- | --- |
 | AuthContext falsificava dados | Buscar `/users/me` após login               | ✅ Implementado |
 | Interfaces não alinhadas      | Criar `src/types/index.ts`                  | ✅ Implementado |
 | Mock data em catch blocks     | Remover mocks, mostrar erros reais          | ✅ Implementado |
@@ -284,7 +299,8 @@ await CorporateService.createEmployee(payload);
    - Espelha Pydantic schemas do backend
    - Single Source of Truth
 
-2. **`src/services/corporate.ts`** (87 linhas)
+1. **`src/services/corporate.ts`** (87 linhas)
+
    - 12 métodos de API
    - Abstração centralizada
    - Tipos fortes em todas as chamadas
@@ -299,25 +315,26 @@ await CorporateService.createEmployee(payload);
    - Importações de tipos unificados
    - Fallback com tratamento de erro
 
-2. **`src/pages/Employees.tsx`**
+1. **`src/pages/Employees.tsx`**
 
    - Carregamento paralelo com `Promise.all()`
    - Dropdown dinâmico de CCs
    - Removido mock data
 
-3. **`src/pages/CostCenters.tsx`**
+1. **`src/pages/CostCenters.tsx`**
 
    - Usar CorporateService
    - Removido mock data
    - Validações reais
 
-4. **`src/hooks/useDashboard.ts`**
+1. **`src/hooks/useDashboard.ts`**
 
    - Usar CorporateService
    - Remover mock data
    - Tipos do arquivo unificado
 
-5. **`podium-backend-api/app/api/v1/stats.py`**
+1. **`podium-backend-api/app/api/v1/stats.py`**
+
    - Adicionar endpoint `/stats/corporate/dashboard`
    - Schema CorporateDashboardStats
    - Implementação com soberania
@@ -329,18 +346,22 @@ await CorporateService.createEmployee(payload);
 ### 1. Testes de API
 
 ```bash
-# Verifique em Swagger: http://localhost:8000/docs
+
+# Verifique em Swagger: <http://localhost:8000/docs>
+
 GET /api/v1/stats/corporate/dashboard
 GET /api/v1/corporate/cost-centers
 GET /api/v1/corporate/employees
-```
 
-### 2. Testes Locais (web-corporate)
+```bash
+
+## 2. Testes Locais (web-corporate)
 
 ```bash
 npm install    # Garante tipos/corporate.ts está resolvido
 npm run dev    # Inicia servidor local
-```
+
+```bash
 
 Vá para:
 
@@ -350,21 +371,21 @@ Vá para:
 
 ### 3. Validações de Campo
 
-**CostCenters:**
+#### CostCenters
 
 - [ ] Listar sem erros
 - [ ] Criar novo CC funciona
 - [ ] Editar CC funciona
 - [ ] Valores dinâmicos da API
 
-**Employees:**
+#### Employees
 
 - [ ] Listar sem erros
 - [ ] Criar novo funcionário funciona
 - [ ] Dropdown CC mostra dados da API
 - [ ] Validações de campo funcionam
 
-**Dashboard:**
+#### Dashboard
 
 - [ ] Stats carregam sem fallback
 - [ ] Valores correspondem ao backend
@@ -425,11 +446,12 @@ Vá para:
 Este arquivo serve como referência completa da integração realizada. Consulte:
 
 1. **`src/types/index.ts`** - Para entender as interfaces
-2. **`src/services/corporate.ts`** - Para ver os métodos disponíveis
-3. **Componentes** - Para ver como usar CorporateService
+1. **`src/services/corporate.ts`** - Para ver os métodos disponíveis
+1. **Componentes** - Para ver como usar CorporateService
 
 ---
 
 **Data:** 2024
 **Status:** ✅ PRONTO PARA PRODUÇÃO
 **Próximo:** Testes E2E + Deployments
+
