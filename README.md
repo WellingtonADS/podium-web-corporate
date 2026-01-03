@@ -285,11 +285,11 @@ Este monorepo sincroniza com **5 repositórios independentes** via **git subtree
 # Sincronizar remotes
 git fetch --all --prune
 
-# Puxar mudanças (exemplo backend-api)
-git subtree pull --prefix=backend-api podium-backend-api release/v0.1.0 --squash
+# Puxar mudanças (exemplo podium-backend-api)
+git subtree pull --prefix=podium-backend-api podium-backend-api release/v0.1.0 --squash
 
 # Ou sem squash (preserva todos commits)
-git subtree pull --prefix=backend-api podium-backend-api release/v0.1.0
+git subtree pull --prefix=podium-backend-api podium-backend-api release/v0.1.0
 
 # Sincronizar TODOS os subrepos automaticamente
 .\scripts\sync-subtrees-pull.ps1
@@ -298,11 +298,11 @@ git subtree pull --prefix=backend-api podium-backend-api release/v0.1.0
 ### Enviar Mudanças para um Subprojeto
 
 ```bash
-# Exportar mudanças do monorepo (exemplo web-admin)
-git subtree push --prefix=web-admin podium-web-admin release/v0.1.0
+# Exportar mudanças do monorepo (exemplo podium-web-admin)
+git subtree push --prefix=podium-web-admin podium-web-admin release/v0.1.0
 
-# Exportar para web-site
-git subtree push --prefix=web-site podium-web-site main
+# Exportar para podium-web-site
+git subtree push --prefix=podium-web-site podium-web-site main
 
 # Sincronizar TODOS os subrepos automaticamente
 .\scripts\sync-subtrees-push.ps1
@@ -320,11 +320,11 @@ git subtree push --prefix=web-site podium-web-site main
 
    ```bash
    git fetch --all
-   git subtree pull --prefix=backend-api podium-backend-api release/v0.1.0 --squash
-   git subtree pull --prefix=web-admin podium-web-admin release/v0.1.0 --squash
-   git subtree pull --prefix=web-corporate podium-web-corporate main --squash
-   git subtree pull --prefix=web-site podium-web-site main --squash
-   git subtree pull --prefix=mobile-driver podium-mobile-driver release/v1.0.0 --squash
+   git subtree pull --prefix=podium-backend-api podium-backend-api release/v0.1.0 --squash
+   git subtree pull --prefix=podium-web-admin podium-web-admin release/v0.1.0 --squash
+   git subtree pull --prefix=podium-web-corporate podium-web-corporate main --squash
+   git subtree pull --prefix=podium-web-site podium-web-site main --squash
+   git subtree pull --prefix=podium-mobile-driver podium-mobile-driver release/v1.0.0 --squash
    ```
 
    **Ou use o script automatizado:**
@@ -340,11 +340,11 @@ git subtree push --prefix=web-site podium-web-site main
 5. **Após merge, sincronize com os subrepos (se necessário):**
 
    ```bash
-   git subtree push --prefix=backend-api podium-backend-api release/v0.1.0
-   git subtree push --prefix=web-admin podium-web-admin release/v0.1.0
-   git subtree push --prefix=web-corporate podium-web-corporate main
-   git subtree push --prefix=web-site podium-web-site main
-   git subtree push --prefix=mobile-driver podium-mobile-driver release/v1.0.0
+   git subtree push --prefix=podium-backend-api podium-backend-api release/v0.1.0
+   git subtree push --prefix=podium-web-admin podium-web-admin release/v0.1.0
+   git subtree push --prefix=podium-web-corporate podium-web-corporate main
+   git subtree push --prefix=podium-web-site podium-web-site main
+   git subtree push --prefix=podium-mobile-driver podium-mobile-driver release/v1.0.0
    ```
 
    **Ou use o script automatizado:**
