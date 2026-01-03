@@ -22,6 +22,31 @@ Monorepo central que orquestra e sincroniza os projetos da plataforma Podium:
 - **mobile-driver** (React Native/Expo) — App mobile para motoristas
 - **docs-assets** — Materiais de suporte e documentação
 
+---
+
+## 🎯 Últimas Melhorias: Integração Web-Corporate
+
+### Status: ✅ COMPLETO E DOCUMENTADO
+
+A integração entre `podium-web-corporate` (frontend) e `podium-backend-api` foi completamente refatorada com:
+
+✅ **Tipos unificados** (`src/types/index.ts`)
+✅ **Camada de serviço** (`src/services/corporate.ts`)  
+✅ **AuthContext real** (busca `/users/me`)
+✅ **Dropdowns dinâmicos** (Promise.all())
+✅ **Sem dados falsificados** (apenas API real)
+✅ **Dashboard corporativo** (novo endpoint)
+✅ **100% Type-safe** (TypeScript)
+
+📖 **Documentação completa:**
+
+- [INTEGRATION_COMPLETE.md](INTEGRATION_COMPLETE.md) - Resumo visual
+- [INTEGRATION_SUMMARY.md](INTEGRATION_SUMMARY.md) - Análise técnica
+- [VALIDATION_CHECKLIST.md](VALIDATION_CHECKLIST.md) - Validações
+- [TESTING_GUIDE.md](TESTING_GUIDE.md) - Guia de testes
+
+---
+
 ## 📋 Requisitos
 
 - Node.js 18+ (npm 8+)

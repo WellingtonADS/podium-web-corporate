@@ -23,7 +23,8 @@ class CostCenter(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str  # Ex: "Diretoria", "Projeto Samsung"
     code: str  # Ex: "CC-001"
-    budget_limit: Optional[float] = None
+    budget_limit: float = 0.0  # Limite de orçamento
+    is_active: bool = True  # Status ativo/inativo
 
     company_id: Optional[int] = Field(default=None, foreign_key="company.id")
     company: Optional[Company] = Relationship(back_populates="cost_centers")
@@ -58,7 +59,11 @@ class EmployeeProfile(SQLModel, table=True):
     user_id: int = Field(foreign_key="users.id")
 
     company_id: int = Field(foreign_key="company.id")
+    cost_center_id: Optional[int] = Field(
+        default=None, foreign_key="costcenter.id"
+    )  # Vínculo com centro de custo
     department: Optional[str] = None
+    phone: Optional[str] = None  # Telefone de contato
 
     # Relacionamento Reverso
     user: "User" = Relationship(back_populates="employee_profile")
@@ -88,7 +93,7 @@ class User(SQLModel, table=True):
     employee_profile: Optional[EmployeeProfile] = Relationship(back_populates="user")
 
 
-# --- 4. LEADS (CAPTURAS DE SITE) ---
+# --- 5. LEADS (CAPTURAS DE SITE) ---
 class Lead(SQLModel, table=True):
     __tablename__ = "leads"  # type: ignore[assignment]
 
@@ -97,16 +102,6 @@ class Lead(SQLModel, table=True):
     email: str = Field(unique=True, index=True)
     phone: str
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-
-
-# --- 5. REGRAS DE PREÇO (TABELA FIXA) ---
-class PricingRule(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
-    name: str  # "Tabela Padrão 2025"
-    min_km: float
-    max_km: float
-    fixed_price: float
-    extra_km_price: float = 0.0  # Se exceder o max_km
 
 
 # --- 6. CORRIDAS (O CORE) ---
@@ -132,4 +127,6 @@ class Ride(SQLModel, table=True):
     # Vínculos
     passenger_id: int = Field(foreign_key="users.id")
     driver_id: Optional[int] = Field(default=None, foreign_key="users.id")
-    cost_center_id: int = Field(foreign_key="costcenter.id")
+    cost_center_id: Optional[int] = Field(
+        default=None, foreign_key="costcenter.id"
+    )  # Histórico imutável do CC

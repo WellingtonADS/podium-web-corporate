@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from 'react';
 import {
-  Box, Text, SimpleGrid, Flex, Button,
-  useDisclosure, useToast, Spinner, Switch,
+    Box,
+    Button,
+    Flex,
+    SimpleGrid,
+    Spinner,
+    Text,
+    useDisclosure, useToast
 } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { CostCenterCard, FormInput, FormModal } from '../components';
-import api, { CostCenter, CreateCostCenterData } from '../services/api';
+import { CorporateService } from '../services/corporate';
+import { CostCenter, CreateCostCenterInput } from '../types';
 
 const CostCenters: React.FC = () => {
   const toast = useToast();
@@ -15,55 +21,26 @@ const CostCenters: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [editingCC, setEditingCC] = useState<CostCenter | null>(null);
 
-  const [formData, setFormData] = useState<CreateCostCenterData>({
+  const [formData, setFormData] = useState<CreateCostCenterInput>({
     name: '',
     code: '',
     budget_limit: 0,
-    active: true
   });
 
   const fetchCostCenters = async () => {
     try {
       setLoading(true);
-      const response = await api.get<CostCenter[]>('/corporate/cost-centers');
-      setCostCenters(response.data);
-    } catch (error) {
-      console.error(error);
-      // Mock data para desenvolvimento
-      setCostCenters([
-        {
-          id: '1',
-          name: 'Marketing',
-          code: 'MKT-001',
-          budget_limit: 10000,
-          current_spent: 4500,
-          active: true
-        },
-        {
-          id: '2',
-          name: 'Vendas',
-          code: 'VND-001',
-          budget_limit: 15000,
-          current_spent: 11200,
-          active: true
-        },
-        {
-          id: '3',
-          name: 'TI',
-          code: 'TI-001',
-          budget_limit: 8000,
-          current_spent: 2800,
-          active: true
-        },
-        {
-          id: '4',
-          name: 'Diretoria',
-          code: 'DIR-001',
-          budget_limit: 50000,
-          current_spent: 46500,
-          active: true
-        }
-      ]);
+      const data = await CorporateService.getCostCenters();
+      setCostCenters(data);
+    } catch (error: any) {
+      console.error("Erro ao carregar centros de custo:", error);
+      toast({
+        title: 'Erro ao carregar centros de custo',
+        description: error?.response?.data?.detail || 'Tente novamente mais tarde',
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -80,37 +57,64 @@ const CostCenters: React.FC = () => {
         name: cc.name,
         code: cc.code,
         budget_limit: cc.budget_limit,
-        active: cc.active
       });
     } else {
       setEditingCC(null);
-      setFormData({ name: '', code: '', budget_limit: 0, active: true });
+      setFormData({ name: '', code: '', budget_limit: 0 });
     }
     onOpen();
   };
 
   const handleSave = async () => {
+    if (!formData.name || !formData.code || !formData.budget_limit) {
+      toast({
+        title: 'Campos obrigatórios',
+        description: 'Preencha todos os campos',
+        status: 'warning',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
       setIsSaving(true);
       
       if (editingCC) {
-        await api.put(`/corporate/cost-centers/${editingCC.id}`, formData);
+        await CorporateService.updateCostCenter(editingCC.id, formData);
         toast({
-          title: 'Centro de Custo atualizado!',
+          title: '✅ Centro de Custo atualizado!',
           status: 'success',
           duration: 3000,
+          isClosable: true,
         });
       } else {
-        await api.post('/corporate/cost-centers', formData);
+        await CorporateService.createCostCenter(formData);
         toast({
-          title: 'Centro de Custo criado!',
+          title: '✅ Centro de Custo criado!',
           status: 'success',
           duration: 3000,
+          isClosable: true,
         });
       }
 
       onClose();
-      setFormData({ name: '', code: '', budget_limit: 0, active: true });
+      setFormData({ name: '', code: '', budget_limit: 0 });
+      fetchCostCenters();
+    } catch (error: any) {
+      const errorMessage = error?.response?.data?.detail || 'Tente novamente mais tarde';
+      toast({
+        title: `❌ Erro ao ${editingCC ? 'atualizar' : 'criar'} centro de custo`,
+        description: errorMessage,
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <Box>
       {/* Título e Botão */}
@@ -128,6 +132,28 @@ const CostCenters: React.FC = () => {
         <Flex justify="center" p={10}>
           <Spinner color="brand.600" size="xl" />
         </Flex>
+      ) : costCenters.length === 0 ? (
+        <Flex
+          justify="center"
+          align="center"
+          p={10}
+          bg="gray.800"
+          borderRadius="lg"
+          minH="300px"
+        >
+          <Text color="gray.500" textAlign="center">
+            Nenhum centro de custo cadastrado ainda.
+            <br />
+            <Button
+              colorScheme="gold"
+              size="sm"
+              mt={4}
+              onClick={() => handleOpenModal()}
+            >
+              Criar primeiro centro
+            </Button>
+          </Text>
+        </Flex>
       ) : (
         <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
           {costCenters.map((cc) => (
@@ -137,7 +163,7 @@ const CostCenters: React.FC = () => {
               code={cc.code}
               budget_limit={cc.budget_limit}
               current_spent={cc.current_spent}
-              active={cc.active}
+              active={cc.is_active}
               onEdit={() => handleOpenModal(cc)}
             />
           ))}
@@ -154,7 +180,7 @@ const CostCenters: React.FC = () => {
         submitLabel={editingCC ? 'Atualizar' : 'Criar'}
       >
         <FormInput
-          label="Nome do Departamento"
+          label="Nome do Departamento *"
           isRequired
           placeholder="Ex: Marketing"
           value={formData.name}
@@ -162,33 +188,24 @@ const CostCenters: React.FC = () => {
         />
 
         <FormInput
-          label="Código ERP/SAP"
+          label="Código ERP/SAP *"
           isRequired
           placeholder="Ex: MKT-001"
           value={formData.code}
           onChange={e => setFormData({...formData, code: e.target.value})}
         />
-        <Text fontSize="xs" color="midnight.500" mb={4}>
+        <Text fontSize="xs" color="gray.500" mb={4}>
           Código interno para conciliação com sistema financeiro
         </Text>
 
         <FormInput
-          label="Orçamento Mensal (R$)"
+          label="Orçamento Mensal (R$) *"
           type="number"
           isRequired
           placeholder="10000.00"
           value={formData.budget_limit || ''}
           onChange={e => setFormData({...formData, budget_limit: parseFloat(e.target.value) || 0})}
         />
-
-        <Flex align="center" gap={4}>
-          <Text fontWeight="600">Centro de Custo Ativo</Text>
-          <Switch
-            colorScheme="green"
-            isChecked={formData.active}
-            onChange={e => setFormData({...formData, active: e.target.checked})}
-          />
-        </Flex>
       </FormModal>
     </Box>
   );

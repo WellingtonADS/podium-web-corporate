@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import api, { CorporateDashboardStats } from "../services/api";
+import { CorporateService } from "../services/corporate";
+import { CorporateDashboardStats } from "../types";
 
 export const useDashboard = () => {
   const [stats, setStats] = useState<CorporateDashboardStats | null>(null);
@@ -10,24 +11,14 @@ export const useDashboard = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        // Endpoint corporativo específico - filtrado por company_id do usuário
-        const response = await api.get<CorporateDashboardStats>(
-          "/stats/corporate/dashboard"
-        );
-        setStats(response.data);
+        const data = await CorporateService.getCorporateDashboard();
+        setStats(data);
         setError(null);
       } catch (err: any) {
-        console.error("Erro ao carregar stats:", err);
+        console.error("Erro ao carregar dashboard:", err);
         setError(
           err.response?.data?.detail || "Erro ao conectar com o servidor"
         );
-        // Dados mockados para desenvolvimento
-        setStats({
-          monthly_consumption: 12500,
-          active_employees: 45,
-          rides_completed: 128,
-          remaining_budget: 37500,
-        });
       } finally {
         setLoading(false);
       }

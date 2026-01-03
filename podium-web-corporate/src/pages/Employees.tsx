@@ -1,103 +1,129 @@
+import {
+    Box,
+    Button,
+    Flex,
+    SimpleGrid,
+    Spinner,
+    Text,
+    useDisclosure,
+    useToast,
+} from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  Spinner,
-  useToast,
-  useDisclosure,
-  SimpleGrid,
-} from "@chakra-ui/react";
-import {
-  EmployeesTable,
-  FormInput,
-  FormSelect,
-  FormModal,
+    EmployeesTable,
+    FormInput,
+    FormModal,
+    FormSelect,
 } from "../components";
-import api, { User, CreateEmployeeData } from "../services/api";
+import { useAuth } from "../contexts/AuthContext";
+import { CorporateService } from "../services/corporate";
+import { CostCenter, CreateEmployeeInput, User } from "../types";
 
 const Employees: React.FC = () => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { user } = useAuth();
 
   const [employees, setEmployees] = useState<User[]>([]);
+  const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  const [formData, setFormData] = useState<CreateEmployeeData>({
+  const [formData, setFormData] = useState<CreateEmployeeInput>({
     full_name: "",
     email: "",
     password: "",
-    role: "employee",
     department: "",
     cost_center_id: undefined,
+    phone: "",
   });
 
-  const fetchEmployees = async () => {
+  // 🔥 Carregar dados em paralelo
+  const loadData = async () => {
     try {
       setLoading(true);
-      const response = await api.get<User[]>("/users/", {
-        params: { role: "employee" },
-      });
-      setEmployees(response.data);
-    } catch (error) {
-      console.error(error);
-      // Mock data para desenvolvimento
-      setEmployees([
-        {
-          id: 1,
-          email: "joao@empresa.com",
-          full_name: "João Silva",
-          role: "employee",
-          is_active: true,
-          employee_profile: { department: "Marketing", cost_center_id: 1 },
-        },
-        {
-          id: 2,
-          email: "maria@empresa.com",
-          full_name: "Maria Santos",
-          role: "employee",
-          is_active: true,
-          employee_profile: { department: "Vendas", cost_center_id: 2 },
-        },
+      
+      const [empData, ccData] = await Promise.all([
+        CorporateService.getEmployees(),
+        CorporateService.getCostCenters(),
       ]);
+      
+      setEmployees(empData);
+      setCostCenters(ccData);
+    } catch (error: any) {
+      console.error("Erro ao carregar dados:", error);
+      toast({
+        title: "Erro ao carregar dados",
+        description: error?.response?.data?.detail || "Tente novamente mais tarde",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+      });
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchEmployees();
+    loadData();
   }, []);
 
   const handleCreateEmployee = async () => {
+    // Validação básica
+    if (!formData.full_name || !formData.email || !formData.password) {
+      toast({
+        title: "Campos obrigatórios",
+        description: "Preencha Nome, Email e Senha",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
     try {
       setIsSaving(true);
-      await api.post("/corporate/employees", formData);
+
+      // Preparar payload com company_id do usuário atual
+      const payload = {
+        ...formData,
+        company_id: user?.employee_profile?.company_id || 1,
+      };
+
+      await CorporateService.createEmployee(payload);
 
       toast({
-        title: "Funcionário cadastrado!",
+        title: "✅ Funcionário cadastrado!",
         status: "success",
         duration: 3000,
+        isClosable: true,
       });
 
       onClose();
+      
+      // Resetar form
       setFormData({
         full_name: "",
         email: "",
         password: "",
-        role: "employee",
         department: "",
         cost_center_id: undefined,
+        phone: "",
       });
-      fetchEmployees();
-    } catch (error) {
+
+      // Recarregar lista
+      loadData();
+    } catch (error: any) {
+      const errorMessage = 
+        error?.response?.data?.detail || 
+        "Verifique os dados e tente novamente";
+      
       toast({
-        title: "Erro ao criar funcionário",
-        description: "Verifique os dados e tente novamente.",
+        title: "❌ Erro ao criar funcionário",
+        description: errorMessage,
         status: "error",
         duration: 4000,
+        isClosable: true,
       });
     } finally {
       setIsSaving(false);
@@ -122,7 +148,28 @@ const Employees: React.FC = () => {
       {/* Tabela de Listagem */}
       {loading ? (
         <Flex justify="center" p={10}>
-          <Spinner color="brand.600" />
+          <Spinner color="brand.600" size="lg" />
+        </Flex>
+      ) : employees.length === 0 ? (
+        <Flex
+          justify="center"
+          align="center"
+          p={10}
+          bg="gray.800"
+          borderRadius="lg"
+          minH="300px"
+        >
+          <Text color="gray.500" textAlign="center">
+            Nenhum funcionário cadastrado ainda.{"\n"}
+            <Button
+              colorScheme="gold"
+              size="sm"
+              mt={4}
+              onClick={onOpen}
+            >
+              Criar primeiro funcionário
+            </Button>
+          </Text>
         </Flex>
       ) : (
         <EmployeesTable employees={employees} />
@@ -138,8 +185,10 @@ const Employees: React.FC = () => {
         submitLabel="Salvar Funcionário"
       >
         <SimpleGrid columns={2} spacing={4}>
+          {/* Linha 1: Nome e Email */}
           <FormInput
-            label="Nome Completo"
+            label="Nome Completo *"
+            placeholder="João Silva"
             isRequired
             value={formData.full_name}
             onChange={(e) =>
@@ -147,17 +196,21 @@ const Employees: React.FC = () => {
             }
           />
           <FormInput
-            label="Email"
+            label="Email *"
             type="email"
+            placeholder="joao@empresa.com"
             isRequired
             value={formData.email}
             onChange={(e) =>
               setFormData({ ...formData, email: e.target.value })
             }
           />
+
+          {/* Linha 2: Senha e Telefone */}
           <FormInput
-            label="Senha"
+            label="Senha *"
             type="password"
+            placeholder="••••••••"
             isRequired
             value={formData.password}
             onChange={(e) =>
@@ -165,17 +218,27 @@ const Employees: React.FC = () => {
             }
           />
           <FormInput
+            label="Telefone"
+            placeholder="11 99999-9999"
+            value={formData.phone || ""}
+            onChange={(e) =>
+              setFormData({ ...formData, phone: e.target.value })
+            }
+          />
+
+          {/* Linha 3: Departamento e Centro de Custo */}
+          <FormInput
             label="Departamento"
-            placeholder="Ex: Marketing"
-            isRequired
-            value={formData.department}
+            placeholder="Ex: Marketing, Vendas"
+            value={formData.department || ""}
             onChange={(e) =>
               setFormData({ ...formData, department: e.target.value })
             }
           />
+          
           <FormSelect
             label="Centro de Custo"
-            value={formData.cost_center_id || ""}
+            value={formData.cost_center_id ? String(formData.cost_center_id) : ""}
             onChange={(e) =>
               setFormData({
                 ...formData,
@@ -185,10 +248,11 @@ const Employees: React.FC = () => {
               })
             }
             options={[
-              { value: "", label: "Selecione..." },
-              { value: "1", label: "CC-1 - Marketing" },
-              { value: "2", label: "CC-2 - Vendas" },
-              { value: "3", label: "CC-3 - TI" },
+              { value: "", label: "Selecione um centro de custo..." },
+              ...costCenters.map((cc) => ({
+                value: String(cc.id),
+                label: `${cc.code} - ${cc.name}`,
+              })),
             ]}
           />
         </SimpleGrid>

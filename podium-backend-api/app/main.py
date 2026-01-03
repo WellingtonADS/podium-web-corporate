@@ -43,6 +43,10 @@ origins = [
     "http://192.168.15.18:3000",
     # Mobile Metro (Expo)
     "http://192.168.15.18:8081",
+    # Production domains
+    "https://b2b.podiumrentacar.com.br",
+    "https://admin.podiumrentacar.com.br",
+    "https://podiumrentacar.com.br",
 ]
 
 app.add_middleware(

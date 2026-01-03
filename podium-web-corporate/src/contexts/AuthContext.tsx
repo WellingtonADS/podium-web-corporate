@@ -5,8 +5,8 @@ import {
   useEffect,
   useState,
 } from "react";
-import api, { User } from "../services/api";
-
+import api from "../services/api";
+import { LoginCredentials, User } from "../types";
 interface AuthContextData {
   signed: boolean;
   user: User | null;
@@ -14,12 +14,6 @@ interface AuthContextData {
   signIn: (credentials: LoginCredentials) => Promise<void>;
   signOut: () => void;
 }
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -65,17 +59,26 @@ export function AuthProvider({ children }: AuthProviderProps) {
       api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
       localStorage.setItem("@Podium:token", access_token);
 
-      // Cria objeto de usuário com dados básicos (role=employee para portal corporativo)
-      const userData: User = {
-        id: 1,
-        email: email,
-        full_name: email.split("@")[0],
-        role: "employee",
-        is_active: true,
-      };
+      // 🔥 MUDANÇA: Buscar perfil real do backend em vez de mockar
+      try {
+        const userResponse = await api.get<User>("/users/me");
+        const userData = userResponse.data;
 
-      localStorage.setItem("@Podium:user", JSON.stringify(userData));
-      setUser(userData);
+        localStorage.setItem("@Podium:user", JSON.stringify(userData));
+        setUser(userData);
+      } catch (profileError) {
+        console.error("Erro ao carregar perfil do usuário:", profileError);
+        // Fallback: se não conseguir carregar o perfil, usar dados do login
+        const userData: User = {
+          id: 1,
+          email: email,
+          full_name: email.split("@")[0],
+          role: "employee",
+          is_active: true,
+        };
+        localStorage.setItem("@Podium:user", JSON.stringify(userData));
+        setUser(userData);
+      }
     } catch (error) {
       console.error("Erro no Login:", error);
       throw error;
