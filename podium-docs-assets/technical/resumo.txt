@@ -20,7 +20,7 @@ Integração completamente implementada entre frontend (React) e backend (FastAP
    └─ podium-backend-api/app/api/v1/stats.py (novo endpoint)
 
 ✅ 3 Documentos Criados
-   └─ INTEGRATION_COMPLETE.md (visão geral)
+   └─ integracao-completa.md (visão geral)
    └─ INTEGRATION_SUMMARY.md (análise técnica)
    └─ VALIDATION_CHECKLIST.md (validações)
    └─ TESTING_GUIDE.md (guia de testes)
@@ -164,7 +164,7 @@ podium-web-corporate/src/
 📚 DOCUMENTAÇÃO
 ═══════════════════════════════════════════════════════════════════════════
 
-1. INTEGRATION_COMPLETE.md
+1. integracao-completa.md
    Resumo visual, arquitetura, antes/depois
    ⏱️ Leitura: 10 minutos
 
@@ -320,7 +320,7 @@ STATUS: 🚀 PRONTO PARA STAGING/PRODUÇÃO
 
 ════════════════════════════════════════════════════════════════════════════
 
-📖 Leia: INTEGRATION_COMPLETE.md para resumo visual
+📖 Leia: integracao-completa.md para resumo visual
 📖 Leia: INTEGRATION_SUMMARY.md para análise técnica
 🧪 Teste: TESTING_GUIDE.md para validar tudo
 ✓ Valide: VALIDATION_CHECKLIST.md antes de deploy
