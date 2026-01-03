@@ -2,7 +2,8 @@
 
 ## ✅ Status: INTEGRAÇÃO COMPLETA E DOCUMENTADA
 
-A integração entre `podium-web-corporate` (frontend React) e `podium-backend-api` (FastAPI) foi completamente refatorada e testada.
+A integração entre `podium-web-corporate` (frontend React) e `podium-backend-api` (FastAPI) foi completamente refatorada
+e testada.
 
 ---
 
@@ -31,14 +32,14 @@ A integração entre `podium-web-corporate` (frontend React) e `podium-backend-a
 
 ### Problemas Resolvidos
 
-| Problema                         | Solução                                      |
-| -------------------------------- | -------------------------------------------- |
-| ❌ AuthContext falsificava dados | ✅ Busca real de `/users/me`                 |
-| ❌ Dropdown hardcoded            | ✅ Carrega dinamicamente com `Promise.all()` |
-| ❌ Mock data em error handlers   | ✅ Erros reais com toast                     |
-| ❌ API dispersa em componentes   | ✅ Centralizada em CorporateService          |
-| ❌ Tipos desalinhados            | ✅ SSOT em `src/types/index.ts`              |
-| ❌ Sem dashboard corporativo     | ✅ Novo endpoint + hook                      |
+| Problema | Solução |
+| --- | --- |
+| ❌ AuthContext falsificava dados | ✅ Busca real de `/users/me` |
+| ❌ Dropdown hardcoded | ✅ Carrega dinamicamente com `Promise.all()` |
+| ❌ Mock data em error handlers | ✅ Erros reais com toast |
+| ❌ API dispersa em componentes | ✅ Centralizada em CorporateService |
+| ❌ Tipos desalinhados | ✅ SSOT em `src/types/index.ts` |
+| ❌ Sem dashboard corporativo | ✅ Novo endpoint + hook |
 
 ---
 
@@ -46,7 +47,7 @@ A integração entre `podium-web-corporate` (frontend React) e `podium-backend-a
 
 ### Frontend
 
-```
+```bash
 podium-web-corporate/
 ├── src/
 │   ├── types/
@@ -62,11 +63,12 @@ podium-web-corporate/
 │   │   └── Dashboard.tsx               ✏️ INALTERADO
 │   └── hooks/
 │       └── useDashboard.ts             ✏️ MODIFICADO
-```
+
+```bash
 
 ### Backend
 
-```
+```bash
 podium-backend-api/
 ├── app/
 │   └── api/
@@ -74,7 +76,8 @@ podium-backend-api/
 │           ├── stats.py                ✏️ MODIFICADO
 │           ├── corporate.py            ✏️ INALTERADO
 │           └── deps.py                 ✏️ INALTERADO
-```
+
+```bash
 
 ---
 
@@ -88,9 +91,10 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 python -m uvicorn app.main:app --reload
-```
 
-➜ Acesse: http://localhost:8000/docs
+```bash
+
+➜ Acesse: <http://localhost:8000/docs>
 
 ### 2️⃣ Iniciar Frontend
 
@@ -98,37 +102,38 @@ python -m uvicorn app.main:app --reload
 cd podium-web-corporate
 npm install
 npm run dev
-```
 
-➜ Acesse: http://localhost:5173
+```json
+
+➜ Acesse: <http://localhost:5173>
 
 ### 3️⃣ Testar Fluxo
 
 1. Login com credenciais válidas
-2. Acesse "Centros de Custo" → deve carregar sem mock
-3. Acesse "Funcionários" → dropdown deve ser dinâmico
-4. Acesse "Dashboard" → deve carregar stats reais
-5. Crie um novo CC e um novo funcionário
+1. Acesse "Centros de Custo" → deve carregar sem mock
+1. Acesse "Funcionários" → dropdown deve ser dinâmico
+1. Acesse "Dashboard" → deve carregar stats reais
+1. Crie um novo CC e um novo funcionário
 
 ---
 
 ## 📚 Documentação
 
-### 1. **INTEGRATION_SUMMARY.md**
+### 1. **INTEGRATION_SUMMARY.md
 
 Descrição completa de cada passo, arquitetura, segurança.
 
 - ✅ Ideal para: Code review, onboarding, referência técnica
 - 📖 Leitura: 15 minutos
 
-### 2. **VALIDATION_CHECKLIST.md**
+### 2. **VALIDATION_CHECKLIST.md
 
 Checklist detalhado de cada arquivo e funcionalidade.
 
 - ✅ Ideal para: QA, validação pré-deploy
 - ✓ Tem: 50+ items para validar
 
-### 3. **TESTING_GUIDE.md**
+### 3. **TESTING_GUIDE.md
 
 Guia passo-a-passo para validar a integração.
 
@@ -139,7 +144,7 @@ Guia passo-a-passo para validar a integração.
 
 ## 🏗️ Arquitetura
 
-```
+```bash
 ┌──────────────────────────────────────────────┐
 │         React Components                      │
 │  (Employees, CostCenters, Dashboard)         │
@@ -164,6 +169,7 @@ Guia passo-a-passo para validar a integração.
 │  /api/v1/stats/corporate/dashboard          │
 │  /api/v1/users/*                            │
 └──────────────────────────────────────────────┘
+
 ```
 
 ---
@@ -184,7 +190,8 @@ def create_cost_center(...):
     user_company_id = current_user.employee_profile.company_id
     if company_id != user_company_id:
         raise HTTPException(403)  # ← Rejeita se tentar acessar outra empresa
-```
+
+```typescript
 
 ---
 
@@ -219,7 +226,8 @@ export interface CorporateDashboardStats {
   rides_completed: int;
   remaining_budget: float;
 }
-```
+
+```python
 
 ### Backend (`app/api/v1/stats.py`)
 
@@ -229,7 +237,8 @@ class CorporateDashboardStats(BaseModel):
     active_employees: int
     rides_completed: int
     remaining_budget: float
-```
+
+```bash
 
 ✅ **1:1 Mapping** - Tipos frontend e backend são idênticos!
 
@@ -245,7 +254,8 @@ CorporateService.getCostCenter(id); // GET /corporate/cost-centers/{id}
 CorporateService.createCostCenter(data); // POST /corporate/cost-centers
 CorporateService.updateCostCenter(id, data); // PUT /corporate/cost-centers/{id}
 CorporateService.deleteCostCenter(id); // DELETE /corporate/cost-centers/{id}
-```
+
+```bash
 
 ### Employees
 
@@ -255,14 +265,16 @@ CorporateService.getEmployee(id); // GET /users/{id}
 CorporateService.createEmployee(data); // POST /corporate/employees
 CorporateService.updateEmployee(id, data); // PUT /users/{id}
 CorporateService.deleteEmployee(id); // DELETE /users/{id}
-```
+
+```bash
 
 ### Dashboard & Stats
 
 ```typescript
 CorporateService.getCorporateDashboard(); // GET /stats/corporate/dashboard
 CorporateService.getCurrentUser(); // GET /users/me
-```
+
+```typescript
 
 ---
 
@@ -295,7 +307,8 @@ const fetchEmployees = async () => {
     { value: "3", label: "CC-3 - TI" },
   ]}
 />
-```
+
+```typescript
 
 ### DEPOIS ✅
 
@@ -329,6 +342,7 @@ const loadData = async () => {
     label: `${cc.code} - ${cc.name}`,
   }))}
 />;
+
 ```
 
 ---
@@ -372,21 +386,21 @@ const loadData = async () => {
 ### Fase 1: Deploy
 
 1. [ ] Merge em `develop`
-2. [ ] Deploy em staging
-3. [ ] Testes de fumaça
-4. [ ] Code review
+1. [ ] Deploy em staging
+1. [ ] Testes de fumaça
+1. [ ] Code review
 
 ### Fase 2: Otimização
 
 1. [ ] Adicionar caching de dados
-2. [ ] Adicionar paginação em listas
-3. [ ] Adicionar filtros avançados
+1. [ ] Adicionar paginação em listas
+1. [ ] Adicionar filtros avançados
 
 ### Fase 3: Recursos
 
 1. [ ] Adicionar edição em linha de CCs
-2. [ ] Adicionar bulk upload de funcionários
-3. [ ] Adicionar relatórios de consumo
+1. [ ] Adicionar bulk upload de funcionários
+1. [ ] Adicionar relatórios de consumo
 
 ---
 
@@ -400,8 +414,8 @@ const loadData = async () => {
 
 ### Endpoints Swagger
 
-- http://localhost:8000/docs - Swagger UI
-- http://localhost:8000/redoc - ReDoc
+- <http://localhost:8000/docs> - Swagger UI
+- <http://localhost:8000/redoc> - ReDoc
 
 ### Logs
 
@@ -427,6 +441,8 @@ A integração web-corporate × backend está **100% completa e pronta para prod
 
 ---
 
-_Integração concluída em 2024_
-_Responsável: GitHub Copilot_
-_Documentação: Completa_
+#### Integração concluída em 2024
+
+#### Responsável: GitHub Copilot
+
+#### Documentação: Completa

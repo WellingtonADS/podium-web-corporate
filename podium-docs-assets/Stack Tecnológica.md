@@ -2,12 +2,13 @@
 
 Tecnologia Base: React Native (via Expo)
 
-O Expo continua sendo a escolha definitiva pela facilidade de deploy (EAS) e acesso a APIs nativas sem precisar de um Mac inicialmente.
+O Expo continua sendo a escolha definitiva pela facilidade de deploy (EAS) e acesso a APIs nativas sem precisar de um
+Mac inicialmente.
 
 | **Componente**     | **Tecnologia / Biblioteca**             | **Função Real (Produção)**                           |
 | ------------------ | --------------------------------------- | ---------------------------------------------------- |
 | **Core**           | **Expo SDK 50+**                        | Base do sistema (gerenciamento de build e updates).  |
-| **Linguagem**      | ** TypeScript**                         | Lógica da interface.                                 |
+| **Linguagem**      | **TypeScript**                          | Lógica da interface.                                 |
 | **Mapas**          | **`react-native-maps`**                 | Renderização do mapa nativo (Google/Apple).          |
 | **Geolocalização** | **`expo-location`**                     | Captura de coordenadas GPS do dispositivo.           |
 | **HTTP Client**    | **`axios`**                             | Comunicação segura com sua API Python.               |
@@ -48,16 +49,16 @@ Aqui reside a lógica do Preço Fixo e a segurança dos dados.
 
 ### 4. Infraestrutura & Serviços Externos (Cloud)
 
-_Onde o sistema vai viver no mundo real._
+#### Onde o sistema vai viver no mundo real
 
-| **Serviço**        | **Provedor Recomendado**              | **Custo Inicial**                                                      |
-| ------------------ | ------------------------------------- | ---------------------------------------------------------------------- |
-| **Hospedagem API** | **Render** ou **Railway**             | Baixo (Free Tier ou ~$5/mês). Suportam Docker/Python nativo.           |
-| **Banco de Dados** | **NeonDB** ou **Supabase** (Postgres) | Free Tier generoso para MVP.                                           |
-| **Hospedagem Web** | **Vercel**                            | Grátis para Frontend.                                                  |
-| **Build Mobile**   | **Expo EAS**                          | Grátis (limitado) ou Pay-as-you-go.                                    |
-| **Mapas & Places** | **Google Maps Platform**              | $200 crédito mensal grátis (Essencial para Autocomplete e Directions). |
+| **Serviço**        | **Provedor Recomendado**            | **Custo Inicial**                                                      |
+| ------------------ | ----------------------------------- | ---------------------------------------------------------------------- |
+| **Hospedagem API** | **Render**ou**Railway**             | Baixo (Free Tier ou ~$5/mês). Suportam Docker/Python nativo.           |
+| **Banco de Dados** | **NeonDB**ou**Supabase** (Postgres) | Free Tier generoso para MVP.                                           |
+| **Hospedagem Web** | **Vercel**                          | Grátis para Frontend.                                                  |
+| **Build Mobile**   | **Expo EAS**                        | Grátis (limitado) ou Pay-as-you-go.                                    |
+| **Mapas & Places** | **Google Maps Platform**            | $200 crédito mensal grátis (Essencial para Autocomplete e Directions). |
 
-### 
+###
 
-1. 
+1.
