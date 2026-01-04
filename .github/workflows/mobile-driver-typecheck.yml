@@ -1,14 +1,15 @@
 name: Typecheck Mobile Driver
 
 on:
+  workflow_dispatch:
   push:
     paths:
-      - 'mobile-driver/**'
-      - '.github/workflows/mobile-driver-typecheck.yml'
+      - "podium-mobile-driver/**"
+      - ".github/workflows/mobile-driver-typecheck.yml"
   pull_request:
     paths:
-      - 'mobile-driver/**'
-      - '.github/workflows/mobile-driver-typecheck.yml'
+      - "podium-mobile-driver/**"
+      - ".github/workflows/mobile-driver-typecheck.yml"
 
 concurrency:
   group: mobile-driver-typecheck-${{ github.ref }}
@@ -22,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: mobile-driver
+        working-directory: podium-mobile-driver
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +33,7 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-          cache-dependency-path: mobile-driver/yarn.lock
+          cache-dependency-path: podium-mobile-driver/yarn.lock
 
       - name: Install dependencies (yarn)
         run: yarn install --frozen-lockfile
@@ -48,7 +49,7 @@ jobs:
     needs: lint
     defaults:
       run:
-        working-directory: mobile-driver
+        working-directory: podium-mobile-driver
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,7 +59,7 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-          cache-dependency-path: mobile-driver/yarn.lock
+          cache-dependency-path: podium-mobile-driver/yarn.lock
 
       - name: Install dependencies (yarn)
         run: yarn install --frozen-lockfile

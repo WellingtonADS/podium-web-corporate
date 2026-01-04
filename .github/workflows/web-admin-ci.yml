@@ -1,14 +1,15 @@
 name: CI Web Admin
 
 on:
+  workflow_dispatch:
   push:
     paths:
-      - 'web-admin/**'
-      - '.github/workflows/web-admin-ci.yml'
+      - "podium-web-admin/**"
+      - ".github/workflows/web-admin-ci.yml"
   pull_request:
     paths:
-      - 'web-admin/**'
-      - '.github/workflows/web-admin-ci.yml'
+      - "podium-web-admin/**"
+      - ".github/workflows/web-admin-ci.yml"
 
 concurrency:
   group: web-admin-ci-${{ github.ref }}
@@ -22,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: web-admin
+        working-directory: podium-web-admin
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -32,7 +33,7 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-          cache-dependency-path: web-admin/yarn.lock
+          cache-dependency-path: podium-web-admin/yarn.lock
 
       - name: Install dependencies (yarn)
         run: yarn install --frozen-lockfile
@@ -48,7 +49,7 @@ jobs:
     needs: lint
     defaults:
       run:
-        working-directory: web-admin
+        working-directory: podium-web-admin
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -58,7 +59,7 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-          cache-dependency-path: web-admin/yarn.lock
+          cache-dependency-path: podium-web-admin/yarn.lock
 
       - name: Install dependencies (yarn)
         run: yarn install --frozen-lockfile
@@ -74,4 +75,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: web-admin-build
-          path: web-admin/build
+          path: podium-web-admin/build
