@@ -223,7 +223,7 @@ def fix_file(path: Path) -> bool:
     dedented: list[str] = []
     prev_nonblank = ""
     for line in fixed_emphasis:
-        m = re.match(r"^(\\s{2})(?:([-*+]\\s+)|(\\d+\\.\\s+))(.*)$", line)
+        m = re.match(r"^(\s{2})(?:([-*+]\s+)|(\d+\.\s+))(.*)$", line)
         if m and (prev_nonblank == "" or prev_nonblank.lstrip().startswith("#")):
             marker = m.group(2) if m.group(2) else m.group(3)
             content = m.group(4)

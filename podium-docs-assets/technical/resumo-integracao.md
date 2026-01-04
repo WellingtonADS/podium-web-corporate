@@ -114,7 +114,7 @@ Mudanças implementadas:
     label: `${cc.code} - ${cc.name}`,
   }))
 
-```bash
+  ```bash
 
 - ✅ **Removido** mock data do catch block (linhas 47-61)
 - ✅ Mensagens de erro reais com toast
@@ -188,8 +188,7 @@ Mudanças:
 
 ### Data Flow
 
-```
-
+```bash
 User Login
     ↓
 AuthContext.signIn()
@@ -244,7 +243,6 @@ Response typed with unified interfaces
 ### Tipos Compartilhados
 
 ```bash
-
 Frontend (src/types/index.ts)
     ↕ (1:1 mapping)
 Backend (Pydantic schemas)
@@ -262,7 +260,6 @@ CorporateDashboardStats ↔ CorporateDashboardStats
 Todos os endpoints respeitam **soberania de empresa**:
 
 1. **Token JWT** contém `employee_profile.company_id`
-
 1. **Backend** valida company_id automaticamente
 1. **Frontend** armazena user context com company_id
 1. **Criação** de recursos vinculada automaticamente à empresa do usuário
@@ -282,15 +279,15 @@ await CorporateService.createEmployee(payload);
 
 ## ✨ Melhorias Implementadas
 
-| Problema | Solução | Status |
+| Problema                      | Solução                                     | Status          |
 | --- | --- | --- |
-| AuthContext falsificava dados | Buscar `/users/me` após login | ✅ Implementado |
-| Interfaces não alinhadas | Criar `src/types/index.ts` | ✅ Implementado |
-| Mock data em catch blocks | Remover mocks, mostrar erros reais | ✅ Implementado |
-| Dropdowns hardcoded | Carregar dinamicamente do backend | ✅ Implementado |
-| Chamadas API dispersas | Centralizar em CorporateService | ✅ Implementado |
-| Sem dashboard corporativo | Criar endpoint `/stats/corporate/dashboard` | ✅ Implementado |
-| Tipo inseguro | Adicionar interfaces TypeScript fortes | ✅ Implementado |
+| AuthContext falsificava dados | Buscar `/users/me` após login               | ✅ Implementado |
+| Interfaces não alinhadas      | Criar `src/types/index.ts`                  | ✅ Implementado |
+| Mock data em catch blocks     | Remover mocks, mostrar erros reais          | ✅ Implementado |
+| Dropdowns hardcoded           | Carregar dinamicamente do backend           | ✅ Implementado |
+| Chamadas API dispersas        | Centralizar em CorporateService             | ✅ Implementado |
+| Sem dashboard corporativo     | Criar endpoint `/stats/corporate/dashboard` | ✅ Implementado |
+| Tipo inseguro                 | Adicionar interfaces TypeScript fortes      | ✅ Implementado |
 
 ---
 
@@ -364,7 +361,7 @@ GET /api/v1/corporate/employees
 npm install    # Garante tipos/corporate.ts está resolvido
 npm run dev    # Inicia servidor local
 
-```
+```bash
 
 Vá para:
 
@@ -457,3 +454,4 @@ Este arquivo serve como referência completa da integração realizada. Consulte
 **Data:** 2024
 **Status:** ✅ PRONTO PARA PRODUÇÃO
 **Próximo:** Testes E2E + Deployments
+

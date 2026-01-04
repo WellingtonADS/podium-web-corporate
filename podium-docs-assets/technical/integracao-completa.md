@@ -32,14 +32,14 @@ e testada.
 
 ### Problemas Resolvidos
 
-| Problema | Solução |
-| --- | --- |
-| ❌ AuthContext falsificava dados | ✅ Busca real de `/users/me` |
-| ❌ Dropdown hardcoded | ✅ Carrega dinamicamente com `Promise.all()` |
-| ❌ Mock data em error handlers | ✅ Erros reais com toast |
-| ❌ API dispersa em componentes | ✅ Centralizada em CorporateService |
-| ❌ Tipos desalinhados | ✅ SSOT em `src/types/index.ts` |
-| ❌ Sem dashboard corporativo | ✅ Novo endpoint + hook |
+| Problema                         | Solução                                      |
+| -------------------------------- | -------------------------------------------- |
+| ❌ AuthContext falsificava dados | ✅ Busca real de `/users/me`                 |
+| ❌ Dropdown hardcoded            | ✅ Carrega dinamicamente com `Promise.all()` |
+| ❌ Mock data em error handlers   | ✅ Erros reais com toast                     |
+| ❌ API dispersa em componentes   | ✅ Centralizada em CorporateService          |
+| ❌ Tipos desalinhados            | ✅ SSOT em `src/types/index.ts`              |
+| ❌ Sem dashboard corporativo     | ✅ Novo endpoint + hook                      |
 
 ---
 
@@ -119,21 +119,21 @@ npm run dev
 
 ## 📚 Documentação
 
-### 1. **INTEGRATION_SUMMARY.md
+### 1. **INTEGRATION_SUMMARY.md**
 
 Descrição completa de cada passo, arquitetura, segurança.
 
 - ✅ Ideal para: Code review, onboarding, referência técnica
 - 📖 Leitura: 15 minutos
 
-### 2. **VALIDATION_CHECKLIST.md
+### 2. **VALIDATION_CHECKLIST.md**
 
 Checklist detalhado de cada arquivo e funcionalidade.
 
 - ✅ Ideal para: QA, validação pré-deploy
 - ✓ Tem: 50+ items para validar
 
-### 3. **TESTING_GUIDE.md
+### 3. **TESTING_GUIDE.md**
 
 Guia passo-a-passo para validar a integração.
 
@@ -170,7 +170,7 @@ Guia passo-a-passo para validar a integração.
 │  /api/v1/users/*                            │
 └──────────────────────────────────────────────┘
 
-```
+```typescript
 
 ---
 
@@ -343,7 +343,7 @@ const loadData = async () => {
   }))}
 />;
 
-```
+```bash
 
 ---
 
@@ -446,3 +446,4 @@ A integração web-corporate × backend está **100% completa e pronta para prod
 #### Responsável: GitHub Copilot
 
 #### Documentação: Completa
+

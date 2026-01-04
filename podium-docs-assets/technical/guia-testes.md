@@ -11,7 +11,7 @@ corretamente após a refatoração.
 
 ### Backend
 
-````bash
+```bash
 
 # 1. Certifique-se que o backend está rodando
 
@@ -101,7 +101,7 @@ console.log(Object.keys(CorporateService));
   'getCurrentUser'
 ]
 
-````
+```bash
 
 #### Se falhar
 
@@ -119,7 +119,7 @@ Acesse: `<http://localhost:8000/docs>`
 
 #### Teste 3.1: Endpoint `/stats/corporate/dashboard`
 
-````bash
+```bash
 GET /api/v1/stats/corporate/dashboard
 
 ```json
@@ -182,7 +182,7 @@ GET /api/v1/corporate/cost-centers
 ```bash
 GET /api/v1/users?role=employee
 
-````
+```bash
 
 #### Resultado Esperado
 
@@ -199,26 +199,25 @@ GET /api/v1/users?role=employee
 1. Vá para página de login
 1. Digite credenciais de teste:
 
-   ````bash
+```bash
+
    Email: <a<dmin@podium.co>m>
    Senha: (confira no banco)
 
    ```bash
-   ````
 
-#### Verificações (Login)
+#### Verificações
 
 - [ ] Login bem-sucedido (sem erros no console)
 - [ ] Token armazenado em localStorage
 
-  ````javascript
+  ```javascript
   // No console:
   localStorage.getItem('@Podium:token')
 
-  ```bash
+```bash
 
   Deve retornar um JWT válido
-  ````
 
 #### Se falhar
 
@@ -233,11 +232,10 @@ GET /api/v1/users?role=employee
 ### Passo 5: Navegar para Centros de Custo
 
 1. Faça login
-
 1. Clique em "Centros de Custo" na sidebar
 1. Aguarde carregamento
 
-#### Verificações (Centros de Custo)
+#### Verificações
 
 - [ ] Página carrega sem erro
 - [ ] Lista de CCs aparece (se existirem)
@@ -246,18 +244,18 @@ GET /api/v1/users?role=employee
 
 #### No Console do Navegador
 
-````javascript
+```javascript
 // Verifique que está fazendo a chamada correta:
 // Deve ver: GET /api/v1/corporate/cost-centers
 
-   ```json
+```bash
 
 #### Se vir erro
 
 ```json
 ❌ ERRO: "Mock data que tinha aqui..."
 
-```bash
+```json
 
 Significa que o catch block ainda está lá. Verifique se refactoring foi feito corretamente.
 
@@ -276,11 +274,11 @@ Significa que o catch block ainda está lá. Verifique se refactoring foi feito 
    Código: TST-001
    Orçamento: 5000
 
-````
+   ```json
 
 1. Clique em "Criar"
 
-#### Verificações (Criar CC)
+#### Verificações
 
 - [ ] Modal desaparece
 - [ ] Toast "✅ Centro de Custo criado!" aparece
@@ -289,7 +287,8 @@ Significa que o catch block ainda está lá. Verifique se refactoring foi feito 
 
 #### Se falhar
 
-````json
+```json
+
 ❌ "Erro ao criar centro de custo"
 
 ```bash
@@ -307,7 +306,7 @@ Significa que o catch block ainda está lá. Verifique se refactoring foi feito 
 1. Clique em "Funcionários" na sidebar
 1. Aguarde carregamento
 
-#### Verificações (Funcionários)
+#### Verificações
 
 - [ ] Página carrega sem erro
 - [ ] Lista de funcionários aparece
@@ -322,15 +321,14 @@ Significa que o catch block ainda está lá. Verifique se refactoring foi feito 
 // GET /api/v1/users?role=employee
 // GET /api/v1/corporate/cost-centers
 
-```bash
+```json
 
 #### Se vir erro ou mock data
 
 ```json
-
 ❌ ERRO: "João Silva, Maria Santos"
 
-```json
+```bash
 
 Significa que mock data ainda está no catch block.
 
@@ -341,29 +339,29 @@ Significa que mock data ainda está no catch block.
 ### Passo 8: Testar Criação de Funcionário
 
 1. Na página Funcionários
-
 1. Clique em "+ Novo Funcionário"
 1. Preencha o formulário:
 
-```json
-
+   ```bash
    Nome: João da Silva
    Email: <joao@empresa.com>
    Senha: Senha123!
    Departamento: Marketing
    Centro de Custo: (selecione um da lista)
 
-   ```json
+```json
 
-4. Clique em "Salvar Funcionário"
+1. Clique em "Salvar Funcionário"
 
-**Verificações:**
+#### Verificações
+
 - [ ] Modal desaparece
 - [ ] Toast "✅ Funcionário cadastrado!" aparece
 - [ ] Lista recarrega com novo funcionário
 - [ ] No Network tab: POST /api/v1/corporate/employees
 
-**Se dropdown não carregar CCs:**
+#### Se dropdown não carregar CCs
+
 - [ ] Promise.all() não está executando corretamente
 - [ ] Verifique CorporateService.getCostCenters()
 - [ ] Verifique se try/catch está correto
@@ -375,10 +373,10 @@ Significa que mock data ainda está no catch block.
 ### Passo 9: Validar Dashboard
 
 1. Clique em "Dashboard" na sidebar
+1. Aguarde carregamento
 
-2. Aguarde carregamento
+#### Verificações
 
-**Verificações:**
 - [ ] Página carrega sem erro
 - [ ] StatCard mostra valores reais (não "0" ou mock)
 - [ ] Valores fazem sentido:
@@ -386,17 +384,17 @@ Significa que mock data ainda está no catch block.
   - Funcionários ativos deve corresponder à contagem
   - Orçamento restante deve ser Orçamento Total - Consumo
 
-**No Console do Navegador:**
+#### No Console do Navegador
 
 ```javascript
 // Verifique que está buscando dados reais:
 // GET /api/v1/stats/corporate/dashboard
 
-````
+```json
 
 #### Se vir mock data
 
-````json
+```json
 {
   "monthly_consumption": 12500,
   "active_employees": 45,
@@ -419,7 +417,6 @@ Significa que o endpoint está retornando fallback. Verifique hook useDashboard.
 #### Como testar
 
 1. Login como usuário da Empresa A
-
 1. Verifique CCs e Funcionários listados
 1. Logout
 1. Login como usuário da Empresa B
@@ -446,7 +443,6 @@ Abra Developer Tools (F12) → Network Tab
 ### Esperado para Employees.tsx
 
 ```bash
-
 GET /api/v1/users?role=employee        [200] ~50ms
 GET /api/v1/corporate/cost-centers     [200] ~50ms
 POST /api/v1/corporate/employees       [201] ~100ms (on create)
@@ -456,7 +452,6 @@ POST /api/v1/corporate/employees       [201] ~100ms (on create)
 ### Esperado para CostCenters.tsx
 
 ```bash
-
 GET /api/v1/corporate/cost-centers     [200] ~50ms
 POST /api/v1/corporate/cost-centers    [201] ~100ms (on create)
 
@@ -465,7 +460,6 @@ POST /api/v1/corporate/cost-centers    [201] ~100ms (on create)
 ### Esperado para Dashboard.tsx
 
 ```bash
-
 GET /api/v1/stats/corporate/dashboard  [200] ~100ms
 
 ```bash
@@ -476,11 +470,10 @@ GET /api/v1/stats/corporate/dashboard  [200] ~100ms
 
 Se ver erros como:
 
-````
-
+```bash
 TypeError: Cannot read property 'getEmployees' of undefined
 
-````json
+```json
 
 ### Solução
 
@@ -541,4 +534,3 @@ Próximos passos:
 **Versão:** 1.0
 **Status:** Pronto para Testes
 
-````
