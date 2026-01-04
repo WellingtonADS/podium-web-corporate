@@ -313,5 +313,4 @@ Todos os problemas identificados foram resolvidos:
 #### Responsável: GitHub Copilot
 
 #### Versão: 1.0
-
 ````
