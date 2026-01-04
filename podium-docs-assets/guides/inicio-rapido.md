@@ -11,7 +11,7 @@
 
 Localização: `wiki-pages/`
 
-```bash
+````bash
 ✓ Home.md                          - Página inicial com índice
 ✓ Instalação-e-Configuração.md    - Setup completo
 ✓ Arquitetura.md                   - Estrutura técnica
@@ -310,3 +310,4 @@ Todos os arquivos estão em seus respectivos locais:
 **Documento atualizado:** 03 de janeiro de 2026
 **Versão:** 1.0 - Pronto para Integração
 
+````

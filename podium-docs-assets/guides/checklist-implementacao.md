@@ -221,7 +221,7 @@
 | Páginas Wiki             | 12         | Documentação completa                                    |
 | Arquivos de Configuração | 2          | .markdownlint.json, validate-docs.yml                    |
 | Documentação de Suporte  | 2          | guides/resumo-wiki.md, guides/checklist-implementacao.md |
-| **Total**|**16**|**Arquivos novos**                                       |
+| **Total**                | **16**     | **Arquivos novos**                                       |
 
 ### Linhas de Documentação
 
@@ -239,7 +239,7 @@
 | Testes.md                    | 378       |
 | Integração-Web-Corporate.md  | 226       |
 | README.md                    | 62        |
-| **TOTAL**|**2.264** |
+| **TOTAL**                    | **2.264** |
 
 ### Arquivos Organizados
 

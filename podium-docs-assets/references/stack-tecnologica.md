@@ -1,64 +1,45 @@
-### 1. Aplicações Móveis (Passageiro & Motorista)
+﻿### 1. Aplicações Móveis (Passageiro & Motorista)
 
-Tecnologia Base: React Native (via Expo)
+Tecnologia base: React Native (via Expo). O Expo facilita deploy (EAS) e acesso a APIs nativas sem precisar de Mac.
 
-O Expo continua sendo a escolha definitiva pela facilidade de deploy (EAS) e acesso a APIs nativas sem precisar de um
-Mac inicialmente.
-
-| **Componente**|**Tecnologia / Biblioteca**|**Função Real (Produção)**                           |
-| --- | --- | --- |
-| **Core**|**Expo SDK 50+**                        | Base do sistema (gerenciamento de build e updates).  |
-| **Linguagem**|** TypeScript**                         | Lógica da interface.                                 |
-| **Mapas**|**`react-native-maps`**                 | Renderização do mapa nativo (Google/Apple).          |
-| **Geolocalização**|**`expo-location`**                     | Captura de coordenadas GPS do dispositivo.           |
-| **HTTP Client**|**`axios`**                             | Comunicação segura com sua API Python.               |
-| **Armazenamento**|**`@react-native-async-storage`**       | Salvar Token JWT e sessão do usuário (persistência). |
-| **Navegação**|**`expo-router`** ou `react-navigation` | Fluxo de telas (Login -> Home -> Corrida).           |
-| **Estilização**|**NativeWind** (Tailwind) ou StyleSheet | Manter o visual Dark/Gold consistente.               |
+- **Core:** Expo SDK 50+ para builds e updates.
+- **Linguagem:** TypeScript para tipagem de UI.
+- **Mapas:** `react-native-maps` para mapas Google/Apple.
+- **Geolocalização:** `expo-location` para GPS do dispositivo.
+- **HTTP Client:** `axios` para chamadas à API Python.
+- **Armazenamento:** `@react-native-async-storage` para token JWT/sessão.
+- **Navegação:** `expo-router` ou `react-navigation` para fluxo de telas.
+- **Estilização:** NativeWind (Tailwind) ou StyleSheet com visual Dark/Gold.
 
 ### 2. Painel Administrativo (Web B2B & Dispatch)
 
-Tecnologia Base: React.js (Single Page Application)
+Tecnologia base: React.js (SPA) focada em gestão de Centros de Custo e monitoramento da frota.
 
-Focado na gestão de Centros de Custo e monitoramento da frota.
+- **Build Tool:** Vite (ou CRA) para DX e performance.
+- **UI Framework:** Chakra UI (v2) com componentes prontos e Dark Mode.
+- **Gráficos:** Recharts para faturamento e volume de corridas.
+- **Conexão API:** `axios` para endpoints do backend.
+- **Mapas Web:** `react-leaflet` para visão da frota (mais barato que Google Maps JS).
 
-| **Componente**|**Tecnologia / Biblioteca**|**Função Real (Produção)**                                           |
-| --- | --- | --- |
-| **Build Tool**|**Vite** ou CRA             | Performance superior para desenvolvimento web.                       |
-| **UI Framework**|**Chakra UI (v2)**          | Componentes prontos (Cards, Tabelas) com suporte nativo a Dark Mode. |
-| **Gráficos**|**Recharts**                | Visualização real de faturamento e volume de corridas.               |
-| **Conexão API**|**`axios`**                 | Consumo dos endpoints do Backend.                                    |
-| **Mapas Web**|**`react-leaflet`**         | Visualização da frota no navegador (mais barato que Google Maps JS). |
+### 3. Backend (Regras de Negócio)
 
-### 3. Backend (O "Cérebro" & Regras de Negócio)
+Tecnologia base: Python 3.12+ com FastAPI. Aqui vive o preço fixo e a segurança dos dados.
 
-Tecnologia Base: Python 3.12+ com FastAPI
-
-Aqui reside a lógica do Preço Fixo e a segurança dos dados.
-
-| **Componente**|**Tecnologia / Biblioteca**|**Função Real (Produção)**                                       |
-| --- | --- | --- |
-| **Framework**|**FastAPI**                        | Alta performance (Async) e documentação automática (Swagger).    |
-| **Servidor**|**Uvicorn** (com Gunicorn em prod) | Servidor ASGI para produção.                                     |
-| **Banco de Dados**|**PostgreSQL**                     | O padrão para dados relacionais e financeiros2.                  |
-| **Extensão Geo**|**PostGIS**|**Crítico:** Permite queries como "Motoristas num raio de 5km".  |
-| **ORM**|**SQLModel** (ou SQLAlchemy)       | Interação Python <-> Banco de Dados.                             |
-| **Autenticação**|**`python-jose` (JWT)**            | Geração de tokens de segurança para Login.                       |
-| **Real-time**|**`python-socketio`**              | Comunicação bidirecional (Passageiro chama -> Motorista recebe). |
-| **Migrações**|**Alembic**                        | Versionamento do banco de dados (evita quebrar produção).        |
+- **Framework:** FastAPI com docs automáticas (Swagger).
+- **Servidor:** Uvicorn (Gunicorn em produção) como ASGI.
+- **Banco:** PostgreSQL como padrão financeiro.
+- **Extensão Geo:** PostGIS para queries como "motoristas num raio de 5km".
+- **ORM:** SQLModel ou SQLAlchemy para persistência.
+- **Autenticação:** `python-jose` (JWT) para tokens.
+- **Real-time:** `python-socketio` para comunicação passageiro <-> motorista.
+- **Migrações:** Alembic para versionar schema.
 
 ### 4. Infraestrutura & Serviços Externos (Cloud)
 
-#### Onde o sistema vai viver no mundo real
+Onde o sistema roda no mundo real.
 
-| **Serviço**|**Provedor Recomendado**|**Custo Inicial**                                                      |
-| --- | --- | --- |
-| **Hospedagem API**|**Render**ou**Railway**             | Baixo (Free Tier ou ~$5/mês). Suportam Docker/Python nativo.           |
-| **Banco de Dados**|**NeonDB**ou**Supabase** (Postgres) | Free Tier generoso para MVP.                                           |
-| **Hospedagem Web**|**Vercel**                            | Grátis para Frontend.                                                  |
-| **Build Mobile**|**Expo EAS**                          | Grátis (limitado) ou Pay-as-you-go.                                    |
-| **Mapas & Places**|**Google Maps Platform**              | $200 crédito mensal grátis (Essencial para Autocomplete e Directions). |
-
-###
-
-1. 
+- **Hospedagem API:** Render ou Railway (free tier / ~$5/mês, suporte Docker/Python).
+- **Banco de Dados:** NeonDB ou Supabase (Postgres) com free tier.
+- **Hospedagem Web:** Vercel grátis para frontend.
+- **Build Mobile:** Expo EAS (free limitado ou pay-as-you-go).
+- **Mapas & Places:** Google Maps Platform com $200 de crédito mensal.

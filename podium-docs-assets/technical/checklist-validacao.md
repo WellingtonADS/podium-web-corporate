@@ -226,7 +226,7 @@
 
 ### Backend (FastAPI)
 
-```bash
+````bash
 
 # Swagger: <http://localhost:8000/docs>
 
@@ -326,13 +326,13 @@ npx tsc --noEmit
 
 ### Problemas Encontrados & Soluções
 
-| Problema                  | Solução                          | Status    |
-| ------------------------- | -------------------------------- | --------- |
-| Mock data em Employees    | Promise.all() + CorporateService | ✅ Fixado |
-| Hardcoded CC dropdown     | Mapear de API response           | ✅ Fixado |
-| Tipos desalinhados        | SSOT em src/types/index.ts       | ✅ Fixado |
-| AuthContext falsificava   | Fetch /users/me real             | ✅ Fixado |
-| Sem dashboard corporativo | Novo endpoint + hook             | ✅ Fixado |
+| Problema | Solução | Status |
+| --- | --- | --- |
+| Mock data em Employees | Promise.all() + CorporateService | ✅ Fixado |
+| Hardcoded CC dropdown | Mapear de API response | ✅ Fixado |
+| Tipos desalinhados | SSOT em src/types/index.ts | ✅ Fixado |
+| AuthContext falsificava | Fetch /users/me real | ✅ Fixado |
+| Sem dashboard corporativo | Novo endpoint + hook | ✅ Fixado |
 
 ### Pontos de Atenção
 
@@ -360,4 +360,4 @@ npx tsc --noEmit
 #### Responsável: GitHub Copilot
 
 #### Status: PRONTO PARA DEPLOYMENT
-
+````

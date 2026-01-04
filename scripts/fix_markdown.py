@@ -223,9 +223,11 @@ def fix_file(path: Path) -> bool:
     dedented: list[str] = []
     prev_nonblank = ""
     for line in fixed_emphasis:
-        m = re.match(r"^(\s{2})([-*+]\s+)(.*)$", line)
+        m = re.match(r"^(\s{2})(?:([-*+]\s+)|(\d+\.\s+))(.*)$", line)
         if m and (prev_nonblank == "" or prev_nonblank.lstrip().startswith("#")):
-            new_l = f"{m.group(2)}{m.group(3)}"
+            marker = m.group(2) if m.group(2) else m.group(3)
+            content = m.group(4)
+            new_l = f"{marker}{content}"
             dedented.append(new_l)
             changed = True
         else:
@@ -243,7 +245,9 @@ def fix_file(path: Path) -> bool:
         if h:
             # remove trailing punctuation from heading
             content = h.group(2).rstrip()
+            # remove trailing punctuation and stray asterisks introduced by malformed emphasis
             content = re.sub(r"[:.]+$", "", content).rstrip()
+            content = re.sub(r"\*+$", "", content).rstrip()
             level = len(h.group(1))
             # limit heading jump to +1 from previous
             prev_level = 0

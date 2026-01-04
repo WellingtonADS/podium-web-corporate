@@ -6,19 +6,19 @@ Esta pasta contém toda a documentação técnica e de suporte do monorepo Podiu
 
 ### 📚 Documentos de Referência Rápida
 
-| Arquivo                                                                | Descrição                                            |
-| ---------------------------------------------------------------------- | ---------------------------------------------------- |
-| [guides/inicio-rapido.md](guides/inicio-rapido.md)                     | Guia rápido de integração ao Wiki e primeiros passos |
-| [guides/resumo-wiki.md](guides/resumo-wiki.md)                         | Resumo executivo da implementação do Wiki            |
-| [guides/checklist-implementacao.md](guides/checklist-implementacao.md) | Checklist detalhado de tarefas implementadas         |
-| [guides/visao-geral-projeto.md](guides/visao-geral-projeto.md)         | Visão geral consolidada do projeto                   |
+| Arquivo                                                                | Descrição                                 |
+| ---------------------------------------------------------------------- | ----------------------------------------- |
+| [guides/inicio-rapido.md](guides/inicio-rapido.md)                     | Guia rápido do Wiki e primeiros passos    |
+| [guides/resumo-wiki.md](guides/resumo-wiki.md)                         | Resumo executivo da implementação do Wiki |
+| [guides/checklist-implementacao.md](guides/checklist-implementacao.md) | Checklist das tarefas implementadas       |
+| [guides/visao-geral-projeto.md](guides/visao-geral-projeto.md)         | Visão geral consolidada do projeto        |
 
 ### 🔧 Documentos Técnicos
 
 | Arquivo                                                              | Descrição                                    |
 | -------------------------------------------------------------------- | -------------------------------------------- |
 | [technical/integracao-completa.md](technical/integracao-completa.md) | Resumo da integração Web-Corporate + Backend |
-| [technical/resumo-integracao.md](technical/resumo-integracao.md)     | Análise técnica detalhada da integração      |
+| [technical/resumo-integracao.md](technical/resumo-integracao.md)     | Análise técnica da integração                |
 | [technical/guia-testes.md](technical/guia-testes.md)                 | Guia completo de testes                      |
 | [technical/checklist-validacao.md](technical/checklist-validacao.md) | Checklist de validações implementadas        |
 | [technical/status-final.md](technical/status-final.md)               | Status final da integração                   |
@@ -26,17 +26,17 @@ Esta pasta contém toda a documentação técnica e de suporte do monorepo Podiu
 
 ### 📖 Referências
 
-| Arquivo                                                                      | Descrição                              |
-| ---------------------------------------------------------------------------- | -------------------------------------- |
-| [references/stack-tecnologica.md](references/stack-tecnologica.md)           | Stack tecnológica utilizada no projeto |
-| [references/referencias-opensource.md](references/referencias-opensource.md) | Referências de projetos open source    |
+| Arquivo                                                                      | Descrição                    |
+| ---------------------------------------------------------------------------- | ---------------------------- |
+| [references/stack-tecnologica.md](references/stack-tecnologica.md)           | Stack tecnológica do projeto |
+| [references/referencias-opensource.md](references/referencias-opensource.md) | Referências open source      |
 
 ### 🎨 Design e Imagens
 
-| Item                                                 | Descrição                                                          |
-| ---------------------------------------------------- | ------------------------------------------------------------------ |
-| [design/](design/)                                   | Pasta com 8 imagens catalogadas (wireframes, mockups, screenshots) |
-| [design/indice-imagens.md](design/indice-imagens.md) | Índice completo de todas as imagens catalogadas                    |
+| Item                                                 | Descrição                                              |
+| ---------------------------------------------------- | ------------------------------------------------------ |
+| [design/](design/)                                   | Imagens catalogadas (wireframes, mockups, screenshots) |
+| [design/indice-imagens.md](design/indice-imagens.md) | Índice das imagens catalogadas                         |
 
 ## Como Usar
 
