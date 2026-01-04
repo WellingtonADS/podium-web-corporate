@@ -226,7 +226,7 @@
 
 ### Backend (FastAPI)
 
-```bash
+````bash
 
 # Swagger: <http://localhost:8000/docs>
 
@@ -361,3 +361,4 @@ npx tsc --noEmit
 
 #### Status: PRONTO PARA DEPLOYMENT
 
+````

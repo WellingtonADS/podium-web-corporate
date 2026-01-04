@@ -22,7 +22,7 @@
 
 #### Resultado
 
-```bash
+````bash
 podium-docs-assets/
 ├── design/                      # 8 imagens catalogadas
 │   └── indice-imagens.md        # Índice de imagens
@@ -357,7 +357,6 @@ O workflow `.github/workflows/validate-docs.yml` valida:
    - Faça PR com a correção
    - Reference a issue associada
    - Descreva o erro claramente
-
 1. **Para questões sobre documentação:**
 
    - Abra uma issue no repositório
@@ -381,3 +380,5 @@ automatizada garante que a documentação permaneça consistente e bem formatada
 **Documento atualizado em:** 03 de janeiro de 2026
 **Versão:** 1.0 - Conclusão da Integração Completa
 
+
+````

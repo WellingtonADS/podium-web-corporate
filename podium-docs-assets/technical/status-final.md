@@ -44,7 +44,7 @@ e documentada**.
 
 ### 1️⃣ Iniciar Backend
 
-```bash
+````bash
 cd podium-backend-api
 python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
@@ -314,3 +314,4 @@ Todos os problemas identificados foram resolvidos:
 
 #### Versão: 1.0
 
+````

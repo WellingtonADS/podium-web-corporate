@@ -47,7 +47,7 @@ e testada.
 
 ### Frontend
 
-```bash
+````bash
 podium-web-corporate/
 ├── src/
 │   ├── types/
@@ -427,7 +427,6 @@ const loadData = async () => {
 ## 🎉 Conclusão
 
 A integração web-corporate × backend está **100% completa e pronta para produção**.
-
 ### Conquistas
 
 ✅ Código tipo-seguro (TypeScript)
@@ -447,3 +446,5 @@ A integração web-corporate × backend está **100% completa e pronta para prod
 
 #### Documentação: Completa
 
+
+````
