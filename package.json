@@ -1,37 +1,37 @@
 {
-  "name": "podium-monorepo",
-  "private": true,
+  "name": "web-corporate",
   "version": "0.1.0",
-  "packageManager": "yarn@1.22.19",
-  "workspaces": [
-    "backend-api",
-    "mobile-driver",
-    "web-admin",
-    "web-corporate",
-    "web-site",
-    "shared"
-  ],
+  "private": true,
+  "type": "module",
   "scripts": {
-    "postinstall": "echo 'Skipping postinstall on non-Windows'",
-    "install:api": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"if (Test-Path backend-api/requirements.txt) { Write-Output 'Skipping Python auto-install to avoid env issues' }\"",
-    "dev:web": "yarn workspace web-admin dev",
-    "dev:mobile": "yarn workspace mobile-driver start",
-    "dev:corporate": "yarn workspace web-corporate dev",
-    "dev:api": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"Push-Location backend-api; if (Test-Path venv/Scripts/Activate.ps1) { . venv/Scripts/Activate.ps1 }; python -m app.main\"",
-    "dev": "concurrently -n web,api,mobile -c blue,green,magenta \"yarn run dev:web\" \"yarn run dev:api\" \"yarn run dev:mobile\"",
-    "build:web": "yarn workspace web-admin build",
-    "typecheck:mobile": "yarn workspace mobile-driver typecheck || tsc -p mobile-driver/tsconfig.json --noEmit",
-    "lint:web": "yarn workspace web-admin lint || echo \"lint web-admin skipped\"",
-    "lint:mobile": "yarn workspace mobile-driver lint || echo \"lint mobile-driver skipped\""
-    ,
-    "sync:pull:backend-api": "git subtree pull --prefix=backend-api backend-api release/v0.1.0 --squash",
-    "sync:pull:web-admin": "git subtree pull --prefix=web-admin web-admin release/v0.1.0 --squash",
-    "sync:pull:mobile-driver": "git subtree pull --prefix=mobile-driver mobile-driver release/v1.0.0 --squash",
-    "sync:push:backend-api": "git subtree push --prefix=backend-api backend-api release/v0.1.0",
-    "sync:push:web-admin": "git subtree push --prefix=web-admin web-admin release/v0.1.0",
-    "sync:push:mobile-driver": "git subtree push --prefix=mobile-driver mobile-driver release/v1.0.0"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "format:check": "prettier --check src/**/*.{ts,tsx,json,css,scss,md}"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.8.2",
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@tanstack/react-query": "^5.45.0",
+    "axios": "^1.13.2",
+    "framer-motion": "^10.18.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.10.1"
   },
   "devDependencies": {
-    "concurrently": "^9.0.0"
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "eslint": "^8.45.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.3",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.2",
+    "vite": "^5.4.0"
   }
 }
