@@ -4,7 +4,17 @@ Esta pasta contém toda a documentação técnica e de suporte do monorepo Podiu
 
 ## Estrutura de Arquivos
 
-### 📚 Documentos de Referência Rápida
+### � Backend API
+
+| Arquivo                                                              | Descrição                                    |
+| -------------------------------------------------------------------- | -------------------------------------------- |
+| [backend/API_IMPROVEMENT_PLAN.md](backend/API_IMPROVEMENT_PLAN.md) | Plano de melhorias da API |
+| [backend/DEPLOYMENT_GUIDE.md](backend/DEPLOYMENT_GUIDE.md) | Guia de deployment do backend |
+| [backend/EXECUTIVE_SUMMARY.md](backend/EXECUTIVE_SUMMARY.md) | Resumo executivo (EN) |
+| [backend/RESUMO_EXECUTIVO_PT_BR.md](backend/RESUMO_EXECUTIVO_PT_BR.md) | Resumo executivo (PT-BR) |
+| [backend/](backend/) | Documentação técnica completa do backend |
+
+### �📚 Documentos de Referência Rápida
 
 | Arquivo                                                                | Descrição                                 |
 | ---------------------------------------------------------------------- | ----------------------------------------- |
