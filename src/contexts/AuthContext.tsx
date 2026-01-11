@@ -1,10 +1,4 @@
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, ReactNode, useEffect, useState } from "react";
 import api, { User } from "../services/api";
 
 interface AuthContextData {
@@ -25,7 +19,10 @@ interface AuthProviderProps {
 }
 
 // Criação do Contexto
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+// eslint-disable-next-line react-refresh/only-export-components
+export const AuthContext = createContext<AuthContextData>(
+  {} as AuthContextData
+);
 
 export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
@@ -97,9 +94,4 @@ export function AuthProvider({ children }: AuthProviderProps) {
       {children}
     </AuthContext.Provider>
   );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  return context;
 }

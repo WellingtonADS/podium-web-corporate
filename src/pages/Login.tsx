@@ -11,7 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../hooks/useAuth";
 
 export const Login: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -34,7 +34,7 @@ export const Login: React.FC = () => {
     try {
       await signIn({ email, password });
       navigate("/dashboard");
-    } catch (error) {
+    } catch {
       toast({
         title: "Erro no login.",
         description: "Verifique as suas credenciais.",

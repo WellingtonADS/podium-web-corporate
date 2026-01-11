@@ -2,7 +2,8 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 
 // Base da API configurável via env, com fallback para localhost
 const API_BASE =
-  (import.meta as any).env?.VITE_API_URL ?? "http://localhost:8000";
+  (import.meta as { env?: Record<string, unknown> }).env?.VITE_API_URL ??
+  "http://localhost:8000";
 const API_URL = `${API_BASE}/api/v1`;
 
 const api = axios.create({

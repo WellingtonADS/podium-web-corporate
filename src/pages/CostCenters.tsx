@@ -1,68 +1,75 @@
-import React, { useEffect, useState } from 'react';
 import {
-  Box, Text, SimpleGrid, Flex, Button,
-  useDisclosure, useToast, Spinner, Switch,
-} from '@chakra-ui/react';
-import { CostCenterCard, FormInput, FormModal } from '../components';
-import api, { CostCenter, CreateCostCenterData } from '../services/api';
+  Box,
+  Button,
+  Flex,
+  SimpleGrid,
+  Spinner,
+  Switch,
+  Text,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
+import { CostCenterCard, FormInput, FormModal } from "../components";
+import api, { CostCenter, CreateCostCenterData } from "../services/api";
 
 const CostCenters: React.FC = () => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  
+
   const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [editingCC, setEditingCC] = useState<CostCenter | null>(null);
 
   const [formData, setFormData] = useState<CreateCostCenterData>({
-    name: '',
-    code: '',
+    name: "",
+    code: "",
     budget_limit: 0,
-    active: true
+    active: true,
   });
 
   const fetchCostCenters = async () => {
     try {
       setLoading(true);
-      const response = await api.get<CostCenter[]>('/corporate/cost-centers');
+      const response = await api.get<CostCenter[]>("/corporate/cost-centers");
       setCostCenters(response.data);
     } catch (error) {
       console.error(error);
       // Mock data para desenvolvimento
       setCostCenters([
         {
-          id: '1',
-          name: 'Marketing',
-          code: 'MKT-001',
+          id: "1",
+          name: "Marketing",
+          code: "MKT-001",
           budget_limit: 10000,
           current_spent: 4500,
-          active: true
+          active: true,
         },
         {
-          id: '2',
-          name: 'Vendas',
-          code: 'VND-001',
+          id: "2",
+          name: "Vendas",
+          code: "VND-001",
           budget_limit: 15000,
           current_spent: 11200,
-          active: true
+          active: true,
         },
         {
-          id: '3',
-          name: 'TI',
-          code: 'TI-001',
+          id: "3",
+          name: "TI",
+          code: "TI-001",
           budget_limit: 8000,
           current_spent: 2800,
-          active: true
+          active: true,
         },
         {
-          id: '4',
-          name: 'Diretoria',
-          code: 'DIR-001',
+          id: "4",
+          name: "Diretoria",
+          code: "DIR-001",
           budget_limit: 50000,
           current_spent: 46500,
-          active: true
-        }
+          active: true,
+        },
       ]);
     } finally {
       setLoading(false);
@@ -80,11 +87,11 @@ const CostCenters: React.FC = () => {
         name: cc.name,
         code: cc.code,
         budget_limit: cc.budget_limit,
-        active: cc.active
+        active: cc.active,
       });
     } else {
       setEditingCC(null);
-      setFormData({ name: '', code: '', budget_limit: 0, active: true });
+      setFormData({ name: "", code: "", budget_limit: 0, active: true });
     }
     onOpen();
   };
@@ -92,31 +99,46 @@ const CostCenters: React.FC = () => {
   const handleSave = async () => {
     try {
       setIsSaving(true);
-      
+
       if (editingCC) {
         await api.put(`/corporate/cost-centers/${editingCC.id}`, formData);
         toast({
-          title: 'Centro de Custo atualizado!',
-          status: 'success',
+          title: "Centro de Custo atualizado!",
+          status: "success",
           duration: 3000,
         });
       } else {
-        await api.post('/corporate/cost-centers', formData);
+        await api.post("/corporate/cost-centers", formData);
         toast({
-          title: 'Centro de Custo criado!',
-          status: 'success',
+          title: "Centro de Custo criado!",
+          status: "success",
           duration: 3000,
         });
       }
 
       onClose();
-      setFormData({ name: '', code: '', budget_limit: 0, active: true });
+      setFormData({ name: "", code: "", budget_limit: 0, active: true });
+      fetchCostCenters();
+    } catch {
+      toast({
+        title: "Erro ao salvar centro de custo",
+        status: "error",
+        duration: 3000,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   return (
     <Box>
       {/* Título e Botão */}
       <Flex justify="space-between" align="center" mb={8}>
         <Text textStyle="h2" color="white">
-          Centros de <Text as="span" color="brand.600">Custo</Text>
+          Centros de{" "}
+          <Text as="span" color="brand.600">
+            Custo
+          </Text>
         </Text>
         <Button colorScheme="gold" size="sm" onClick={() => handleOpenModal()}>
           + Novo Centro de Custo
@@ -148,17 +170,17 @@ const CostCenters: React.FC = () => {
       <FormModal
         isOpen={isOpen}
         onClose={onClose}
-        title={editingCC ? 'Editar Centro de Custo' : 'Novo Centro de Custo'}
+        title={editingCC ? "Editar Centro de Custo" : "Novo Centro de Custo"}
         onSubmit={handleSave}
         isLoading={isSaving}
-        submitLabel={editingCC ? 'Atualizar' : 'Criar'}
+        submitLabel={editingCC ? "Atualizar" : "Criar"}
       >
         <FormInput
           label="Nome do Departamento"
           isRequired
           placeholder="Ex: Marketing"
           value={formData.name}
-          onChange={e => setFormData({...formData, name: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
         />
 
         <FormInput
@@ -166,7 +188,7 @@ const CostCenters: React.FC = () => {
           isRequired
           placeholder="Ex: MKT-001"
           value={formData.code}
-          onChange={e => setFormData({...formData, code: e.target.value})}
+          onChange={(e) => setFormData({ ...formData, code: e.target.value })}
         />
         <Text fontSize="xs" color="midnight.500" mb={4}>
           Código interno para conciliação com sistema financeiro
@@ -177,8 +199,13 @@ const CostCenters: React.FC = () => {
           type="number"
           isRequired
           placeholder="10000.00"
-          value={formData.budget_limit || ''}
-          onChange={e => setFormData({...formData, budget_limit: parseFloat(e.target.value) || 0})}
+          value={formData.budget_limit || ""}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              budget_limit: parseFloat(e.target.value) || 0,
+            })
+          }
         />
 
         <Flex align="center" gap={4}>
@@ -186,7 +213,9 @@ const CostCenters: React.FC = () => {
           <Switch
             colorScheme="green"
             isChecked={formData.active}
-            onChange={e => setFormData({...formData, active: e.target.checked})}
+            onChange={(e) =>
+              setFormData({ ...formData, active: e.target.checked })
+            }
           />
         </Flex>
       </FormModal>

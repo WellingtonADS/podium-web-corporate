@@ -1,21 +1,20 @@
-import React from "react";
 import {
-  Box,
-  Text,
-  SimpleGrid,
-  Spinner,
   Alert,
+  AlertDescription,
   AlertIcon,
   AlertTitle,
-  AlertDescription,
-  Flex,
   Badge,
+  Box,
+  Flex,
+  SimpleGrid,
+  Text,
 } from "@chakra-ui/react";
+import React from "react";
 import { StatCard } from "../components";
 import { useDashboard } from "../hooks/useDashboard";
 
 const Dashboard: React.FC = () => {
-  const { stats, loading, error } = useDashboard();
+  const { stats, error } = useDashboard();
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", {

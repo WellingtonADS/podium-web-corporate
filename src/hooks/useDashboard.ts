@@ -16,10 +16,11 @@ export const useDashboard = () => {
         );
         setStats(response.data);
         setError(null);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error("Erro ao carregar stats:", err);
         setError(
-          err.response?.data?.detail || "Erro ao conectar com o servidor"
+          (err as { response?: { data?: { detail?: string } } }).response?.data
+            ?.detail || "Erro ao conectar com o servidor"
         );
         // Dados mockados para desenvolvimento
         setStats({

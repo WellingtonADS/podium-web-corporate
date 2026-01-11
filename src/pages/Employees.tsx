@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
 import {
   Box,
-  Flex,
-  Text,
   Button,
-  Spinner,
-  useToast,
-  useDisclosure,
+  Flex,
   SimpleGrid,
+  Spinner,
+  Text,
+  useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
+import React, { useEffect, useState } from "react";
 import {
   EmployeesTable,
   FormInput,
-  FormSelect,
   FormModal,
+  FormSelect,
 } from "../components";
-import api, { User, CreateEmployeeData } from "../services/api";
+import api, { CreateEmployeeData, User } from "../services/api";
 
 const Employees: React.FC = () => {
   const toast = useToast();
@@ -92,7 +92,7 @@ const Employees: React.FC = () => {
         cost_center_id: undefined,
       });
       fetchEmployees();
-    } catch (error) {
+    } catch {
       toast({
         title: "Erro ao criar funcionário",
         description: "Verifique os dados e tente novamente.",
