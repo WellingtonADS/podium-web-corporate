@@ -1,14 +1,16 @@
 import {
+  Badge,
+  Box,
+  Button,
   Card,
   Heading,
-  Text,
-  Progress,
   HStack,
-  VStack,
-  Button,
+  Progress,
+  Text,
   useColorModeValue,
-  Box,
-  Badge,
+  VStack,
+  Wrap,
+  WrapItem,
 } from "@chakra-ui/react";
 
 interface CostCenterCardProps {
@@ -17,6 +19,12 @@ interface CostCenterCardProps {
   budget_limit: number;
   current_spent: number;
   active: boolean;
+  allowed_categories?: string[];
+  spending_limit_per_ride?: number;
+  business_hours?: {
+    start: string;
+    end: string;
+  };
   onEdit?: () => void;
   onDelete?: () => void;
 }
@@ -27,6 +35,9 @@ export const CostCenterCard = ({
   budget_limit,
   current_spent,
   active,
+  allowed_categories,
+  spending_limit_per_ride,
+  business_hours,
   onEdit,
   onDelete,
 }: CostCenterCardProps) => {
@@ -86,6 +97,45 @@ export const CostCenterCard = ({
             {percentage.toFixed(1)}% utilizado
           </Text>
         </Box>
+
+        {typeof spending_limit_per_ride === "number" && (
+          <Box>
+            <Text fontSize="sm" fontWeight="600">
+              Limite por corrida
+            </Text>
+            <Text fontSize="sm" color="midnight.600">
+              R$ {spending_limit_per_ride.toFixed(2)}
+            </Text>
+          </Box>
+        )}
+
+        {allowed_categories && allowed_categories.length > 0 && (
+          <Box>
+            <Text fontSize="sm" fontWeight="600" mb={1}>
+              Categorias Permitidas
+            </Text>
+            <Wrap spacing={2}>
+              {allowed_categories.map((cat) => (
+                <WrapItem key={cat}>
+                  <Badge colorScheme="purple" variant="subtle">
+                    {cat}
+                  </Badge>
+                </WrapItem>
+              ))}
+            </Wrap>
+          </Box>
+        )}
+
+        {business_hours?.start && business_hours?.end && (
+          <Box>
+            <Text fontSize="sm" fontWeight="600">
+              Horário Comercial
+            </Text>
+            <Text fontSize="sm" color="midnight.600">
+              {business_hours.start} - {business_hours.end}
+            </Text>
+          </Box>
+        )}
 
         <HStack spacing={2}>
           {onEdit && (

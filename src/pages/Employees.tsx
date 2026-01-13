@@ -2,28 +2,62 @@ import {
   Box,
   Button,
   Flex,
+  HStack,
+  Input,
+  List,
+  ListItem,
+  Progress,
   SimpleGrid,
   Spinner,
   Text,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   EmployeesTable,
   FormInput,
   FormModal,
   FormSelect,
 } from "../components";
+import { EmployeeRow } from "../components/Tables/EmployeesTable";
 import api, { CreateEmployeeData, User } from "../services/api";
+import {
+  importEmployeesSequential,
+  ImportResult,
+  ParsedEmployeeRow,
+  parseEmployeesCsv,
+} from "../services/onboarding";
 
 const Employees: React.FC = () => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isImportOpen,
+    onOpen: onOpenImport,
+    onClose: onCloseImport,
+  } = useDisclosure();
 
-  const [employees, setEmployees] = useState<User[]>([]);
+  const [employees, setEmployees] = useState<EmployeeRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [importRows, setImportRows] = useState<ParsedEmployeeRow[]>([]);
+  const [parseIssues, setParseIssues] = useState<
+    { line: number; message: string }[]
+  >([]);
+  const [importResults, setImportResults] = useState<ImportResult[]>([]);
+  const [importProgress, setImportProgress] = useState<{
+    completed: number;
+    total: number;
+  }>({
+    completed: 0,
+    total: 0,
+  });
+  const [isImporting, setIsImporting] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
+  const [importFileName, setImportFileName] = useState<string>("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const [formData, setFormData] = useState<CreateEmployeeData>({
     full_name: "",
@@ -34,17 +68,27 @@ const Employees: React.FC = () => {
     cost_center_id: undefined,
   });
 
+  const normalizeEmployee = (user: User): EmployeeRow => ({
+    id: user.id,
+    full_name: user.full_name,
+    email: user.email,
+    department: user.employee_profile?.department || "",
+    cost_center_id:
+      user.employee_profile?.cost_center_id ?? user.cost_center_id ?? undefined,
+    is_active: user.is_active,
+  });
+
   const fetchEmployees = async () => {
     try {
       setLoading(true);
       const response = await api.get<User[]>("/users/", {
         params: { role: "employee" },
       });
-      setEmployees(response.data);
+      setEmployees(response.data.map(normalizeEmployee));
     } catch (error) {
       console.error(error);
       // Mock data para desenvolvimento
-      setEmployees([
+      const fallback: User[] = [
         {
           id: 1,
           email: "joao@empresa.com",
@@ -61,7 +105,8 @@ const Employees: React.FC = () => {
           is_active: true,
           employee_profile: { department: "Vendas", cost_center_id: 2 },
         },
-      ]);
+      ];
+      setEmployees(fallback.map(normalizeEmployee));
     } finally {
       setLoading(false);
     }
@@ -69,6 +114,7 @@ const Employees: React.FC = () => {
 
   useEffect(() => {
     fetchEmployees();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCreateEmployee = async () => {
@@ -104,6 +150,108 @@ const Employees: React.FC = () => {
     }
   };
 
+  const resetImportState = () => {
+    setImportRows([]);
+    setParseIssues([]);
+    setImportResults([]);
+    setImportProgress({ completed: 0, total: 0 });
+    setImportFileName("");
+    setIsParsing(false);
+    setIsImporting(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleCloseImport = () => {
+    resetImportState();
+    onCloseImport();
+  };
+
+  const handleFileSelect = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setImportFileName(file.name);
+    setIsParsing(true);
+    setParseIssues([]);
+    setImportResults([]);
+    setImportRows([]);
+    setImportProgress({ completed: 0, total: 0 });
+
+    try {
+      const { rows, errors } = await parseEmployeesCsv(file);
+      setImportRows(rows);
+      setImportProgress({ completed: 0, total: rows.length });
+      setParseIssues(
+        errors.map((err) => ({ line: err.line, message: err.message }))
+      );
+
+      if (errors.length > 0) {
+        toast({
+          title: "Erros encontrados no CSV",
+          description: "Revise as linhas indicadas antes de importar.",
+          status: "warning",
+          duration: 4000,
+        });
+      }
+    } catch {
+      toast({
+        title: "Falha ao ler CSV",
+        status: "error",
+        duration: 4000,
+      });
+    } finally {
+      setIsParsing(false);
+    }
+  };
+
+  const handleImport = async () => {
+    if (!importRows.length) {
+      toast({
+        title: "Selecione um arquivo CSV válido",
+        status: "warning",
+        duration: 3000,
+      });
+      return;
+    }
+
+    setIsImporting(true);
+    setImportResults([]);
+
+    try {
+      const results = await importEmployeesSequential(
+        importRows,
+        (completed, total) => {
+          setImportProgress({ completed, total });
+        }
+      );
+
+      setImportResults(results);
+
+      const successCount = results.filter((r) => r.success).length;
+      const errorCount = results.length - successCount;
+
+      toast({
+        title: `Importação concluída: ${successCount} sucesso(s), ${errorCount} erro(s)`,
+        status: errorCount > 0 ? "warning" : "success",
+        duration: 5000,
+      });
+
+      if (successCount > 0) {
+        fetchEmployees();
+      }
+    } catch {
+      toast({
+        title: "Falha ao importar colaboradores",
+        status: "error",
+        duration: 4000,
+      });
+    } finally {
+      setIsImporting(false);
+    }
+  };
+
   return (
     <Box>
       {/* Título e Botão */}
@@ -114,9 +262,19 @@ const Employees: React.FC = () => {
             Funcionários
           </Text>
         </Text>
-        <Button colorScheme="gold" size="sm" onClick={onOpen}>
-          + Novo Funcionário
-        </Button>
+        <HStack spacing={3}>
+          <Button
+            variant="outline"
+            colorScheme="gold"
+            size="sm"
+            onClick={onOpenImport}
+          >
+            Importar CSV
+          </Button>
+          <Button colorScheme="gold" size="sm" onClick={onOpen}>
+            + Novo Funcionário
+          </Button>
+        </HStack>
       </Flex>
 
       {/* Tabela de Listagem */}
@@ -127,6 +285,102 @@ const Employees: React.FC = () => {
       ) : (
         <EmployeesTable employees={employees} />
       )}
+
+      <FormModal
+        isOpen={isImportOpen}
+        onClose={handleCloseImport}
+        title="Importar colaboradores via CSV"
+        onSubmit={handleImport}
+        isLoading={isImporting}
+        submitLabel={isImporting ? "Importando..." : "Importar"}
+      >
+        <Text fontSize="sm" color="midnight.600" mb={3}>
+          Campos obrigatórios: Nome, Email, Centro de Custo (ID). Delimitador
+          "," ou ";". Máximo recomendado: 500 linhas.
+        </Text>
+        <Input
+          type="file"
+          accept=".csv"
+          onChange={handleFileSelect}
+          ref={fileInputRef}
+          mb={3}
+          cursor="pointer"
+          disabled={isParsing || isImporting}
+        />
+        {importFileName && (
+          <Text fontSize="sm" fontWeight="600" mb={2}>
+            Arquivo: {importFileName}
+          </Text>
+        )}
+
+        {isParsing && (
+          <Text fontSize="sm" color="midnight.600" mb={2}>
+            Lendo e validando arquivo...
+          </Text>
+        )}
+
+        {importProgress.total > 0 && (
+          <Box mb={3}>
+            <Text fontSize="sm" mb={1}>
+              Linhas prontas: {importRows.length}
+            </Text>
+            <Progress
+              value={
+                importProgress.total === 0
+                  ? 0
+                  : (importProgress.completed / importProgress.total) * 100
+              }
+              size="sm"
+              colorScheme="gold"
+              isAnimated={isImporting}
+            />
+            {isImporting && (
+              <Text fontSize="xs" color="midnight.600" mt={1}>
+                {importProgress.completed}/{importProgress.total} processadas
+              </Text>
+            )}
+          </Box>
+        )}
+
+        {parseIssues.length > 0 && (
+          <Box mb={3}>
+            <Text fontSize="sm" fontWeight="600" mb={1}>
+              Erros de validação ({parseIssues.length})
+            </Text>
+            <List spacing={1} maxH="120px" overflowY="auto">
+              {parseIssues.map((err) => (
+                <ListItem
+                  key={`${err.line}-${err.message}`}
+                  fontSize="sm"
+                  color="red.500"
+                >
+                  Linha {err.line}: {err.message}
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        )}
+
+        {importResults.length > 0 && (
+          <Box mt={2} maxH="160px" overflowY="auto">
+            <Text fontSize="sm" fontWeight="600" mb={1}>
+              Resultado da importação
+            </Text>
+            <List spacing={1}>
+              {importResults.map((result) => (
+                <ListItem
+                  key={`${result.line}-${result.email}`}
+                  fontSize="sm"
+                  color={result.success ? "green.600" : "red.500"}
+                >
+                  Linha {result.line} — {result.email}:{" "}
+                  {result.success ? "Sucesso" : result.message || "Erro"}
+                </ListItem>
+              ))}
+            </List>
+          </Box>
+        )}
+      </FormModal>
 
       {/* Modal de Cadastro */}
       <FormModal

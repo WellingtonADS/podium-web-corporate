@@ -2,7 +2,8 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 
 // Base da API configurável via env, com fallback para localhost
 const API_BASE =
-  (import.meta as any).env?.VITE_API_URL ?? "http://localhost:8000";
+  (import.meta as Record<string, unknown>).env?.VITE_API_URL ??
+  "http://localhost:8000";
 const API_URL = `${API_BASE}/api/v1`;
 
 const api = axios.create({
@@ -15,7 +16,8 @@ export interface User {
   full_name: string;
   role: "admin" | "driver" | "employee";
   is_active: boolean;
-  company_id?: number;
+  company_id: number;
+  cost_center_id?: number;
   driver_profile?: {
     vehicle_model: string;
     vehicle_plate: string;
@@ -70,6 +72,12 @@ export interface CostCenter {
   current_spent: number;
   active: boolean;
   company_id?: number;
+  allowed_categories: string[];
+  spending_limit_per_ride: number;
+  business_hours?: {
+    start: string; // HH:mm
+    end: string; // HH:mm
+  };
 }
 
 export interface CreateCostCenterData {
@@ -77,6 +85,34 @@ export interface CreateCostCenterData {
   code: string;
   budget_limit: number;
   active?: boolean;
+  allowed_categories: string[];
+  spending_limit_per_ride: number;
+  business_hours?: {
+    start: string;
+    end: string;
+  };
+}
+
+export interface RideRecord {
+  id: number;
+  employee_id: number;
+  employee_name: string;
+  cost_center_id: number;
+  cost_center_name: string;
+  ride_date: string; // ISO datetime
+  distance_km: number;
+  amount: number; // BRL
+  category: string;
+  policy_compliant: boolean;
+  violation_reason?: string;
+}
+
+export interface BillingPeriod {
+  period: string; // "2025-12"
+  rides_count: number;
+  total_amount: number;
+  status: "pending" | "paid" | "disputed";
+  rides: RideRecord[];
 }
 
 // Interceptor tipado
@@ -89,5 +125,10 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
 
   return config;
 });
+
+export const fetchCurrentUser = async (): Promise<User> => {
+  const response = await api.get<User>("/users/me");
+  return response.data;
+};
 
 export default api;

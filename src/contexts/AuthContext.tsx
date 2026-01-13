@@ -5,7 +5,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import api, { User } from "../services/api";
+import api, { fetchCurrentUser, User } from "../services/api";
+
+const TOKEN_STORAGE_KEY = "@Podium:token";
+const USER_STORAGE_KEY = "@Podium:user";
 
 interface AuthContextData {
   signed: boolean;
@@ -34,20 +37,49 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const setAuthHeader = (token: string) => {
+    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+  };
+
+  const persistUser = (profile: User) => {
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile));
+    setUser(profile);
+  };
+
+  const fetchAndPersistProfile = async () => {
+    const profile = await fetchCurrentUser();
+    persistUser(profile);
+    return profile;
+  };
+
   useEffect(() => {
     const loadStorageData = async () => {
-      const storagedUser = localStorage.getItem("@Podium:user");
-      const storagedToken = localStorage.getItem("@Podium:token");
+      const storagedUser = localStorage.getItem(USER_STORAGE_KEY);
+      const storagedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
 
-      if (storagedUser && storagedToken) {
-        setUser(JSON.parse(storagedUser));
-        api.defaults.headers.common["Authorization"] =
-          `Bearer ${storagedToken}`;
+      if (!storagedToken) {
+        setLoading(false);
+        return;
       }
-      setLoading(false);
+
+      setAuthHeader(storagedToken);
+
+      if (storagedUser) {
+        setUser(JSON.parse(storagedUser));
+      }
+      try {
+        const profile = await fetchCurrentUser();
+        persistUser(profile);
+      } catch (error) {
+        console.error("Erro ao sincronizar perfil do usuário:", error);
+        signOut();
+      } finally {
+        setLoading(false);
+      }
     };
 
     loadStorageData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function signIn({ email, password }: LoginCredentials) {
@@ -64,41 +96,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const { access_token } = response.data;
 
-      // Define o token no header ANTES de outras requisições
-      api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
-      localStorage.setItem("@Podium:token", access_token);
+      setAuthHeader(access_token);
+      localStorage.setItem(TOKEN_STORAGE_KEY, access_token);
 
-      // Busca o perfil real do usuário via API
-      try {
-        const userResponse = await api.get<User>("/users/me");
-        const userData = userResponse.data;
-
-        // Persiste o perfil completo com company_id real
-        localStorage.setItem("@Podium:user", JSON.stringify(userData));
-        setUser(userData);
-      } catch (profileError) {
-        console.error("Erro ao buscar perfil do usuário:", profileError);
-        // Fallback: cria objeto básico se a chamada /users/me falhar
-        const fallbackUser: User = {
-          id: 1,
-          email: email,
-          full_name: email.split("@")[0],
-          role: "employee",
-          is_active: true,
-        };
-        localStorage.setItem("@Podium:user", JSON.stringify(fallbackUser));
-        setUser(fallbackUser);
-        throw profileError;
-      }
+      await fetchAndPersistProfile();
     } catch (error) {
       console.error("Erro no Login:", error);
+      signOut();
       throw error;
     }
   }
 
   function signOut() {
-    localStorage.removeItem("@Podium:token");
-    localStorage.removeItem("@Podium:user");
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.removeItem(USER_STORAGE_KEY);
     api.defaults.headers.common["Authorization"] = undefined;
     delete api.defaults.headers.common["Authorization"];
     setUser(null);

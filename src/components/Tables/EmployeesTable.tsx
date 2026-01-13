@@ -1,20 +1,20 @@
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Card,
   Badge,
-  Button,
-  HStack,
-  useColorModeValue,
   Box,
+  Button,
+  Card,
+  HStack,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-interface Employee {
+export interface EmployeeRow {
   id: number;
   full_name: string;
   email: string;
@@ -24,10 +24,10 @@ interface Employee {
 }
 
 interface EmployeesTableProps {
-  employees: Employee[];
-  onEdit?: (employee: Employee) => void;
+  employees: EmployeeRow[];
+  onEdit?: (employee: EmployeeRow) => void;
   onDelete?: (id: number) => void;
-  actions?: (employee: Employee) => ReactNode;
+  actions?: (employee: EmployeeRow) => ReactNode;
 }
 
 export const EmployeesTable = ({

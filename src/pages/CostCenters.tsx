@@ -1,9 +1,13 @@
 import {
   Box,
   Button,
+  Checkbox,
+  CheckboxGroup,
+  Divider,
   Flex,
   SimpleGrid,
   Spinner,
+  Stack,
   Switch,
   Text,
   useDisclosure,
@@ -12,6 +16,9 @@ import {
 import React, { useEffect, useState } from "react";
 import { CostCenterCard, FormInput, FormModal } from "../components";
 import api, { CostCenter, CreateCostCenterData } from "../services/api";
+import { validateCostCenterPolicy } from "../utils";
+
+const rideCategories = ["UberX", "Black", "Comfort", "Bag", "Van"];
 
 const CostCenters: React.FC = () => {
   const toast = useToast();
@@ -27,6 +34,12 @@ const CostCenters: React.FC = () => {
     code: "",
     budget_limit: 0,
     active: true,
+    allowed_categories: [],
+    spending_limit_per_ride: 0,
+    business_hours: {
+      start: "08:00",
+      end: "18:00",
+    },
   });
 
   const fetchCostCenters = async () => {
@@ -45,6 +58,9 @@ const CostCenters: React.FC = () => {
           budget_limit: 10000,
           current_spent: 4500,
           active: true,
+          allowed_categories: ["UberX", "Black"],
+          spending_limit_per_ride: 150,
+          business_hours: { start: "08:00", end: "18:00" },
         },
         {
           id: "2",
@@ -53,6 +69,9 @@ const CostCenters: React.FC = () => {
           budget_limit: 15000,
           current_spent: 11200,
           active: true,
+          allowed_categories: ["UberX", "Comfort"],
+          spending_limit_per_ride: 120,
+          business_hours: { start: "07:00", end: "20:00" },
         },
         {
           id: "3",
@@ -61,6 +80,9 @@ const CostCenters: React.FC = () => {
           budget_limit: 8000,
           current_spent: 2800,
           active: true,
+          allowed_categories: ["UberX"],
+          spending_limit_per_ride: 100,
+          business_hours: { start: "08:00", end: "22:00" },
         },
         {
           id: "4",
@@ -69,6 +91,9 @@ const CostCenters: React.FC = () => {
           budget_limit: 50000,
           current_spent: 46500,
           active: true,
+          allowed_categories: ["Black", "Van"],
+          spending_limit_per_ride: 500,
+          business_hours: { start: "06:00", end: "23:00" },
         },
       ]);
     } finally {
@@ -88,10 +113,24 @@ const CostCenters: React.FC = () => {
         code: cc.code,
         budget_limit: cc.budget_limit,
         active: cc.active,
+        allowed_categories: cc.allowed_categories ?? [],
+        spending_limit_per_ride: cc.spending_limit_per_ride ?? 0,
+        business_hours: cc.business_hours || { start: "08:00", end: "18:00" },
       });
     } else {
       setEditingCC(null);
-      setFormData({ name: "", code: "", budget_limit: 0, active: true });
+      setFormData({
+        name: "",
+        code: "",
+        budget_limit: 0,
+        active: true,
+        allowed_categories: [],
+        spending_limit_per_ride: 0,
+        business_hours: {
+          start: "08:00",
+          end: "18:00",
+        },
+      });
     }
     onOpen();
   };
@@ -99,6 +138,39 @@ const CostCenters: React.FC = () => {
   const handleSave = async () => {
     try {
       setIsSaving(true);
+
+      if (!formData.name || !formData.code) {
+        toast({
+          title: "Preencha nome e código do centro de custo.",
+          status: "warning",
+          duration: 3000,
+        });
+        return;
+      }
+
+      if (!formData.budget_limit || formData.budget_limit <= 0) {
+        toast({
+          title: "Informe um orçamento mensal maior que zero.",
+          status: "warning",
+          duration: 3000,
+        });
+        return;
+      }
+
+      const policyValidation = validateCostCenterPolicy({
+        allowed_categories: formData.allowed_categories,
+        spending_limit_per_ride: formData.spending_limit_per_ride,
+        business_hours: formData.business_hours,
+      });
+
+      if (!policyValidation.valid) {
+        toast({
+          title: policyValidation.message,
+          status: "warning",
+          duration: 3500,
+        });
+        return;
+      }
 
       if (editingCC) {
         await api.put(`/corporate/cost-centers/${editingCC.id}`, formData);
@@ -117,7 +189,18 @@ const CostCenters: React.FC = () => {
       }
 
       onClose();
-      setFormData({ name: "", code: "", budget_limit: 0, active: true });
+      setFormData({
+        name: "",
+        code: "",
+        budget_limit: 0,
+        active: true,
+        allowed_categories: [],
+        spending_limit_per_ride: 0,
+        business_hours: {
+          start: "08:00",
+          end: "18:00",
+        },
+      });
       fetchCostCenters();
     } catch {
       toast({
@@ -160,6 +243,9 @@ const CostCenters: React.FC = () => {
               budget_limit={cc.budget_limit}
               current_spent={cc.current_spent}
               active={cc.active}
+              allowed_categories={cc.allowed_categories}
+              spending_limit_per_ride={cc.spending_limit_per_ride}
+              business_hours={cc.business_hours}
               onEdit={() => handleOpenModal(cc)}
             />
           ))}
@@ -207,6 +293,86 @@ const CostCenters: React.FC = () => {
             })
           }
         />
+
+        <FormInput
+          label="Limite por Corrida (R$)"
+          type="number"
+          isRequired
+          placeholder="150.00"
+          value={formData.spending_limit_per_ride || ""}
+          onChange={(e) =>
+            setFormData({
+              ...formData,
+              spending_limit_per_ride: parseFloat(e.target.value) || 0,
+            })
+          }
+        />
+
+        <Box mb={4}>
+          <Text fontWeight="600" mb={2}>
+            Categorias Permitidas
+          </Text>
+          <CheckboxGroup
+            value={formData.allowed_categories}
+            onChange={(value) =>
+              setFormData({
+                ...formData,
+                allowed_categories: value as string[],
+              })
+            }
+          >
+            <Stack spacing={2} direction={{ base: "column", md: "row" }}>
+              {rideCategories.map((category) => (
+                <Checkbox key={category} value={category}>
+                  {category}
+                </Checkbox>
+              ))}
+            </Stack>
+          </CheckboxGroup>
+          <Text fontSize="xs" color="midnight.500" mt={1}>
+            Selecione quais categorias de veículo podem ser usadas por este
+            centro de custo.
+          </Text>
+        </Box>
+
+        <Divider my={4} />
+
+        <Text fontWeight="600" mb={2}>
+          Horário Comercial Permitido
+        </Text>
+        <Flex gap={4} mb={4} direction={{ base: "column", md: "row" }}>
+          <FormInput
+            label="Início"
+            type="time"
+            value={formData.business_hours?.start || ""}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                business_hours: {
+                  ...(formData.business_hours || { end: "" }),
+                  start: e.target.value,
+                },
+              })
+            }
+          />
+          <FormInput
+            label="Fim"
+            type="time"
+            value={formData.business_hours?.end || ""}
+            onChange={(e) =>
+              setFormData({
+                ...formData,
+                business_hours: {
+                  ...(formData.business_hours || { start: "" }),
+                  end: e.target.value,
+                },
+              })
+            }
+          />
+        </Flex>
+        <Text fontSize="xs" color="midnight.500" mb={4}>
+          Viagens fora desse horário serão bloqueadas pela política corporativa.
+        </Text>
 
         <Flex align="center" gap={4}>
           <Text fontWeight="600">Centro de Custo Ativo</Text>
