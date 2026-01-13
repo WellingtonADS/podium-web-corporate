@@ -6,8 +6,22 @@ const API_BASE =
   "http://localhost:8000";
 const API_URL = `${API_BASE}/api/v1`;
 
+// Variável para injetar LoadingContext (evita circular dependency)
+let loadingContext: {
+  startLoading: () => void;
+  stopLoading: () => void;
+} | null = null;
+
+export const setLoadingContext = (context: {
+  startLoading: () => void;
+  stopLoading: () => void;
+}) => {
+  loadingContext = context;
+};
+
 const api = axios.create({
   baseURL: API_URL,
+  timeout: 10000, // 10 segundos
 });
 
 export interface User {
@@ -116,20 +130,33 @@ export interface BillingPeriod {
 }
 
 // Interceptor tipado
-api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
-  const token = localStorage.getItem("@Podium:token");
+api.interceptors.request.use(
+  async (config: InternalAxiosRequestConfig) => {
+    loadingContext?.startLoading();
 
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
+    const token = localStorage.getItem("@Podium:token");
+
+    if (token && config.headers) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    loadingContext?.stopLoading();
+    return Promise.reject(error);
   }
-
-  return config;
-});
+);
 
 // Interceptor de resposta para tratamento de erro centralizado
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    loadingContext?.stopLoading();
+    return response;
+  },
   (error: unknown) => {
+    loadingContext?.stopLoading();
+
     const axiosError = error as Record<string, unknown>;
     const status = axiosError?.response?.status;
 

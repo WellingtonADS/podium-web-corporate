@@ -37,10 +37,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const setAuthHeader = (token: string) => {
-    api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-  };
-
   const persistUser = (profile: User) => {
     localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(profile));
     setUser(profile);
@@ -61,8 +57,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         setLoading(false);
         return;
       }
-
-      setAuthHeader(storagedToken);
 
       if (storagedUser) {
         setUser(JSON.parse(storagedUser));
@@ -95,7 +89,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       const { access_token } = response.data;
 
-      setAuthHeader(access_token);
       localStorage.setItem(TOKEN_STORAGE_KEY, access_token);
 
       await fetchAndPersistProfile();
@@ -109,8 +102,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
   function signOut() {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem(USER_STORAGE_KEY);
-    api.defaults.headers.common["Authorization"] = undefined;
-    delete api.defaults.headers.common["Authorization"];
     setUser(null);
   }
 
