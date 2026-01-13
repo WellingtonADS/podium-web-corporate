@@ -1,46 +1,43 @@
 import {
   FormControl,
-  FormLabel,
-  Input,
-  InputGroup,
-  InputLeftElement,
   FormErrorMessage,
+  FormLabel,
+  Select,
+  SelectProps,
   useColorModeValue,
-  InputProps,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
-interface FormInputProps extends InputProps {
+interface FormSelectProps extends SelectProps {
   label?: string;
   error?: string;
-  leftIcon?: ReactNode;
   isRequired?: boolean;
+  children: ReactNode;
 }
 
-export const FormInput = ({
+export const FormSelect = ({
   label,
   error,
-  leftIcon,
   isRequired = false,
+  children,
   ...props
-}: FormInputProps) => {
+}: FormSelectProps) => {
   const borderColor = useColorModeValue("midnight.200", "midnight.600");
 
   return (
     <FormControl isInvalid={!!error} isRequired={isRequired} mb={4}>
       {label && <FormLabel fontWeight="600">{label}</FormLabel>}
-      <InputGroup>
-        {leftIcon && <InputLeftElement>{leftIcon}</InputLeftElement>}
-        <Input
-          variant="outline"
-          borderColor={borderColor}
-          _focus={{
-            borderColor: "gold.600",
-            boxShadow: "0 0 0 1px #D4AF37",
-          }}
-          {...props}
-        />
-      </InputGroup>
+      <Select
+        variant="outline"
+        borderColor={borderColor}
+        _focus={{
+          borderColor: "gold.600",
+          boxShadow: "0 0 0 1px #D4AF37",
+        }}
+        {...props}
+      >
+        {children}
+      </Select>
       {error && <FormErrorMessage>{error}</FormErrorMessage>}
     </FormControl>
   );

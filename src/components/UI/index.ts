@@ -1,2 +1,3 @@
-export { FormInput, FormSelect } from "./FormInput";
+export { FormInput } from "./FormInput";
 export { FormModal } from "./FormModal";
+export { FormSelect } from "./FormSelect";

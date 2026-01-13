@@ -1,4 +1,10 @@
-import { createContext, ReactNode, useEffect, useState } from "react";
+import {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import api, { User } from "../services/api";
 
 interface AuthContextData {
@@ -62,17 +68,28 @@ export function AuthProvider({ children }: AuthProviderProps) {
       api.defaults.headers.common["Authorization"] = `Bearer ${access_token}`;
       localStorage.setItem("@Podium:token", access_token);
 
-      // Cria objeto de usuário com dados básicos (role=employee para portal corporativo)
-      const userData: User = {
-        id: 1,
-        email: email,
-        full_name: email.split("@")[0],
-        role: "employee",
-        is_active: true,
-      };
+      // Busca o perfil real do usuário via API
+      try {
+        const userResponse = await api.get<User>("/users/me");
+        const userData = userResponse.data;
 
-      localStorage.setItem("@Podium:user", JSON.stringify(userData));
-      setUser(userData);
+        // Persiste o perfil completo com company_id real
+        localStorage.setItem("@Podium:user", JSON.stringify(userData));
+        setUser(userData);
+      } catch (profileError) {
+        console.error("Erro ao buscar perfil do usuário:", profileError);
+        // Fallback: cria objeto básico se a chamada /users/me falhar
+        const fallbackUser: User = {
+          id: 1,
+          email: email,
+          full_name: email.split("@")[0],
+          role: "employee",
+          is_active: true,
+        };
+        localStorage.setItem("@Podium:user", JSON.stringify(fallbackUser));
+        setUser(fallbackUser);
+        throw profileError;
+      }
     } catch (error) {
       console.error("Erro no Login:", error);
       throw error;
@@ -94,4 +111,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
 }

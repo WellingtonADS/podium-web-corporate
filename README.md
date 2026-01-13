@@ -1,6 +1,6 @@
 # Podium Web Corporate
 
-Portal B2B para corporações gerenciarem funcionários, centros de custo e faturamento no ecossistema Podium.
+Portal B2B para corporações gerenciarem e solictarem corridas ou agendar transporte para funcionários, criar e gerenciar funcionarios atribuindo cargos, criar e gerar centros de custo e seus relatório, relatório de fautamento faturamento no ecossistema Podium.
 
 ## 🚀 Stack Tecnológica
 
