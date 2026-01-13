@@ -12,12 +12,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          'chakra-ui': ['@chakra-ui/react', '@emotion/react', '@emotion/styled'],
-          'vendor': ['react', 'react-dom', 'react-router-dom'],
-          'http': ['axios']
-        }
-      }
+          "chakra-ui": [
+            "@chakra-ui/react",
+            "@emotion/react",
+            "@emotion/styled",
+          ],
+          vendor: ["react", "react-dom", "react-router-dom"],
+          http: ["axios"],
+        },
+      },
     },
-    chunkSizeWarningLimit: 1000
-  }
+    chunkSizeWarningLimit: 1000,
+  },
 });
