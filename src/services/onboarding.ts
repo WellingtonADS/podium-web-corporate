@@ -1,4 +1,4 @@
-import api, { CreateEmployeeData } from "./api";
+import { CreateEmployeeData, createEmployee } from "./api";
 
 export interface ParsedEmployeeRow {
   line: number;
@@ -157,17 +157,12 @@ export const importEmployeesSequential = async (
         password: buildPassword(),
       };
 
-      await api.post("/corporate/employees", payload);
+      await createEmployee(payload);
 
       results.push({ line: row.line, email: row.email, success: true });
     } catch (error: unknown) {
-      const message =
-        (
-          error as Record<
-            string,
-            Record<string, Record<string, unknown>> | undefined
-          >
-        )?.response?.data?.detail || "Falha ao importar";
+      const errorObj = error as Record<string, unknown>;
+      const message = (errorObj?.message as string) || "Falha ao importar";
       results.push({
         line: row.line,
         email: row.email,

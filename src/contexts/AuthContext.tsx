@@ -79,7 +79,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     };
 
     loadStorageData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function signIn({ email, password }: LoginCredentials) {
@@ -124,6 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   );
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {

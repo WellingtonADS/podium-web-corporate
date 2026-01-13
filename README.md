@@ -40,7 +40,7 @@ yarn install
 # Servidor de desenvolvimento (localhost:5175)
 yarn dev
 
-# Verificação de lint
+# Verificação de lint com relatórios detalhados
 yarn lint
 
 # Verificação de formatação
@@ -49,12 +49,18 @@ yarn format:check
 
 O servidor de desenvolvimento roda em `http://localhost:5175`
 
+### Scripts de Lint
+
+O comando de lint foi atualizado para incluir extensões específicas e opções de relatório melhorado, fornecendo feedback mais detalhado durante o desenvolvimento.
+
 ## 🏗️ Build
 
 ```bash
 # Build de produção
 yarn build
 ```
+
+O build gera arquivos otimizados e inclui informações de tipo TypeScript para melhor integração com ferramentas de desenvolvimento.
 
 ## ⚙️ Variáveis de Ambiente
 
@@ -147,6 +153,15 @@ const formatCurrency = (value: number) =>
 - Strict mode ativado
 - Interfaces de API sempre em [src/services/api.ts](src/services/api.ts)
 - Config herda de `../tsconfig.base.json` (monorepo)
+- Build info de TypeScript gerada para otimização incremental
+
+## 🔄 Histórico de Atualizações
+
+### v1.1.0 - Refatoração Core
+- ✨ Configuração aprimorada do Vite com geração de tipos
+- ✨ Scripts de lint com opções de relatório melhoradas
+- 📦 BuildInfo do TypeScript para builds incrementais mais eficientes
+- 🔧 Melhor integração com ferramentas de desenvolvimento
 
 ## 📝 Licença
 

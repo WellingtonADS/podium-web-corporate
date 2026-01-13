@@ -15,7 +15,13 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { CostCenterCard, FormInput, FormModal } from "../components";
-import api, { CostCenter, CreateCostCenterData } from "../services/api";
+import {
+  CostCenter,
+  createCostCenter,
+  CreateCostCenterData,
+  fetchCostCenters,
+  updateCostCenter,
+} from "../services/api";
 import { validateCostCenterPolicy } from "../utils";
 
 const rideCategories = ["UberX", "Black", "Comfort", "Bag", "Van"];
@@ -42,13 +48,16 @@ const CostCenters: React.FC = () => {
     },
   });
 
-  const fetchCostCenters = async () => {
+  const fetchCostCentersData = async () => {
     try {
       setLoading(true);
-      const response = await api.get<CostCenter[]>("/corporate/cost-centers");
-      setCostCenters(response.data);
-    } catch (error) {
-      console.error(error);
+      const data = await fetchCostCenters();
+      setCostCenters(data);
+    } catch (error: unknown) {
+      const errorMsg =
+        ((error as Record<string, unknown>)?.message as string) ||
+        "Erro ao buscar centros de custo";
+      console.error(errorMsg);
       // Mock data para desenvolvimento
       setCostCenters([
         {
@@ -102,7 +111,7 @@ const CostCenters: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchCostCenters();
+    fetchCostCentersData();
   }, []);
 
   const handleOpenModal = (cc?: CostCenter) => {
@@ -173,14 +182,14 @@ const CostCenters: React.FC = () => {
       }
 
       if (editingCC) {
-        await api.put(`/corporate/cost-centers/${editingCC.id}`, formData);
+        await updateCostCenter(editingCC.id, formData);
         toast({
           title: "Centro de Custo atualizado!",
           status: "success",
           duration: 3000,
         });
       } else {
-        await api.post("/corporate/cost-centers", formData);
+        await createCostCenter(formData);
         toast({
           title: "Centro de Custo criado!",
           status: "success",
@@ -201,10 +210,13 @@ const CostCenters: React.FC = () => {
           end: "18:00",
         },
       });
-      fetchCostCenters();
-    } catch {
+      fetchCostCentersData();
+    } catch (error: unknown) {
+      const errorMsg =
+        ((error as Record<string, unknown>)?.message as string) ||
+        "Erro ao salvar centro de custo";
       toast({
-        title: "Erro ao salvar centro de custo",
+        title: `Erro: ${errorMsg}`,
         status: "error",
         duration: 3000,
       });

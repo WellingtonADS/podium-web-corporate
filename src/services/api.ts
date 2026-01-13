@@ -126,9 +126,119 @@ api.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   return config;
 });
 
+// Interceptor de resposta para tratamento de erro centralizado
+api.interceptors.response.use(
+  (response) => response,
+  (error: unknown) => {
+    const axiosError = error as Record<string, unknown>;
+    const status = axiosError?.response?.status;
+
+    // 401/403: não autenticado ou sem permissão
+    if (status === 401 || status === 403) {
+      localStorage.removeItem("@Podium:token");
+      localStorage.removeItem("@Podium:user");
+      window.location.href = "/login";
+    }
+
+    // Extrair mensagem de erro do backend
+    const detail =
+      (axiosError?.response?.data as Record<string, unknown>)?.detail ||
+      (axiosError?.message as string) ||
+      "Erro ao conectar com servidor";
+
+    return Promise.reject({
+      status,
+      message: detail,
+      originalError: error,
+    });
+  }
+);
+
 export const fetchCurrentUser = async (): Promise<User> => {
   const response = await api.get<User>("/users/me");
   return response.data;
+};
+
+// ========== BILLING ENDPOINTS ==========
+
+export interface BillingFiltersPayload {
+  period?: string; // "2025-12"
+  employee_id?: number;
+  cost_center_id?: number;
+}
+
+export const fetchBillingRecords = async (
+  filters?: BillingFiltersPayload
+): Promise<BillingPeriod[]> => {
+  try {
+    const response = await api.get<BillingPeriod[]>(
+      "/stats/corporate/billing",
+      {
+        params: filters,
+      }
+    );
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Erro ao buscar registros de faturamento:", error);
+    throw error;
+  }
+};
+
+// ========== EMPLOYEE ENDPOINTS ==========
+
+export const createEmployee = async (
+  data: CreateEmployeeData
+): Promise<User> => {
+  try {
+    const response = await api.post<User>("/corporate/employees", data);
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Erro ao criar funcionário:", error);
+    throw error;
+  }
+};
+
+// ========== COST CENTER ENDPOINTS ==========
+
+export const fetchCostCenters = async (): Promise<CostCenter[]> => {
+  try {
+    const response = await api.get<CostCenter[]>("/corporate/cost-centers");
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Erro ao buscar centros de custo:", error);
+    throw error;
+  }
+};
+
+export const createCostCenter = async (
+  data: CreateCostCenterData
+): Promise<CostCenter> => {
+  try {
+    const response = await api.post<CostCenter>(
+      "/corporate/cost-centers",
+      data
+    );
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Erro ao criar centro de custo:", error);
+    throw error;
+  }
+};
+
+export const updateCostCenter = async (
+  id: string,
+  data: Partial<CreateCostCenterData>
+): Promise<CostCenter> => {
+  try {
+    const response = await api.patch<CostCenter>(
+      `/corporate/cost-centers/${id}`,
+      data
+    );
+    return response.data;
+  } catch (error: unknown) {
+    console.error("Erro ao atualizar centro de custo:", error);
+    throw error;
+  }
 };
 
 export default api;

@@ -1,5 +1,10 @@
-import { useEffect, useState } from "react";
-import api, { BillingPeriod, RideRecord } from "../services/api";
+import { useCallback, useEffect, useState } from "react";
+import {
+  BillingFiltersPayload,
+  BillingPeriod,
+  RideRecord,
+  fetchBillingRecords,
+} from "../services/api";
 
 export interface BillingFilters {
   period?: string; // "2025-12"
@@ -98,31 +103,35 @@ export const useBillingData = (
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const response = await api.get<BillingPeriod[]>(
-        "/stats/corporate/billing",
-        {
-          params: filters,
-        }
-      );
-      setBillingPeriods(response.data);
-    } catch (err) {
-      console.error("Erro ao buscar dados de faturamento:", err);
+      const payload: BillingFiltersPayload = {
+        period: filters?.period,
+        employee_id: filters?.employee_id,
+        cost_center_id: filters?.cost_center_id,
+      };
+
+      const data = await fetchBillingRecords(payload);
+      setBillingPeriods(data);
+    } catch (err: unknown) {
+      const errorMsg =
+        ((err as Record<string, unknown>)?.message as string) ||
+        "Erro ao buscar dados de faturamento";
+      setError(errorMsg);
+      console.error("Erro em useBillingData:", err);
       // Mockar dados em caso de erro
       setBillingPeriods(generateMockBillingData());
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters?.period, filters?.employee_id, filters?.cost_center_id]);
 
   useEffect(() => {
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filters?.period, filters?.employee_id, filters?.cost_center_id]);
+  }, [fetchData]);
 
   const allRides = billingPeriods.flatMap((period) => period.rides);
 
