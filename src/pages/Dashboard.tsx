@@ -6,6 +6,7 @@ import {
   Badge,
   Box,
   Flex,
+  Progress,
   SimpleGrid,
   Text,
 } from "@chakra-ui/react";
