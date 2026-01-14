@@ -8,7 +8,7 @@
   publish = "dist"
   
   # Node version
-  environment = { NODE_VERSION = "18" }
+  environment = { NODE_VERSION = "20" }
 
 # Configuração de redirects para SPA (Single Page Application)
 [[redirects]]
