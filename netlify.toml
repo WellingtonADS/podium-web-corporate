@@ -24,6 +24,12 @@
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "no-referrer-when-downgrade"
 
+# Evita cache de index.html para prevenir mismatch de chunks após deploy
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "no-cache"
+
 # Cache para assets
 [[headers]]
   for = "/assets/*"
