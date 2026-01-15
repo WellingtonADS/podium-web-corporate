@@ -115,7 +115,14 @@ export const useBillingData = (
       };
 
       const data = await fetchBillingRecords(payload);
-      setBillingPeriods(data);
+      // Backend may return either an array of periods or a single period object; normalize to array
+      if (Array.isArray(data)) {
+        setBillingPeriods(data);
+      } else if (data) {
+        setBillingPeriods([data as BillingPeriod]);
+      } else {
+        setBillingPeriods([]);
+      }
     } catch (err: unknown) {
       const errorMsg =
         ((err as Record<string, unknown>)?.message as string) ||
