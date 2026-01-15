@@ -159,6 +159,14 @@ const formatCurrency = (value: number) =>
 
 ## 🔄 Histórico de Atualizações
 
+### 2026-01-15 - Cleanup: foco B2B e validações de CI
+
+- 🔧 Removidos componentes de operação (LiveMap, DriversTable) que não pertencem ao portal corporativo.
+- 📌 Menu lateral atualizado para expor apenas rotas B2B (`/dashboard`, `/employees`, `/cost-centers`, `/billing`).
+- ✅ Adicionada validação de CI (`scripts/validate-sidebar.js`) que falha em PRs se links de operação forem reintroduzidos.
+- 🛠️ Correções de tipagem TypeScript e melhorias no tratamento de erros da API.
+- ✅ Lint e type-check passam localmente após mudanças.
+
 ### v1.1.0 - Refatoração Core
 
 - ✨ Configuração aprimorada do Vite com geração de tipos

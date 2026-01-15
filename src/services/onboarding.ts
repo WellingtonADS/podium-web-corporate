@@ -68,7 +68,7 @@ export const parseEmployeesCsv = async (
   const delimiter = detectDelimiter(lines[0]);
   const headers = lines[0].split(delimiter).map(normalizeHeader);
 
-  const requiredFields: (keyof typeof headerMap)[] = [
+  const requiredFields: ("full_name" | "email" | "cost_center_id")[] = [
     "full_name",
     "email",
     "cost_center_id",

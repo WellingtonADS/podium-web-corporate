@@ -8,11 +8,17 @@ import {
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
+interface OptionItem {
+  value: string;
+  label: string;
+}
+
 interface FormSelectProps extends SelectProps {
   label?: string;
   error?: string;
   isRequired?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
+  options?: OptionItem[];
 }
 
 export const FormSelect = ({
@@ -20,6 +26,7 @@ export const FormSelect = ({
   error,
   isRequired = false,
   children,
+  options,
   ...props
 }: FormSelectProps) => {
   const borderColor = useColorModeValue("midnight.200", "midnight.600");
@@ -36,7 +43,13 @@ export const FormSelect = ({
         }}
         {...props}
       >
-        {children}
+        {options
+          ? options.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))
+          : children}
       </Select>
       {error && <FormErrorMessage>{error}</FormErrorMessage>}
     </FormControl>
