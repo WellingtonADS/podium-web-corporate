@@ -1,6 +1,8 @@
 # Podium Web Corporate
 
-Portal B2B para corporações gerenciarem e solictarem corridas ou agendar transporte para funcionários, criar e gerenciar funcionarios atribuindo cargos, criar e gerar centros de custo e seus relatório, relatório de fautamento faturamento no ecossistema Podium.
+Portal B2B para corporações gerenciarem e solicitar corridas ou agendar transporte para funcionários, criar e gerenciar funcionários atribuindo cargos, criar e gerar centros de custo e seus relatórios e faturamento no ecossistema Podium.
+
+**Observação:** Este portal é voltado para clientes corporativos (B2B) — não inclui Mapa em Tempo Real nem acesso direto a motoristas. Componentes e links relacionados à operação de frota foram removidos ou ocultados para refletir esse escopo.
 
 ## 🚀 Stack Tecnológica
 
@@ -142,9 +144,9 @@ catch (err: any) {
 ```typescript
 // Moeda sempre em pt-BR
 const formatCurrency = (value: number) =>
-  new Intl.NumberFormat("pt-BR", { 
-    style: "currency", 
-    currency: "BRL" 
+  new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL",
   }).format(value);
 ```
 
@@ -158,6 +160,7 @@ const formatCurrency = (value: number) =>
 ## 🔄 Histórico de Atualizações
 
 ### v1.1.0 - Refatoração Core
+
 - ✨ Configuração aprimorada do Vite com geração de tipos
 - ✨ Scripts de lint com opções de relatório melhoradas
 - 📦 BuildInfo do TypeScript para builds incrementais mais eficientes

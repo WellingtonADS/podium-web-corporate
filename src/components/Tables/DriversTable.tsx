@@ -1,16 +1,17 @@
+// DEPRECATED: Tabela de Motoristas — não utilizada no Portal Corporativo. Remover ou mover para pacote de Operação.
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Card,
   Badge,
-  Button,
-  HStack,
-  useColorModeValue,
   Box,
+  Button,
+  Card,
+  HStack,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
