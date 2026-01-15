@@ -21,7 +21,7 @@ export const setLoadingContext = (context: {
 
 const api = axios.create({
   baseURL: API_URL,
-  timeout: 10000, // 10 segundos
+  timeout: 30000, // 30 segundos
 });
 
 export interface User {
