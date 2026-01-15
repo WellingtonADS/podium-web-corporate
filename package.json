@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "lint": "eslint src --report-unused-disable-directives --max-warnings 0",
     "format:check": "prettier --check src/**/*.{ts,tsx,json,css,scss,md}",
-    "validate:assets": "node scripts/validate-assets.js"
+    "validate:assets": "node scripts/validate-assets.js",
+    "validate:sidebar": "node scripts/validate-sidebar.js"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.8.2",

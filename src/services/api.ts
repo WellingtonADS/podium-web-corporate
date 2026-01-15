@@ -1,8 +1,10 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
 // Base da API configurável via env, com fallback para localhost
+// Tipagem explícita para evitar any e problemas com ImportMeta
+type ImportMetaWithEnv = ImportMeta & { env: { VITE_API_URL?: string } };
 const API_BASE =
-  (import.meta as Record<string, unknown>).env?.VITE_API_URL ??
+  (import.meta as ImportMetaWithEnv).env?.VITE_API_URL ??
   "http://localhost:8000";
 const API_URL = `${API_BASE}/api/v1`;
 
@@ -11,6 +13,14 @@ let loadingContext: {
   startLoading: () => void;
   stopLoading: () => void;
 } | null = null;
+
+// Helper to fetch employees (used by corporate hooks)
+export const fetchEmployees = async (): Promise<User[]> => {
+  const response = await api.get<User[]>("/users", {
+    params: { role: "employee" },
+  });
+  return response.data;
+};
 
 export const setLoadingContext = (context: {
   startLoading: () => void;
@@ -157,7 +167,11 @@ api.interceptors.response.use(
   (error: unknown) => {
     loadingContext?.stopLoading();
 
-    const axiosError = error as Record<string, unknown>;
+    type AxiosLikeError = {
+      response?: { status?: number; data?: { detail?: string } };
+      message?: string;
+    };
+    const axiosError = error as AxiosLikeError;
     const status = axiosError?.response?.status;
 
     // 401/403: não autenticado ou sem permissão
@@ -169,7 +183,7 @@ api.interceptors.response.use(
 
     // Extrair mensagem de erro do backend
     const detail =
-      (axiosError?.response?.data as Record<string, unknown>)?.detail ||
+      (axiosError?.response?.data as { detail?: string })?.detail ||
       (axiosError?.message as string) ||
       "Erro ao conectar com servidor";
 

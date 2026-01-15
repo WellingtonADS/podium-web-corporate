@@ -95,6 +95,7 @@ const Employees: React.FC = () => {
           full_name: "João Silva",
           role: "employee",
           is_active: true,
+          company_id: 1,
           employee_profile: { department: "Marketing", cost_center_id: 1 },
         },
         {
@@ -103,6 +104,7 @@ const Employees: React.FC = () => {
           full_name: "Maria Santos",
           role: "employee",
           is_active: true,
+          company_id: 1,
           employee_profile: { department: "Vendas", cost_center_id: 2 },
         },
       ];
