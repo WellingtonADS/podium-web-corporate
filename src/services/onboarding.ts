@@ -138,6 +138,8 @@ export const parseEmployeesCsv = async (
 
 const buildPassword = () => `Podium#${Math.random().toString(36).slice(-8)}`;
 
+import api from "./api";
+
 export const importEmployeesSequential = async (
   rows: ParsedEmployeeRow[],
   onProgress?: (completed: number, total: number) => void
@@ -174,5 +176,56 @@ export const importEmployeesSequential = async (
     }
   }
 
+  return results;
+};
+
+// New: batch import using backend `/users/batch` endpoint
+export const importEmployeesBatch = async (
+  rows: ParsedEmployeeRow[],
+  onProgress?: (completed: number, total: number) => void
+): Promise<ImportResult[]> => {
+  if (!rows.length) return [];
+  const total = rows.length;
+
+  // Build payload and keep map of email -> original line for mapping results
+  const payload = rows.map((row) => ({
+    email: row.email,
+    full_name: row.full_name,
+    password: buildPassword(),
+    role: "employee",
+    department: row.department ?? "",
+    cost_center_id: row.cost_center_id,
+  }));
+
+  const lineMap = new Map<string, number>();
+  rows.forEach((r) => lineMap.set(r.email, r.line));
+
+  const response = await api.post<{
+    summary: {
+      created: number;
+      conflicts: number;
+      errors: number;
+      total: number;
+    };
+    results: Array<{ email: string; status: string; message?: string }>;
+  }>("/users/batch", payload, {
+    onUploadProgress: (ev) => {
+      if (ev.total) {
+        const completed = Math.round((ev.loaded / ev.total) * total);
+        onProgress?.(completed, total);
+      }
+    },
+  });
+
+  const batchResults = response.data.results || [];
+
+  const results: ImportResult[] = batchResults.map((r, idx) => {
+    const line = lineMap.get(r.email) ?? idx + 1;
+    const success = r.status === "created";
+    const message = r.status === "conflict" ? "Registro já existe" : r.message;
+    return { line, email: r.email, success, message } as ImportResult;
+  });
+
+  onProgress?.(total, total);
   return results;
 };

@@ -49,5 +49,9 @@
     "@testing-library/jest-dom": "^6.0.0",
     "msw": "^1.2.1",
     "jsdom": "^22.1.0"
+  },
+  "resolutions": {
+    "@types/react": "18.2.64",
+    "@types/react-dom": "18.2.21"
   }
 }

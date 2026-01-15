@@ -16,6 +16,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"));
 const Employees = lazy(() => import("./pages/Employees"));
 const CostCenters = lazy(() => import("./pages/CostCenters"));
 const Billing = lazy(() => import("./pages/Billing"));
+const BookingsPage = lazy(() => import("./pages/Bookings"));
 
 // Fallback de loading para Suspense
 const PageFallback = () => (
@@ -77,6 +78,14 @@ const App: React.FC = () => {
                     element={
                       <Suspense fallback={<PageFallback />}>
                         <Billing />
+                      </Suspense>
+                    }
+                  />
+                  <Route
+                    path="/bookings"
+                    element={
+                      <Suspense fallback={<PageFallback />}>
+                        <BookingsPage />
                       </Suspense>
                     }
                   />

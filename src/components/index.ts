@@ -7,3 +7,6 @@ export { BillingTable } from "./Tables/BillingTable";
 
 // UI
 export { FormInput, FormModal, FormSelect } from "./UI";
+
+// Booking
+export { BookingForm } from "./BookingForm";

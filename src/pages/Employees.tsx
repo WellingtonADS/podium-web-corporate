@@ -15,6 +15,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import {
+  BookingForm,
   EmployeesTable,
   FormInput,
   FormModal,
@@ -23,6 +24,7 @@ import {
 import { EmployeeRow } from "../components/Tables/EmployeesTable";
 import api, { CreateEmployeeData, User } from "../services/api";
 import {
+  importEmployeesBatch,
   importEmployeesSequential,
   ImportResult,
   ParsedEmployeeRow,
@@ -54,6 +56,20 @@ const Employees: React.FC = () => {
     completed: 0,
     total: 0,
   });
+
+  // Booking modal
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [bookingPassengerId, setBookingPassengerId] = useState<
+    number | undefined
+  >(undefined);
+  const openBookingFor = (employeeId: number) => {
+    setBookingPassengerId(employeeId);
+    setIsBookingOpen(true);
+  };
+  const closeBooking = () => {
+    setBookingPassengerId(undefined);
+    setIsBookingOpen(false);
+  };
   const [isImporting, setIsImporting] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
   const [importFileName, setImportFileName] = useState<string>("");
@@ -220,9 +236,11 @@ const Employees: React.FC = () => {
 
     setIsImporting(true);
     setImportResults([]);
+    setImportProgress({ completed: 0, total: importRows.length });
 
     try {
-      const results = await importEmployeesSequential(
+      // Try batch API first
+      const results = await importEmployeesBatch(
         importRows,
         (completed, total) => {
           setImportProgress({ completed, total });
@@ -243,12 +261,47 @@ const Employees: React.FC = () => {
       if (successCount > 0) {
         fetchEmployees();
       }
-    } catch {
-      toast({
-        title: "Falha ao importar colaboradores",
-        status: "error",
-        duration: 4000,
-      });
+    } catch (err) {
+      // Fallback para modo sequencial caso o endpoint não exista ou falhe
+      console.warn(
+        "Batch import failed, falling back to sequential import:",
+        err
+      );
+      try {
+        toast({
+          title: "Usando modo de fallback: importação sequencial",
+          status: "info",
+          duration: 4000,
+        });
+
+        const results = await importEmployeesSequential(
+          importRows,
+          (completed, total) => {
+            setImportProgress({ completed, total });
+          }
+        );
+
+        setImportResults(results);
+
+        const successCount = results.filter((r) => r.success).length;
+        const errorCount = results.length - successCount;
+
+        toast({
+          title: `Importação concluída: ${successCount} sucesso(s), ${errorCount} erro(s)`,
+          status: errorCount > 0 ? "warning" : "success",
+          duration: 5000,
+        });
+
+        if (successCount > 0) {
+          fetchEmployees();
+        }
+      } catch {
+        toast({
+          title: "Falha ao importar colaboradores",
+          status: "error",
+          duration: 4000,
+        });
+      }
     } finally {
       setIsImporting(false);
     }
@@ -285,7 +338,20 @@ const Employees: React.FC = () => {
           <Spinner color="brand.600" />
         </Flex>
       ) : (
-        <EmployeesTable employees={employees} />
+        <EmployeesTable
+          employees={employees}
+          actions={(employee) => (
+            <>
+              <Button
+                size="sm"
+                colorScheme="green"
+                onClick={() => openBookingFor(employee.id)}
+              >
+                Solicitar Corrida
+              </Button>
+            </>
+          )}
+        />
       )}
 
       <FormModal
@@ -296,6 +362,24 @@ const Employees: React.FC = () => {
         isLoading={isImporting}
         submitLabel={isImporting ? "Importando..." : "Importar"}
       >
+        {" "}
+      </FormModal>
+
+      <BookingForm
+        isOpen={isBookingOpen}
+        onClose={closeBooking}
+        initialPassengerId={bookingPassengerId}
+      />
+
+      <FormModal
+        isOpen={isOpen}
+        onClose={onClose}
+        title="Novo Funcionário"
+        onSubmit={handleCreateEmployee}
+        isLoading={isSaving}
+        submitLabel="Salvar Funcionário"
+      >
+        {" "}
         <Text fontSize="sm" color="midnight.600" mb={3}>
           Campos obrigatórios: Nome, Email, Centro de Custo (ID). Delimitador
           "," ou ";". Máximo recomendado: 500 linhas.
@@ -314,13 +398,11 @@ const Employees: React.FC = () => {
             Arquivo: {importFileName}
           </Text>
         )}
-
         {isParsing && (
           <Text fontSize="sm" color="midnight.600" mb={2}>
             Lendo e validando arquivo...
           </Text>
         )}
-
         {importProgress.total > 0 && (
           <Box mb={3}>
             <Text fontSize="sm" mb={1}>
@@ -343,7 +425,6 @@ const Employees: React.FC = () => {
             )}
           </Box>
         )}
-
         {parseIssues.length > 0 && (
           <Box mb={3}>
             <Text fontSize="sm" fontWeight="600" mb={1}>
@@ -362,7 +443,6 @@ const Employees: React.FC = () => {
             </List>
           </Box>
         )}
-
         {importResults.length > 0 && (
           <Box mt={2} maxH="160px" overflowY="auto">
             <Text fontSize="sm" fontWeight="600" mb={1}>

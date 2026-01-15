@@ -13,7 +13,7 @@ const MenuLink = ({
   active?: boolean;
 }) => (
   <NavLink to={to} style={{ textDecoration: "none", width: "100%" }}>
-    {({ isActive }) => (
+    {({ isActive }: { isActive: boolean }) => (
       <Box
         p={3}
         mx={4}
@@ -107,6 +107,7 @@ export const Sidebar: React.FC = () => {
           <MenuLink to="/employees" label="Funcionários" />
           <MenuLink to="/cost-centers" label="Centros de Custo" />
           <MenuLink to="/billing" label="Faturamento" />
+          <MenuLink to="/bookings" label="Reservas" />
         </VStack>
       </Box>
     </Box>

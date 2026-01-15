@@ -139,6 +139,40 @@ export interface BillingPeriod {
   rides: RideRecord[];
 }
 
+// ===== BOOKING TYPES =====
+export interface Booking {
+  id: number;
+  status: string;
+  origin_address: string;
+  dest_address: string;
+  passenger_id: number;
+  cost_center_id: number;
+  created_at: string;
+  updated_at: string;
+  notes?: string;
+}
+
+export interface CreateBookingData {
+  origin_address: string;
+  dest_address: string;
+  passenger_id: number;
+  cost_center_id: number;
+  scheduled_at?: string;
+  notes?: string;
+}
+
+export const createBooking = async (
+  data: CreateBookingData
+): Promise<Booking> => {
+  const response = await api.post<Booking>("/bookings", data);
+  return response.data;
+};
+
+export const fetchBookings = async (): Promise<Booking[]> => {
+  const response = await api.get<{ bookings: Booking[] }>("/bookings");
+  return response.data.bookings;
+};
+
 // Interceptor tipado
 api.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
@@ -187,10 +221,10 @@ api.interceptors.response.use(
       (axiosError?.message as string) ||
       "Erro ao conectar com servidor";
 
+    // Return a serializable error object to avoid worker serialization issues
     return Promise.reject({
       status,
       message: detail,
-      originalError: error,
     });
   }
 );

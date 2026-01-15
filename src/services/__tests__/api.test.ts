@@ -1,4 +1,5 @@
 import axios from "axios";
+import type { Mock } from "vitest";
 import { describe, expect, it, vi } from "vitest";
 import { fetchBillingRecords } from "../../services/api";
 
@@ -17,7 +18,8 @@ vi.mock("axios", () => {
 
 describe("api service", () => {
   it("fetchBillingRecords calls axios.get", async () => {
-    (axios.get as unknown as any).mockResolvedValue({ data: [] });
+    const getMock = axios.get as unknown as Mock;
+    getMock.mockResolvedValue({ data: [] });
     const res = await fetchBillingRecords();
     expect(axios.get).toHaveBeenCalled();
     expect(res).toEqual([]);
