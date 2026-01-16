@@ -3,6 +3,8 @@ import { Booking } from "../../services/api";
 
 // Mirror the default API base used in tests
 const API_BASE = "http://localhost:8000";
+// Production API URL
+const PROD_API_BASE = "https://podium-backend-api-production.up.railway.app";
 
 const bookings: Booking[] = [
   {
@@ -58,6 +60,14 @@ export const handlers = [
     return res(ctx.status(200), ctx.json({ bookings }));
   }),
   rest.get(`${API_BASE}/bookings`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json({ bookings }));
+  }),
+
+  // Production API variants
+  rest.get(`${PROD_API_BASE}/api/v1/bookings`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json({ bookings }));
+  }),
+  rest.get(`${PROD_API_BASE}/bookings`, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json({ bookings }));
   }),
 
@@ -133,6 +143,42 @@ export const handlers = [
     return res(ctx.status(201), ctx.json(newBooking));
   }),
 
+  // Production API POST variants
+  rest.post(`${PROD_API_BASE}/api/v1/bookings`, async (req, res, ctx) => {
+    const body = await req.json();
+    const id = bookings.length + 1;
+    const newBooking: Booking = {
+      id,
+      status: "requested",
+      origin_address: body.origin_address,
+      dest_address: body.dest_address,
+      passenger_id: body.passenger_id,
+      cost_center_id: body.cost_center_id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      notes: body.notes || null,
+    };
+    bookings.push(newBooking);
+    return res(ctx.status(201), ctx.json(newBooking));
+  }),
+  rest.post(`${PROD_API_BASE}/bookings`, async (req, res, ctx) => {
+    const body = await req.json();
+    const id = bookings.length + 1;
+    const newBooking: Booking = {
+      id,
+      status: "requested",
+      origin_address: body.origin_address,
+      dest_address: body.dest_address,
+      passenger_id: body.passenger_id,
+      cost_center_id: body.cost_center_id,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      notes: body.notes || null,
+    };
+    bookings.push(newBooking);
+    return res(ctx.status(201), ctx.json(newBooking));
+  }),
+
   // Cancel booking
   rest.patch("/api/v1/bookings/:id/cancel", (req, res, ctx) => {
     const { id } = req.params as { id: string };
@@ -173,6 +219,26 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(bookings[idx]));
   }),
 
+  // Production API PATCH cancel variants
+  rest.patch(`${PROD_API_BASE}/api/v1/bookings/:id/cancel`, (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    const idx = bookings.findIndex((b) => b.id === Number(id));
+    if (idx === -1)
+      return res(ctx.status(404), ctx.json({ detail: "Not found" }));
+    bookings[idx].status = "cancelled";
+    bookings[idx].updated_at = new Date().toISOString();
+    return res(ctx.status(200), ctx.json(bookings[idx]));
+  }),
+  rest.patch(`${PROD_API_BASE}/bookings/:id/cancel`, (req, res, ctx) => {
+    const { id } = req.params as { id: string };
+    const idx = bookings.findIndex((b) => b.id === Number(id));
+    if (idx === -1)
+      return res(ctx.status(404), ctx.json({ detail: "Not found" }));
+    bookings[idx].status = "cancelled";
+    bookings[idx].updated_at = new Date().toISOString();
+    return res(ctx.status(200), ctx.json(bookings[idx]));
+  }),
+
   // Fetch employees for select (support multiple path variants)
   // Return employee list for any users GET variant to simplify tests
   rest.get("/api/v1/users", (_req, res, ctx) => {
@@ -202,6 +268,20 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(_employeeList));
   }),
   rest.get(`${API_BASE}/users/`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(_employeeList));
+  }),
+
+  // Production API users variants
+  rest.get(`${PROD_API_BASE}/api/v1/users`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(_employeeList));
+  }),
+  rest.get(`${PROD_API_BASE}/api/v1/users/`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(_employeeList));
+  }),
+  rest.get(`${PROD_API_BASE}/users`, (_req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(_employeeList));
+  }),
+  rest.get(`${PROD_API_BASE}/users/`, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json(_employeeList));
   }),
 
@@ -284,6 +364,62 @@ export const handlers = [
 
   // Absolute cost center variants
   rest.get(`${API_BASE}/api/v1/corporate/cost-centers`, (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: "1",
+          name: "Diretoria",
+          code: "CC-DIR",
+          budget_limit: 50000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+        {
+          id: "2",
+          name: "Financeiro",
+          code: "CC-FIN",
+          budget_limit: 30000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+      ])
+    );
+  }),
+
+  // Production API cost center variants
+  rest.get(`${PROD_API_BASE}/api/v1/corporate/cost-centers`, (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: "1",
+          name: "Diretoria",
+          code: "CC-DIR",
+          budget_limit: 50000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+        {
+          id: "2",
+          name: "Financeiro",
+          code: "CC-FIN",
+          budget_limit: 30000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+      ])
+    );
+  }),
+  rest.get(`${PROD_API_BASE}/corporate/cost-centers`, (_req, res, ctx) => {
     return res(
       ctx.status(200),
       ctx.json([
