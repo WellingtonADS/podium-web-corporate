@@ -81,7 +81,7 @@ export const Sidebar: React.FC = () => {
         >
           PODIUM{" "}
           <Text as="span" color="brand.100">
-            GO
+            SERVICE
           </Text>
         </Text>
       </Flex>
