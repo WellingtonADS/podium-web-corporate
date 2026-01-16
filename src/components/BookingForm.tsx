@@ -44,6 +44,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     passenger_id: initialPassengerId ?? 0,
     cost_center_id: 0,
     notes: "",
+    scheduled_time: "",
   });
 
   const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
@@ -61,6 +62,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         passenger_id: initialPassengerId ?? 0,
         cost_center_id: 0,
         notes: "",
+        scheduled_time: "",
       });
     }
   }, [isOpen, initialPassengerId]);
@@ -119,6 +121,30 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       return;
     }
 
+    // Validate scheduled_time if provided
+    if (payload.scheduled_time) {
+      const scheduledDate = new Date(payload.scheduled_time);
+      const now = new Date();
+      const minTime = new Date(now.getTime() + 30 * 60 * 1000); // +30min
+      const maxTime = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000); // +30days
+
+      if (scheduledDate < minTime) {
+        toast({
+          title: "Agendamento deve ser feito com no mínimo 30 minutos de antecedência",
+          status: "warning",
+        });
+        return;
+      }
+
+      if (scheduledDate > maxTime) {
+        toast({
+          title: "Agendamento não pode ser feito com mais de 30 dias de antecedência",
+          status: "warning",
+        });
+        return;
+      }
+    }
+
     try {
       await createBooking({
         origin_address: payload.origin_address,
@@ -131,6 +157,7 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         cost_center_id:
           payload.cost_center_id === 0 ? undefined : payload.cost_center_id,
         notes: payload.notes,
+        scheduled_time: payload.scheduled_time || undefined,
       });
 
       toast({ title: "Reserva criada com sucesso!", status: "success" });
@@ -201,6 +228,16 @@ export const BookingForm: React.FC<BookingFormProps> = ({
           </option>
         ))}
       </FormSelect>
+
+      {/* Data/Hora de Agendamento (opcional) */}
+      <FormInput
+        label="Agendar para (opcional)"
+        type="datetime-local"
+        value={payload.scheduled_time}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setPayload((p) => ({ ...p, scheduled_time: e.target.value }))
+        }
+      />
 
       {/* Observações (opcional) */}
       <FormInput

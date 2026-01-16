@@ -164,6 +164,7 @@ export interface Booking {
   cost_center_id: number;
   created_at: string;
   updated_at: string;
+  scheduled_time?: string;
   notes?: string;
 }
 
@@ -176,7 +177,7 @@ export interface CreateBookingData {
   dest_lng: number;
   passenger_id: number;
   cost_center_id?: number | null;
-  scheduled_at?: string;
+  scheduled_time?: string;
   notes?: string;
 }
 
