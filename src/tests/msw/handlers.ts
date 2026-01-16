@@ -310,4 +310,30 @@ export const handlers = [
       ])
     );
   }),
+
+  // Photon geocoding (used by AddressAutocomplete) - mock to keep tests deterministic
+  rest.get("https://photon.komoot.io/api", (req, res, ctx) => {
+    const q = req.url.searchParams.get("q") || "";
+    // Return a predictable single feature that AddressAutocomplete can parse
+    return res(
+      ctx.status(200),
+      ctx.json({
+        features: [
+          {
+            properties: {
+              osm_id: 999999,
+              name: q || "Av Teste 1",
+              osm_type: "way",
+              housenumber: "1000",
+              street: q || "Av Teste",
+              district: "Centro",
+              city: "Cidade",
+              postcode: "00000",
+            },
+            geometry: { coordinates: [-46.6333, -23.5505] },
+          },
+        ],
+      })
+    );
+  }),
 ];
