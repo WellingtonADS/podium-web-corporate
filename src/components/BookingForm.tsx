@@ -130,7 +130,8 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
       if (scheduledDate < minTime) {
         toast({
-          title: "Agendamento deve ser feito com no mínimo 30 minutos de antecedência",
+          title:
+            "Agendamento deve ser feito com no mínimo 30 minutos de antecedência",
           status: "warning",
         });
         return;
@@ -138,7 +139,8 @@ export const BookingForm: React.FC<BookingFormProps> = ({
 
       if (scheduledDate > maxTime) {
         toast({
-          title: "Agendamento não pode ser feito com mais de 30 dias de antecedência",
+          title:
+            "Agendamento não pode ser feito com mais de 30 dias de antecedência",
           status: "warning",
         });
         return;
