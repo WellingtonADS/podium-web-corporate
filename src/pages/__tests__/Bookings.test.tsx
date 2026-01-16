@@ -32,6 +32,26 @@ describe("Bookings page", () => {
       target: { value: "1" },
     });
 
+    // Select a cost center (required) using the same select pattern as Passageiro
+    await waitFor(() =>
+      expect(screen.getByLabelText(/Centro de Custo/i)).toBeInTheDocument()
+    );
+    const ccSelect = screen.getByLabelText(
+      /Centro de Custo/i
+    ) as HTMLSelectElement;
+    const ccOption = await waitFor(() => screen.getByText(/Diretoria/), {
+      timeout: 5000,
+    });
+    fireEvent.change(ccSelect, {
+      target: { value: (ccOption as HTMLOptionElement).value },
+    });
+
+    // Wait for the selection to reflect in the select
+    await waitFor(
+      () => expect((ccSelect as HTMLSelectElement).value).not.toBe("0"),
+      { timeout: 5000 }
+    );
+
     fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
 
     // Table should show the newly created booking
@@ -52,5 +72,5 @@ describe("Bookings page", () => {
     await waitFor(() =>
       expect(screen.getByText(/cancelled|cancelada/i)).toBeInTheDocument()
     );
-  });
+  }, 20000);
 });

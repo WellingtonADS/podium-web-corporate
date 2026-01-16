@@ -5,6 +5,13 @@ import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import theme from "../theme";
 
+// Polyfill para jsdom: Chakra Menu espera que elementos suportem scrollTo
+if (typeof Element.prototype.scrollTo !== "function") {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  Element.prototype.scrollTo = function () {};
+}
+
 export function renderWithProviders(ui: React.ReactElement) {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },

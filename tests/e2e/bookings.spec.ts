@@ -17,8 +17,29 @@ test("create -> verify -> cancel booking (smoke)", async ({ page }) => {
 
   await page.click("text=+ Nova Reserva");
 
-  await page.fill('input[placeholder="Origem"]', "Av Teste 1");
-  await page.fill('input[placeholder="Destino"]', "Rua Teste 2");
+  // Note: AddressAutocomplete now requires Google Places API integration
+  // In a real e2e test, you would:
+  // 1. Type in the origin input field
+  // 2. Wait for Google Places autocomplete suggestions to appear
+  // 3. Click on a suggestion to select it
+  // 4. Repeat for destination
+  //
+  // For now, fill the input fields and wait for autocomplete suggestions
+  const originInput = page
+    .locator('input[placeholder="Rua, número, bairro - Cidade"]')
+    .first();
+  await originInput.fill("Av Paulista, 1000");
+
+  // Wait for autocomplete suggestions (this would require Google Places API to be configured)
+  // In testing environment, you may need to mock the Google Places API response
+  await page.waitForTimeout(500);
+
+  const destInput = page
+    .locator('input[placeholder="Rua, número, bairro - Cidade"]')
+    .nth(1);
+  await destInput.fill("Rua Augusta, 200");
+
+  await page.waitForTimeout(500);
 
   // Select passenger (first option)
   await page.selectOption("select", "1");
@@ -26,7 +47,10 @@ test("create -> verify -> cancel booking (smoke)", async ({ page }) => {
   await page.click("text=Salvar");
 
   // Expect to find created booking in the table
-  await expect(page.locator("text=Av Teste 1")).toBeVisible();
+  // Note: The actual coordinate values will depend on the Google Places API response
+  await expect(page.locator("text=Av Paulista, 1000")).toBeVisible({
+    timeout: 10000,
+  });
 
   // Cancel it
   await page.click("text=Cancelar");

@@ -1,7 +1,13 @@
 import { useToast } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import { useBookings } from "../hooks/useBookings";
-import { fetchEmployees, User } from "../services/api";
+import {
+  CostCenter,
+  fetchCostCenters,
+  fetchEmployees,
+  User,
+} from "../services/api";
+import { AddressAutocomplete } from "./AddressAutocomplete";
 import { FormInput } from "./UI/FormInput";
 import { FormModal } from "./UI/FormModal";
 import { FormSelect } from "./UI/FormSelect";
@@ -10,6 +16,13 @@ interface BookingFormProps {
   isOpen: boolean;
   onClose: () => void;
   initialPassengerId?: number;
+}
+
+interface AddressData {
+  address: string;
+  latitude: number;
+  longitude: number;
+  placeId: string;
 }
 
 export const BookingForm: React.FC<BookingFormProps> = ({
@@ -23,18 +36,28 @@ export const BookingForm: React.FC<BookingFormProps> = ({
   const [employees, setEmployees] = useState<User[]>([]);
   const [payload, setPayload] = useState({
     origin_address: "",
+    origin_lat: 0,
+    origin_lng: 0,
     dest_address: "",
+    dest_lat: 0,
+    dest_lng: 0,
     passenger_id: initialPassengerId ?? 0,
     cost_center_id: 0,
     notes: "",
   });
 
-  // Reset passenger when modal opened/closed
+  const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
+
+  // Reset quando modal abre/fecha
   useEffect(() => {
     if (isOpen) {
       setPayload({
         origin_address: "",
+        origin_lat: 0,
+        origin_lng: 0,
         dest_address: "",
+        dest_lat: 0,
+        dest_lng: 0,
         passenger_id: initialPassengerId ?? 0,
         cost_center_id: 0,
         notes: "",
@@ -52,16 +75,45 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       }
     };
     load();
+
+    const loadCostCenters = async () => {
+      try {
+        const ccs = await fetchCostCenters();
+        setCostCenters(ccs);
+      } catch {
+        // ignore
+      }
+    };
+    loadCostCenters();
   }, []);
+
+  const handleOriginSelect = (addressData: AddressData) => {
+    setPayload({
+      ...payload,
+      origin_address: addressData.address,
+      origin_lat: addressData.latitude,
+      origin_lng: addressData.longitude,
+    });
+  };
+
+  const handleDestSelect = (addressData: AddressData) => {
+    setPayload({
+      ...payload,
+      dest_address: addressData.address,
+      dest_lat: addressData.latitude,
+      dest_lng: addressData.longitude,
+    });
+  };
 
   const handleSubmit = async () => {
     if (
       !payload.origin_address ||
       !payload.dest_address ||
-      !payload.passenger_id
+      !payload.passenger_id ||
+      !payload.cost_center_id
     ) {
       toast({
-        title: "Preencha origem, destino e passageiro",
+        title: "Preencha origem, destino, passageiro e centro de custo",
         status: "warning",
       });
       return;
@@ -70,16 +122,25 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     try {
       await createBooking({
         origin_address: payload.origin_address,
+        origin_lat: payload.origin_lat,
+        origin_lng: payload.origin_lng,
         dest_address: payload.dest_address,
+        dest_lat: payload.dest_lat,
+        dest_lng: payload.dest_lng,
         passenger_id: payload.passenger_id,
-        cost_center_id: payload.cost_center_id || 1,
+        cost_center_id:
+          payload.cost_center_id === 0 ? undefined : payload.cost_center_id,
         notes: payload.notes,
       });
 
-      toast({ title: "Reserva criada", status: "success" });
+      toast({ title: "Reserva criada com sucesso!", status: "success" });
       onClose();
-    } catch {
-      toast({ title: "Erro ao criar reserva", status: "error" });
+    } catch (error) {
+      console.error("Erro ao criar reserva:", error);
+      toast({
+        title: "Erro ao criar reserva",
+        status: "error",
+      });
     }
   };
 
@@ -91,25 +152,31 @@ export const BookingForm: React.FC<BookingFormProps> = ({
       onSubmit={handleSubmit}
       isLoading={creating}
     >
-      <FormInput
+      <AddressAutocomplete
         label="Origem"
+        placeholder="Rua, número, bairro - Cidade"
         value={payload.origin_address}
-        onChange={(e) =>
-          setPayload({ ...payload, origin_address: e.target.value })
+        onChange={handleOriginSelect}
+        onTextChange={(text) =>
+          setPayload((p) => ({ ...p, origin_address: text }))
         }
       />
-      <FormInput
+
+      <AddressAutocomplete
         label="Destino"
+        placeholder="Rua, número, bairro - Cidade"
         value={payload.dest_address}
-        onChange={(e) =>
-          setPayload({ ...payload, dest_address: e.target.value })
+        onChange={handleDestSelect}
+        onTextChange={(text) =>
+          setPayload((p) => ({ ...p, dest_address: text }))
         }
       />
+
       <FormSelect
         label="Passageiro"
         value={payload.passenger_id}
         onChange={(e) =>
-          setPayload({ ...payload, passenger_id: Number(e.target.value) })
+          setPayload((p) => ({ ...p, passenger_id: Number(e.target.value) }))
         }
       >
         <option value={0}>Selecione um funcionário</option>
@@ -119,10 +186,30 @@ export const BookingForm: React.FC<BookingFormProps> = ({
           </option>
         ))}
       </FormSelect>
+
+      <FormSelect
+        label="Centro de Custo"
+        value={payload.cost_center_id}
+        onChange={(e) =>
+          setPayload((p) => ({ ...p, cost_center_id: Number(e.target.value) }))
+        }
+      >
+        <option value={0}>Selecione...</option>
+        {costCenters.map((c) => (
+          <option key={c.id} value={Number(c.id)}>
+            {c.code} - {c.name}
+          </option>
+        ))}
+      </FormSelect>
+
+      {/* Observações (opcional) */}
       <FormInput
         label="Observações (opcional)"
+        placeholder="Informações úteis para o motorista"
         value={payload.notes}
-        onChange={(e) => setPayload({ ...payload, notes: e.target.value })}
+        onChange={(
+          e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => setPayload((p) => ({ ...p, notes: e.target.value }))}
       />
     </FormModal>
   );

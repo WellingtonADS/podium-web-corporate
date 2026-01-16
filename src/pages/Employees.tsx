@@ -22,7 +22,12 @@ import {
   FormSelect,
 } from "../components";
 import { EmployeeRow } from "../components/Tables/EmployeesTable";
-import api, { CreateEmployeeData, User } from "../services/api";
+import api, {
+  CostCenter,
+  CreateEmployeeData,
+  fetchCostCenters,
+  User,
+} from "../services/api";
 import {
   importEmployeesBatch,
   importEmployeesSequential,
@@ -43,6 +48,8 @@ const Employees: React.FC = () => {
   const [employees, setEmployees] = useState<EmployeeRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
 
   const [importRows, setImportRows] = useState<ParsedEmployeeRow[]>([]);
   const [parseIssues, setParseIssues] = useState<
@@ -84,47 +91,66 @@ const Employees: React.FC = () => {
     cost_center_id: undefined,
   });
 
-  const normalizeEmployee = (user: User): EmployeeRow => ({
-    id: user.id,
-    full_name: user.full_name,
-    email: user.email,
-    department: user.employee_profile?.department || "",
-    cost_center_id:
-      user.employee_profile?.cost_center_id ?? user.cost_center_id ?? undefined,
-    is_active: user.is_active,
+  const [editingEmployee, setEditingEmployee] = useState<EmployeeRow | null>(
+    null
+  );
+  const [editFormData, setEditFormData] = useState<{
+    department: string;
+    cost_center_id?: number;
+  }>({
+    department: "",
+    cost_center_id: undefined,
   });
+
+  const normalizeEmployee = (
+    user: User,
+    ccMap: Map<number, string> | null = null
+  ): EmployeeRow => {
+    const cost_center_id =
+      user.employee_profile?.cost_center_id ?? user.cost_center_id ?? undefined;
+    return {
+      id: user.id,
+      full_name: user.full_name,
+      email: user.email,
+      department: user.employee_profile?.department || "",
+      cost_center_id: cost_center_id,
+      cost_center_name: cost_center_id ? ccMap?.get(cost_center_id) : undefined,
+      is_active: user.is_active,
+    };
+  };
 
   const fetchEmployees = async () => {
     try {
       setLoading(true);
-      const response = await api.get<User[]>("/users/", {
-        params: { role: "employee" },
-      });
-      setEmployees(response.data.map(normalizeEmployee));
+
+      const [ccs, usersResp] = await Promise.all([
+        fetchCostCenters(),
+        api.get<User[]>("/users/", { params: { role: "employee" } }),
+      ]);
+
+      setCostCenters(ccs);
+
+      const ccMap = new Map<number, string>(
+        ccs.map((c: CostCenter) => [Number(c.id), c.name])
+      );
+
+      console.log("🔍 DADOS RAW DA API:", usersResp.data.slice(0, 2));
+      console.log(
+        "🔍 APÓS NORMALIZAÇÃO:",
+        usersResp.data.slice(0, 2).map((u) => normalizeEmployee(u, ccMap))
+      );
+
+      setEmployees(usersResp.data.map((u) => normalizeEmployee(u, ccMap)));
     } catch (error) {
-      console.error(error);
-      // Mock data para desenvolvimento
-      const fallback: User[] = [
-        {
-          id: 1,
-          email: "joao@empresa.com",
-          full_name: "João Silva",
-          role: "employee",
-          is_active: true,
-          company_id: 1,
-          employee_profile: { department: "Marketing", cost_center_id: 1 },
-        },
-        {
-          id: 2,
-          email: "maria@empresa.com",
-          full_name: "Maria Santos",
-          role: "employee",
-          is_active: true,
-          company_id: 1,
-          employee_profile: { department: "Vendas", cost_center_id: 2 },
-        },
-      ];
-      setEmployees(fallback.map(normalizeEmployee));
+      console.error("Erro ao buscar funcionários:", error);
+      toast({
+        title: "Erro ao carregar funcionários",
+        description:
+          "Não foi possível conectar à API. Verifique se o backend está rodando.",
+        status: "error",
+        duration: 5000,
+      });
+      setEmployees([]);
     } finally {
       setLoading(false);
     }
@@ -166,6 +192,49 @@ const Employees: React.FC = () => {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleEditEmployee = (employee: EmployeeRow) => {
+    setEditingEmployee(employee);
+    setEditFormData({
+      department: employee.department,
+      cost_center_id: employee.cost_center_id,
+    });
+  };
+
+  const handleUpdateEmployee = async () => {
+    if (!editingEmployee) return;
+
+    try {
+      setIsSaving(true);
+      await api.patch(
+        `/corporate/employees/${editingEmployee.id}`,
+        editFormData
+      );
+
+      toast({
+        title: "Funcionário atualizado!",
+        status: "success",
+        duration: 3000,
+      });
+
+      setEditingEmployee(null);
+      fetchEmployees();
+    } catch {
+      toast({
+        title: "Erro ao atualizar funcionário",
+        description: "Verifique os dados e tente novamente.",
+        status: "error",
+        duration: 4000,
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleCloseEditModal = () => {
+    setEditingEmployee(null);
+    setEditFormData({ department: "", cost_center_id: undefined });
   };
 
   const resetImportState = () => {
@@ -340,6 +409,7 @@ const Employees: React.FC = () => {
       ) : (
         <EmployeesTable
           employees={employees}
+          onEdit={handleEditEmployee}
           actions={(employee) => (
             <>
               <Button
@@ -522,9 +592,51 @@ const Employees: React.FC = () => {
             }
             options={[
               { value: "", label: "Selecione..." },
-              { value: "1", label: "CC-1 - Marketing" },
-              { value: "2", label: "CC-2 - Vendas" },
-              { value: "3", label: "CC-3 - TI" },
+              ...costCenters.map((c) => ({
+                value: String(c.id),
+                label: `${c.code} - ${c.name}`,
+              })),
+            ]}
+          />
+        </SimpleGrid>
+      </FormModal>
+
+      {/* Modal de Edição de Departamento e Centro de Custo */}
+      <FormModal
+        isOpen={editingEmployee !== null}
+        onClose={handleCloseEditModal}
+        title={`Editar: ${editingEmployee?.full_name}`}
+        onSubmit={handleUpdateEmployee}
+        isLoading={isSaving}
+        submitLabel="Atualizar"
+      >
+        <SimpleGrid columns={2} spacing={4}>
+          <FormInput
+            label="Departamento"
+            placeholder="Ex: Marketing"
+            isRequired
+            value={editFormData.department}
+            onChange={(e) =>
+              setEditFormData({ ...editFormData, department: e.target.value })
+            }
+          />
+          <FormSelect
+            label="Centro de Custo"
+            value={editFormData.cost_center_id || ""}
+            onChange={(e) =>
+              setEditFormData({
+                ...editFormData,
+                cost_center_id: e.target.value
+                  ? Number(e.target.value)
+                  : undefined,
+              })
+            }
+            options={[
+              { value: "", label: "Selecione..." },
+              ...costCenters.map((c) => ({
+                value: String(c.id),
+                label: `${c.code} - ${c.name}`,
+              })),
             ]}
           />
         </SimpleGrid>

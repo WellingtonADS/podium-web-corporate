@@ -32,8 +32,8 @@ interface CostCenterCardProps {
 export const CostCenterCard = ({
   name,
   code,
-  budget_limit,
-  current_spent,
+  budget_limit = 0,
+  current_spent = 0,
   active,
   allowed_categories,
   spending_limit_per_ride,

@@ -225,4 +225,89 @@ export const handlers = [
       })
     );
   }),
+
+  // Cost centers for company (used by BookingForm)
+  rest.get("/api/v1/corporate/cost-centers", (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: "1",
+          name: "Diretoria",
+          code: "CC-DIR",
+          budget_limit: 50000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+        {
+          id: "2",
+          name: "Financeiro",
+          code: "CC-FIN",
+          budget_limit: 30000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+      ])
+    );
+  }),
+  rest.get("/corporate/cost-centers", (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: "1",
+          name: "Diretoria",
+          code: "CC-DIR",
+          budget_limit: 50000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+        {
+          id: "2",
+          name: "Financeiro",
+          code: "CC-FIN",
+          budget_limit: 30000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+      ])
+    );
+  }),
+
+  // Absolute cost center variants
+  rest.get(`${API_BASE}/api/v1/corporate/cost-centers`, (_req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json([
+        {
+          id: "1",
+          name: "Diretoria",
+          code: "CC-DIR",
+          budget_limit: 50000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+        {
+          id: "2",
+          name: "Financeiro",
+          code: "CC-FIN",
+          budget_limit: 30000.0,
+          current_spent: 0,
+          active: true,
+          allowed_categories: [],
+          spending_limit_per_ride: 1000,
+        },
+      ])
+    );
+  }),
 ];

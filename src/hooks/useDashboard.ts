@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
-import api, { CorporateDashboardStats } from "../services/api";
+import api, {
+  CorporateDashboardStats,
+  CostCenterUsage,
+  RecentRide,
+} from "../services/api";
 
 export const useDashboard = () => {
   const [stats, setStats] = useState<CorporateDashboardStats | null>(null);
@@ -10,7 +14,6 @@ export const useDashboard = () => {
     const fetchStats = async () => {
       try {
         setLoading(true);
-        // Endpoint corporativo específico - filtrado por company_id do usuário
         const response = await api.get<CorporateDashboardStats>(
           "/stats/corporate/dashboard"
         );
@@ -22,13 +25,6 @@ export const useDashboard = () => {
           (err as { response?: { data?: { detail?: string } } }).response?.data
             ?.detail || "Erro ao conectar com o servidor"
         );
-        // Dados mockados para desenvolvimento
-        setStats({
-          monthly_consumption: 12500,
-          active_employees: 45,
-          rides_completed: 128,
-          remaining_budget: 37500,
-        });
       } finally {
         setLoading(false);
       }
@@ -38,4 +34,60 @@ export const useDashboard = () => {
   }, []);
 
   return { stats, loading, error };
+};
+
+export const useCostCentersUsage = () => {
+  const [data, setData] = useState<CostCenterUsage[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get<CostCenterUsage[]>(
+          "/stats/corporate/cost-centers-usage"
+        );
+        setData(response.data);
+        setError(null);
+      } catch (err: unknown) {
+        console.error("Erro ao carregar uso por centro de custo:", err);
+        setError("Erro ao carregar dados");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { data, loading, error };
+};
+
+export const useRecentRides = () => {
+  const [data, setData] = useState<RecentRide[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await api.get<RecentRide[]>(
+          "/stats/corporate/recent-rides"
+        );
+        setData(response.data);
+        setError(null);
+      } catch (err: unknown) {
+        console.error("Erro ao carregar últimas corridas:", err);
+        setError("Erro ao carregar dados");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  return { data, loading, error };
 };

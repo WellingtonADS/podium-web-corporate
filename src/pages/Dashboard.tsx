@@ -8,14 +8,21 @@ import {
   Flex,
   Progress,
   SimpleGrid,
+  Spinner,
   Text,
 } from "@chakra-ui/react";
 import React from "react";
 import { StatCard } from "../components";
-import { useDashboard } from "../hooks/useDashboard";
+import {
+  useCostCentersUsage,
+  useDashboard,
+  useRecentRides,
+} from "../hooks/useDashboard";
 
 const Dashboard: React.FC = () => {
   const { stats, error } = useDashboard();
+  const { data: costCenters, loading: loadingCC } = useCostCentersUsage();
+  const { data: recentRides, loading: loadingRides } = useRecentRides();
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", {
@@ -70,7 +77,7 @@ const Dashboard: React.FC = () => {
       <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
         <StatCard
           title="Consumo Mensal"
-          value={formatCurrency(stats?.monthly_consumption || 0)}
+          value={formatCurrency(stats?.total_spent || 0)}
           color="green.500"
         >
           <Text fontSize="xs" color="midnight.500">
@@ -114,55 +121,41 @@ const Dashboard: React.FC = () => {
             Uso por Centro de Custo
           </Text>
 
-          <Flex mb={4} align="center" justify="space-between">
+          {loadingCC ? (
+            <Flex justify="center" align="center" h="200px">
+              <Spinner color="brand.500" />
+            </Flex>
+          ) : costCenters.length === 0 ? (
             <Text color="gray.400" fontSize="sm">
-              Marketing
+              Nenhum dado disponível
             </Text>
-            <Text color="white" fontWeight="bold">
-              R$ 4.500
-            </Text>
-          </Flex>
-          <Progress
-            value={45}
-            size="xs"
-            colorScheme="green"
-            bg="whiteAlpha.200"
-            mb={6}
-            borderRadius="full"
-          />
-
-          <Flex mb={4} align="center" justify="space-between">
-            <Text color="gray.400" fontSize="sm">
-              Vendas
-            </Text>
-            <Text color="white" fontWeight="bold">
-              R$ 5.200
-            </Text>
-          </Flex>
-          <Progress
-            value={52}
-            size="xs"
-            colorScheme="blue"
-            bg="whiteAlpha.200"
-            mb={6}
-            borderRadius="full"
-          />
-
-          <Flex mb={2} align="center" justify="space-between">
-            <Text color="gray.400" fontSize="sm">
-              TI
-            </Text>
-            <Text color="white" fontWeight="bold">
-              R$ 2.800
-            </Text>
-          </Flex>
-          <Progress
-            value={28}
-            size="xs"
-            colorScheme="purple"
-            bg="whiteAlpha.200"
-            borderRadius="full"
-          />
+          ) : (
+            costCenters.map((cc) => (
+              <Box key={cc.cost_center_id} mb={6}>
+                <Flex mb={2} align="center" justify="space-between">
+                  <Text color="gray.400" fontSize="sm">
+                    {cc.name}
+                  </Text>
+                  <Text color="white" fontWeight="bold">
+                    {formatCurrency(cc.spent)}
+                  </Text>
+                </Flex>
+                <Progress
+                  value={cc.percentage}
+                  size="xs"
+                  colorScheme={
+                    cc.percentage > 60
+                      ? "red"
+                      : cc.percentage > 30
+                        ? "blue"
+                        : "green"
+                  }
+                  bg="whiteAlpha.200"
+                  borderRadius="full"
+                />
+              </Box>
+            ))
+          )}
         </Box>
 
         {/* Widget: Últimas Corridas */}
@@ -170,77 +163,61 @@ const Dashboard: React.FC = () => {
           <Text textStyle="h3" mb={4} color="white">
             Últimas Corridas
           </Text>
-          <Box>
-            <Flex
-              justify="space-between"
-              mb={3}
-              borderBottom="1px solid"
-              borderColor="whiteAlpha.100"
-              pb={2}
-            >
-              <Text color="gray.500" fontSize="xs" textTransform="uppercase">
-                Funcionário
-              </Text>
-              <Text color="gray.500" fontSize="xs" textTransform="uppercase">
-                Valor
-              </Text>
-            </Flex>
 
-            {/* Items de exemplo */}
-            <Flex
-              justify="space-between"
-              mb={3}
-              pb={3}
-              borderBottom="1px solid"
-              borderColor="whiteAlpha.50"
-            >
-              <Box>
-                <Text color="white" fontSize="sm" fontWeight="bold">
-                  João Silva
-                </Text>
-                <Text color="gray.500" fontSize="xs">
-                  Marketing
-                </Text>
-              </Box>
-              <Text color="brand.600" fontWeight="bold">
-                R$ 45,00
-              </Text>
+          {loadingRides ? (
+            <Flex justify="center" align="center" h="200px">
+              <Spinner color="brand.500" />
             </Flex>
+          ) : recentRides.length === 0 ? (
+            <Text color="gray.400" fontSize="sm">
+              Nenhuma corrida registrada
+            </Text>
+          ) : (
+            <Box>
+              <Flex
+                justify="space-between"
+                mb={3}
+                borderBottom="1px solid"
+                borderColor="whiteAlpha.100"
+                pb={2}
+              >
+                <Text color="gray.500" fontSize="xs" textTransform="uppercase">
+                  Funcionário
+                </Text>
+                <Text color="gray.500" fontSize="xs" textTransform="uppercase">
+                  Valor
+                </Text>
+              </Flex>
 
-            <Flex
-              justify="space-between"
-              mb={3}
-              pb={3}
-              borderBottom="1px solid"
-              borderColor="whiteAlpha.50"
-            >
-              <Box>
-                <Text color="white" fontSize="sm" fontWeight="bold">
-                  Maria Santos
-                </Text>
-                <Text color="gray.500" fontSize="xs">
-                  Vendas
-                </Text>
-              </Box>
-              <Text color="brand.600" fontWeight="bold">
-                R$ 38,00
-              </Text>
-            </Flex>
-
-            <Flex justify="space-between">
-              <Box>
-                <Text color="white" fontSize="sm" fontWeight="bold">
-                  Pedro Costa
-                </Text>
-                <Text color="gray.500" fontSize="xs">
-                  TI
-                </Text>
-              </Box>
-              <Text color="brand.600" fontWeight="bold">
-                R$ 52,00
-              </Text>
-            </Flex>
-          </Box>
+              {recentRides.map((ride, index) => (
+                <Flex
+                  key={index}
+                  justify="space-between"
+                  mb={3}
+                  pb={3}
+                  borderBottom={
+                    index < recentRides.length - 1 ? "1px solid" : undefined
+                  }
+                  borderColor="whiteAlpha.50"
+                >
+                  <Box>
+                    <Text color="white" fontSize="sm" fontWeight="bold">
+                      {ride.employee_name}
+                    </Text>
+                    <Text color="gray.500" fontSize="xs">
+                      {ride.department}{" "}
+                      {ride.cost_center_name !== "-"
+                        ? `• ${ride.cost_center_name}`
+                        : ""}
+                    </Text>
+                  </Box>
+                  <Text color="brand.600" fontWeight="bold">
+                    {formatCurrency(ride.price)}
+                  </Text>
+                </Flex>
+              ))}
+            </Box>
+          )}
         </Box>
       </SimpleGrid>
     </Box>

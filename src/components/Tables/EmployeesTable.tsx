@@ -20,6 +20,7 @@ export interface EmployeeRow {
   email: string;
   department: string;
   cost_center_id?: number;
+  cost_center_name?: string;
   is_active: boolean;
 }
 
@@ -72,7 +73,12 @@ export const EmployeesTable = ({
                 <Td fontWeight="medium">{employee.full_name}</Td>
                 <Td fontSize="sm">{employee.email}</Td>
                 <Td>{employee.department}</Td>
-                <Td>{employee.cost_center_id || "-"}</Td>
+                <Td>
+                  {employee.cost_center_name ??
+                    (employee.cost_center_id
+                      ? String(employee.cost_center_id)
+                      : "-")}
+                </Td>
                 <Td>
                   <Badge colorScheme={employee.is_active ? "green" : "gray"}>
                     {employee.is_active ? "Ativo" : "Inativo"}

@@ -22,7 +22,11 @@ describe("useBookings", () => {
     await act(async () => {
       await result.current.createBooking({
         origin_address: "A",
+        origin_lat: -23.5505,
+        origin_lng: -46.6333,
         dest_address: "B",
+        dest_lat: -23.5615,
+        dest_lng: -46.6559,
         passenger_id: 1,
         cost_center_id: 1,
       });

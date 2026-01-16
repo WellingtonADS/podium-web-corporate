@@ -44,7 +44,7 @@ const Billing: React.FC = () => {
       <Flex justify="space-between" align="center" mb={8}>
         <Text textStyle="h2" color="white">
           Faturas &{" "}
-          <Text as="span" color="brand.600">
+          <Text as="span" color="gold.500">
             Auditoria
           </Text>
         </Text>

@@ -63,10 +63,25 @@ export interface DashboardStats {
 }
 
 export interface CorporateDashboardStats {
-  monthly_consumption: number;
+  total_employees: number;
   active_employees: number;
   rides_completed: number;
+  total_spent: number;
   remaining_budget: number;
+}
+
+export interface CostCenterUsage {
+  cost_center_id: number;
+  name: string;
+  spent: number;
+  percentage: number;
+}
+
+export interface RecentRide {
+  employee_name: string;
+  department: string;
+  cost_center_name: string;
+  price: number;
 }
 
 export interface CreateDriverData {
@@ -154,9 +169,13 @@ export interface Booking {
 
 export interface CreateBookingData {
   origin_address: string;
+  origin_lat: number;
+  origin_lng: number;
   dest_address: string;
+  dest_lat: number;
+  dest_lng: number;
   passenger_id: number;
-  cost_center_id: number;
+  cost_center_id?: number | null;
   scheduled_at?: string;
   notes?: string;
 }
