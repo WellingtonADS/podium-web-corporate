@@ -48,6 +48,7 @@ const Employees: React.FC = () => {
   const [employees, setEmployees] = useState<EmployeeRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const [costCenters, setCostCenters] = useState<CostCenter[]>([]);
 
@@ -376,6 +377,17 @@ const Employees: React.FC = () => {
     }
   };
 
+  const filteredEmployees = employees.filter((emp) => {
+    if (!searchTerm) return true;
+    const term = searchTerm.toLowerCase();
+    return (
+      emp.full_name.toLowerCase().includes(term) ||
+      emp.email.toLowerCase().includes(term) ||
+      emp.department.toLowerCase().includes(term) ||
+      emp.cost_center_name?.toLowerCase().includes(term)
+    );
+  });
+
   return (
     <Box>
       {/* Título e Botão */}
@@ -401,6 +413,29 @@ const Employees: React.FC = () => {
         </HStack>
       </Flex>
 
+      {/* Barra de Pesquisa */}
+      <Box mb={4}>
+        <Input
+          placeholder="Pesquisar por nome, email, departamento ou centro de custo..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          size="md"
+          bg="midnight.800"
+          borderColor="whiteAlpha.200"
+          color="white"
+          _placeholder={{ color: "whiteAlpha.500" }}
+          _focus={{
+            borderColor: "gold.600",
+            boxShadow: "0 0 0 1px #D4AF37",
+          }}
+        />
+        {searchTerm && (
+          <Text fontSize="sm" color="whiteAlpha.600" mt={2}>
+            {filteredEmployees.length} resultado(s) encontrado(s)
+          </Text>
+        )}
+      </Box>
+
       {/* Tabela de Listagem */}
       {loading ? (
         <Flex justify="center" p={10}>
@@ -408,7 +443,7 @@ const Employees: React.FC = () => {
         </Flex>
       ) : (
         <EmployeesTable
-          employees={employees}
+          employees={filteredEmployees}
           onEdit={handleEditEmployee}
           actions={(employee) => (
             <>

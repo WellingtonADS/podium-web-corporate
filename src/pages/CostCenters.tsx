@@ -24,7 +24,7 @@ import {
 } from "../services/api";
 import { validateCostCenterPolicy } from "../utils";
 
-const rideCategories = ["UberX", "Black", "Comfort", "Bag", "Van"];
+const rideCategories = ["Econômica", "Executivo", "Van"];
 
 const CostCenters: React.FC = () => {
   const toast = useToast();

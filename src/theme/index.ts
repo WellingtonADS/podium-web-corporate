@@ -195,6 +195,32 @@ export const theme = extendTheme({
         },
       },
     },
+    Select: {
+      variants: {
+        outline: {
+          field: {
+            bg: midnight[800],
+            borderColor: "whiteAlpha.200",
+            color: "white",
+            _focus: {
+              borderColor: gold[600],
+              boxShadow: `0 0 0 1px ${gold[600]}`,
+            },
+            option: {
+              bg: midnight[800],
+              color: "white",
+              _hover: {
+                bg: midnight[700],
+              },
+              _selected: {
+                bg: gold[600],
+                color: midnight[900],
+              },
+            },
+          },
+        },
+      },
+    },
   },
 });
 

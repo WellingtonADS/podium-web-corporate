@@ -1,5 +1,5 @@
 import { useToast } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useBookings } from "../hooks/useBookings";
 import {
   CostCenter,
@@ -10,7 +10,7 @@ import {
 import { AddressAutocomplete } from "./AddressAutocomplete";
 import { FormInput } from "./UI/FormInput";
 import { FormModal } from "./UI/FormModal";
-import { FormSelect } from "./UI/FormSelect";
+import { SelectSearchable } from "./UI/SelectSearchable";
 
 interface BookingFormProps {
   isOpen: boolean;
@@ -107,6 +107,26 @@ export const BookingForm: React.FC<BookingFormProps> = ({
     });
   };
 
+  // Opções para combobox de funcionários
+  const employeeOptions = useMemo(
+    () =>
+      employees.map((emp) => ({
+        value: emp.id,
+        label: `${emp.full_name} — ${emp.email}`,
+      })),
+    [employees]
+  );
+
+  // Opções para combobox de centros de custo
+  const costCenterOptions = useMemo(
+    () =>
+      costCenters.map((c) => ({
+        value: Number(c.id),
+        label: `${c.code} - ${c.name}`,
+      })),
+    [costCenters]
+  );
+
   const handleSubmit = async () => {
     if (
       !payload.origin_address ||
@@ -201,35 +221,27 @@ export const BookingForm: React.FC<BookingFormProps> = ({
         }
       />
 
-      <FormSelect
+      <SelectSearchable
         label="Passageiro"
+        placeholder="Digite o nome ou email do funcionário..."
         value={payload.passenger_id}
-        onChange={(e) =>
-          setPayload((p) => ({ ...p, passenger_id: Number(e.target.value) }))
+        options={employeeOptions}
+        onChange={(value) =>
+          setPayload((p) => ({ ...p, passenger_id: Number(value) }))
         }
-      >
-        <option value={0}>Selecione um funcionário</option>
-        {employees.map((emp) => (
-          <option key={emp.id} value={emp.id}>
-            {emp.full_name} — {emp.email}
-          </option>
-        ))}
-      </FormSelect>
+        isRequired
+      />
 
-      <FormSelect
+      <SelectSearchable
         label="Centro de Custo"
+        placeholder="Digite o código ou nome do centro de custo..."
         value={payload.cost_center_id}
-        onChange={(e) =>
-          setPayload((p) => ({ ...p, cost_center_id: Number(e.target.value) }))
+        options={costCenterOptions}
+        onChange={(value) =>
+          setPayload((p) => ({ ...p, cost_center_id: Number(value) }))
         }
-      >
-        <option value={0}>Selecione...</option>
-        {costCenters.map((c) => (
-          <option key={c.id} value={Number(c.id)}>
-            {c.code} - {c.name}
-          </option>
-        ))}
-      </FormSelect>
+        isRequired
+      />
 
       {/* Data/Hora de Agendamento (opcional) */}
       <FormInput
