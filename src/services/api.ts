@@ -16,14 +16,9 @@ let loadingContext: {
 
 // Helper to fetch employees (used by corporate hooks)
 export const fetchEmployees = async (): Promise<User[]> => {
-  // Debug: log requests during tests
-  // eslint-disable-next-line no-console
-  console.log("API: fetchEmployees -> GET /users");
   const response = await api.get<User[]>("/users", {
     params: { role: "employee" },
   });
-  // eslint-disable-next-line no-console
-  console.log("API: fetchEmployees response", response?.data?.length);
   return response.data;
 };
 
@@ -189,12 +184,7 @@ export interface CreateBookingData {
 export const createBooking = async (
   data: CreateBookingData,
 ): Promise<Booking> => {
-  // Debug
-  // eslint-disable-next-line no-console
-  console.log("API: createBooking payload", data);
   const response = await api.post<Booking>("/bookings", data);
-  // eslint-disable-next-line no-console
-  console.log("API: createBooking response status", response.status);
   return response.data;
 };
 

@@ -94,12 +94,6 @@ export const handlers = [
       notes: body.notes || null,
     };
     bookings.push(newBooking);
-    // Debug
-    // eslint-disable-next-line no-console
-    console.log(
-      "MSW handler: POST /api/v1/bookings -> total bookings",
-      bookings.length,
-    );
     return res(ctx.status(201), ctx.json(newBooking));
   }),
   rest.post("/bookings", async (req, res, ctx) => {
@@ -136,12 +130,6 @@ export const handlers = [
       notes: body.notes || null,
     };
     bookings.push(newBooking);
-    // Debug
-    // eslint-disable-next-line no-console
-    console.log(
-      "MSW handler: POST ABSOLUTE ${API_BASE}/api/v1/bookings -> total bookings",
-      bookings.length,
-    );
     return res(ctx.status(201), ctx.json(newBooking));
   }),
   rest.post(`${API_BASE}/bookings`, async (req, res, ctx) => {
@@ -159,12 +147,6 @@ export const handlers = [
       notes: body.notes || null,
     };
     bookings.push(newBooking);
-    // Debug
-    // eslint-disable-next-line no-console
-    console.log(
-      "MSW handler: POST ABSOLUTE ${API_BASE}/bookings -> total bookings",
-      bookings.length,
-    );
     return res(ctx.status(201), ctx.json(newBooking));
   }),
 
@@ -267,9 +249,6 @@ export const handlers = [
   // Fetch employees for select (support multiple path variants)
   // Return employee list for any users GET variant to simplify tests
   rest.get("/api/v1/users", (_req, res, ctx) => {
-    // Debug: ensure handler is invoked in tests
-    // eslint-disable-next-line no-console
-    console.log("MSW handler: GET /api/v1/users");
     return res(ctx.status(200), ctx.json(_employeeList));
   }),
 

@@ -93,7 +93,7 @@ const Employees: React.FC = () => {
   });
 
   const [editingEmployee, setEditingEmployee] = useState<EmployeeRow | null>(
-    null
+    null,
   );
   const [editFormData, setEditFormData] = useState<{
     department: string;
@@ -105,7 +105,7 @@ const Employees: React.FC = () => {
 
   const normalizeEmployee = (
     user: User,
-    ccMap: Map<number, string> | null = null
+    ccMap: Map<number, string> | null = null,
   ): EmployeeRow => {
     const cost_center_id =
       user.employee_profile?.cost_center_id ?? user.cost_center_id ?? undefined;
@@ -132,13 +132,7 @@ const Employees: React.FC = () => {
       setCostCenters(ccs);
 
       const ccMap = new Map<number, string>(
-        ccs.map((c: CostCenter) => [Number(c.id), c.name])
-      );
-
-      console.log("🔍 DADOS RAW DA API:", usersResp.data.slice(0, 2));
-      console.log(
-        "🔍 APÓS NORMALIZAÇÃO:",
-        usersResp.data.slice(0, 2).map((u) => normalizeEmployee(u, ccMap))
+        ccs.map((c: CostCenter) => [Number(c.id), c.name]),
       );
 
       setEmployees(usersResp.data.map((u) => normalizeEmployee(u, ccMap)));
@@ -210,7 +204,7 @@ const Employees: React.FC = () => {
       setIsSaving(true);
       await api.patch(
         `/corporate/employees/${editingEmployee.id}`,
-        editFormData
+        editFormData,
       );
 
       toast({
@@ -255,7 +249,7 @@ const Employees: React.FC = () => {
   };
 
   const handleFileSelect = async (
-    event: React.ChangeEvent<HTMLInputElement>
+    event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -272,7 +266,7 @@ const Employees: React.FC = () => {
       setImportRows(rows);
       setImportProgress({ completed: 0, total: rows.length });
       setParseIssues(
-        errors.map((err) => ({ line: err.line, message: err.message }))
+        errors.map((err) => ({ line: err.line, message: err.message })),
       );
 
       if (errors.length > 0) {
@@ -314,7 +308,7 @@ const Employees: React.FC = () => {
         importRows,
         (completed, total) => {
           setImportProgress({ completed, total });
-        }
+        },
       );
 
       setImportResults(results);
@@ -335,7 +329,7 @@ const Employees: React.FC = () => {
       // Fallback para modo sequencial caso o endpoint não exista ou falhe
       console.warn(
         "Batch import failed, falling back to sequential import:",
-        err
+        err,
       );
       try {
         toast({
@@ -348,7 +342,7 @@ const Employees: React.FC = () => {
           importRows,
           (completed, total) => {
             setImportProgress({ completed, total });
-          }
+          },
         );
 
         setImportResults(results);
