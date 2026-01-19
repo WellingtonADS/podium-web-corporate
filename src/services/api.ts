@@ -16,9 +16,14 @@ let loadingContext: {
 
 // Helper to fetch employees (used by corporate hooks)
 export const fetchEmployees = async (): Promise<User[]> => {
+  // Debug: log requests during tests
+  // eslint-disable-next-line no-console
+  console.log("API: fetchEmployees -> GET /users");
   const response = await api.get<User[]>("/users", {
     params: { role: "employee" },
   });
+  // eslint-disable-next-line no-console
+  console.log("API: fetchEmployees response", response?.data?.length);
   return response.data;
 };
 
@@ -182,9 +187,14 @@ export interface CreateBookingData {
 }
 
 export const createBooking = async (
-  data: CreateBookingData
+  data: CreateBookingData,
 ): Promise<Booking> => {
+  // Debug
+  // eslint-disable-next-line no-console
+  console.log("API: createBooking payload", data);
   const response = await api.post<Booking>("/bookings", data);
+  // eslint-disable-next-line no-console
+  console.log("API: createBooking response status", response.status);
   return response.data;
 };
 
@@ -209,7 +219,7 @@ api.interceptors.request.use(
   (error) => {
     loadingContext?.stopLoading();
     return Promise.reject(error);
-  }
+  },
 );
 
 // Interceptor de resposta para tratamento de erro centralizado
@@ -246,7 +256,7 @@ api.interceptors.response.use(
       status,
       message: detail,
     });
-  }
+  },
 );
 
 export const fetchCurrentUser = async (): Promise<User> => {
@@ -263,14 +273,14 @@ export interface BillingFiltersPayload {
 }
 
 export const fetchBillingRecords = async (
-  filters?: BillingFiltersPayload
+  filters?: BillingFiltersPayload,
 ): Promise<BillingPeriod[]> => {
   try {
     const response = await api.get<BillingPeriod[]>(
       "/stats/corporate/billing",
       {
         params: filters,
-      }
+      },
     );
     return response.data;
   } catch (error: unknown) {
@@ -282,7 +292,7 @@ export const fetchBillingRecords = async (
 // ========== EMPLOYEE ENDPOINTS ==========
 
 export const createEmployee = async (
-  data: CreateEmployeeData
+  data: CreateEmployeeData,
 ): Promise<User> => {
   try {
     const response = await api.post<User>("/corporate/employees", data);
@@ -306,12 +316,12 @@ export const fetchCostCenters = async (): Promise<CostCenter[]> => {
 };
 
 export const createCostCenter = async (
-  data: CreateCostCenterData
+  data: CreateCostCenterData,
 ): Promise<CostCenter> => {
   try {
     const response = await api.post<CostCenter>(
       "/corporate/cost-centers",
-      data
+      data,
     );
     return response.data;
   } catch (error: unknown) {
@@ -322,12 +332,12 @@ export const createCostCenter = async (
 
 export const updateCostCenter = async (
   id: string,
-  data: Partial<CreateCostCenterData>
+  data: Partial<CreateCostCenterData>,
 ): Promise<CostCenter> => {
   try {
     const response = await api.patch<CostCenter>(
       `/corporate/cost-centers/${id}`,
-      data
+      data,
     );
     return response.data;
   } catch (error: unknown) {

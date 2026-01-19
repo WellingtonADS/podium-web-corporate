@@ -1,10 +1,17 @@
 import { rest } from "msw";
 import { Booking } from "../../services/api";
 
-// Mirror the default API base used in tests
-const API_BASE = "http://localhost:8000";
-// Production API URL
-const PROD_API_BASE = "https://podium-backend-api-production.up.railway.app";
+// Derive API bases from env for consistency with app code
+type ImportMetaWithEnv = ImportMeta & {
+  env: { VITE_API_URL?: string; VITE_API_PROD_URL?: string };
+};
+const API_BASE =
+  (import.meta as ImportMetaWithEnv).env?.VITE_API_URL ??
+  "http://localhost:8000";
+// Optional production override for CI/e2e
+const PROD_API_BASE =
+  (import.meta as ImportMetaWithEnv).env?.VITE_API_PROD_URL ??
+  "https://podium-backend-api-production.up.railway.app";
 
 const bookings: Booking[] = [
   {
@@ -87,6 +94,12 @@ export const handlers = [
       notes: body.notes || null,
     };
     bookings.push(newBooking);
+    // Debug
+    // eslint-disable-next-line no-console
+    console.log(
+      "MSW handler: POST /api/v1/bookings -> total bookings",
+      bookings.length,
+    );
     return res(ctx.status(201), ctx.json(newBooking));
   }),
   rest.post("/bookings", async (req, res, ctx) => {
@@ -123,6 +136,12 @@ export const handlers = [
       notes: body.notes || null,
     };
     bookings.push(newBooking);
+    // Debug
+    // eslint-disable-next-line no-console
+    console.log(
+      "MSW handler: POST ABSOLUTE ${API_BASE}/api/v1/bookings -> total bookings",
+      bookings.length,
+    );
     return res(ctx.status(201), ctx.json(newBooking));
   }),
   rest.post(`${API_BASE}/bookings`, async (req, res, ctx) => {
@@ -140,6 +159,12 @@ export const handlers = [
       notes: body.notes || null,
     };
     bookings.push(newBooking);
+    // Debug
+    // eslint-disable-next-line no-console
+    console.log(
+      "MSW handler: POST ABSOLUTE ${API_BASE}/bookings -> total bookings",
+      bookings.length,
+    );
     return res(ctx.status(201), ctx.json(newBooking));
   }),
 
@@ -242,6 +267,9 @@ export const handlers = [
   // Fetch employees for select (support multiple path variants)
   // Return employee list for any users GET variant to simplify tests
   rest.get("/api/v1/users", (_req, res, ctx) => {
+    // Debug: ensure handler is invoked in tests
+    // eslint-disable-next-line no-console
+    console.log("MSW handler: GET /api/v1/users");
     return res(ctx.status(200), ctx.json(_employeeList));
   }),
 
@@ -302,7 +330,7 @@ export const handlers = [
           total: results.length,
         },
         results,
-      })
+      }),
     );
   }),
 
@@ -331,7 +359,7 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
   rest.get("/corporate/cost-centers", (_req, res, ctx) => {
@@ -358,7 +386,7 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
 
@@ -387,38 +415,41 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
 
   // Production API cost center variants
-  rest.get(`${PROD_API_BASE}/api/v1/corporate/cost-centers`, (_req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          id: "1",
-          name: "Diretoria",
-          code: "CC-DIR",
-          budget_limit: 50000.0,
-          current_spent: 0,
-          active: true,
-          allowed_categories: [],
-          spending_limit_per_ride: 1000,
-        },
-        {
-          id: "2",
-          name: "Financeiro",
-          code: "CC-FIN",
-          budget_limit: 30000.0,
-          current_spent: 0,
-          active: true,
-          allowed_categories: [],
-          spending_limit_per_ride: 1000,
-        },
-      ])
-    );
-  }),
+  rest.get(
+    `${PROD_API_BASE}/api/v1/corporate/cost-centers`,
+    (_req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json([
+          {
+            id: "1",
+            name: "Diretoria",
+            code: "CC-DIR",
+            budget_limit: 50000.0,
+            current_spent: 0,
+            active: true,
+            allowed_categories: [],
+            spending_limit_per_ride: 1000,
+          },
+          {
+            id: "2",
+            name: "Financeiro",
+            code: "CC-FIN",
+            budget_limit: 30000.0,
+            current_spent: 0,
+            active: true,
+            allowed_categories: [],
+            spending_limit_per_ride: 1000,
+          },
+        ]),
+      );
+    },
+  ),
   rest.get(`${PROD_API_BASE}/corporate/cost-centers`, (_req, res, ctx) => {
     return res(
       ctx.status(200),
@@ -443,7 +474,7 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
 
@@ -469,7 +500,7 @@ export const handlers = [
             geometry: { coordinates: [-46.6333, -23.5505] },
           },
         ],
-      })
+      }),
     );
   }),
 ];
