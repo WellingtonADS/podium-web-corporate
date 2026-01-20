@@ -279,6 +279,15 @@ export const fetchBillingRecords = async (
     );
     return response.data;
   } catch (error: unknown) {
+    // If the endpoint is not yet implemented on the backend (404), treat as "no data yet" and return empty array.
+    const axiosLike = error as {
+      response?: { status?: number; data?: any };
+      message?: string;
+    };
+    if (axiosLike.response?.status === 404) {
+      return [];
+    }
+
     console.error("Erro ao buscar registros de faturamento:", error);
     throw error;
   }
