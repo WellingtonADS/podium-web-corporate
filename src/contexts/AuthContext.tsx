@@ -30,7 +30,7 @@ interface AuthProviderProps {
 // Criação do Contexto
 // eslint-disable-next-line react-refresh/only-export-components
 export const AuthContext = createContext<AuthContextData>(
-  {} as AuthContextData
+  {} as AuthContextData,
 );
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -81,7 +81,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     formData.append("password", password);
 
     try {
-      const response = await api.post("/login", formData, {
+      const response = await api.post("/auth/login", formData, {
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },

@@ -8,9 +8,10 @@ test("create -> verify -> cancel booking (smoke)", async ({ page }) => {
   await page.goto("/login");
 
   // If login flow exists, you can replace this with form submit
-  await page.evaluate(() => {
-    localStorage.setItem("@Podium:token", "test-token");
-  });
+  // Use E2E token from env if provided, otherwise fallback to test-token
+  await page.evaluate((token) => {
+    localStorage.setItem("@Podium:token", token || "test-token");
+  }, process.env.E2E_TOKEN);
 
   // Go to bookings
   await page.goto("/bookings");

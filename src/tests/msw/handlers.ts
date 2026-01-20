@@ -50,7 +50,7 @@ const _employeeList = [
 
 export const handlers = [
   // Auth login
-  rest.post("/api/v1/login", async (_req, res, ctx) => {
+  rest.post("/api/v1/auth/login", async (_req, res, ctx) => {
     return res(ctx.json({ access_token: "test-token" }));
   }),
 
@@ -65,6 +65,11 @@ export const handlers = [
   // Absolute URL variants
   rest.get(`${API_BASE}/api/v1/bookings`, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json({ bookings }));
+  }),
+
+  // Absolute auth login variant
+  rest.post(`${API_BASE}/api/v1/auth/login`, async (_req, res, ctx) => {
+    return res(ctx.json({ access_token: "test-token" }));
   }),
   rest.get(`${API_BASE}/bookings`, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json({ bookings }));
