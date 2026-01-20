@@ -1,11 +1,16 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-// Base da API configurável via env, com fallback para localhost
-// Tipagem explícita para evitar any e problemas com ImportMeta
+// Base da API sempre definido via .env; erro claro se ausente em dev/prod
 type ImportMetaWithEnv = ImportMeta & { env: { VITE_API_URL?: string } };
-const API_BASE =
-  (import.meta as ImportMetaWithEnv).env?.VITE_API_URL ??
-  "http://localhost:8000";
+const env = (import.meta as ImportMetaWithEnv).env;
+
+if (!env?.VITE_API_URL) {
+  throw new Error(
+    "VITE_API_URL não definido no arquivo .env. Adicione VITE_API_URL e reinicie o dev server.",
+  );
+}
+
+const API_BASE = env.VITE_API_URL;
 const API_URL = `${API_BASE}/api/v1`;
 
 // Variável para injetar LoadingContext (evita circular dependency)

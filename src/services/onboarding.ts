@@ -24,11 +24,22 @@ export interface ImportResult {
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const detectDelimiter = (headerLine: string): string => {
-  if (headerLine.includes(";")) return ";";
-  return ",";
+  const candidates = [",", ";", "\t", "|"];
+  const counts = candidates.map((c) => headerLine.split(c).length - 1);
+  const max = Math.max(...counts);
+  if (max === 0) return ","; // default
+  const idx = counts.indexOf(max);
+  return candidates[idx];
 };
 
-const normalizeHeader = (value: string) => value.trim().toLowerCase();
+const normalizeHeader = (value: string) =>
+  value
+    .trim()
+    .replace(/^"|"$/g, "") // remove surrounding quotes
+    .replace(/\s+/g, " ") // collapse whitespace
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, ""); // remove diacritics
 
 const headerMap: Record<
   string,
@@ -44,19 +55,24 @@ const headerMap: Record<
   cost_center: "cost_center_id",
   costcenter: "cost_center_id",
   cost_center_id: "cost_center_id",
+  "cost center": "cost_center_id",
   "centro de custo": "cost_center_id",
+  "centro-de-custo": "cost_center_id",
+  centro_de_custo: "cost_center_id",
   cc: "cost_center_id",
   department: "department",
   departamento: "department",
 };
 
 const toNumber = (value: string): number | undefined => {
-  const parsed = Number(value);
+  const v = value.trim();
+  if (v === "") return undefined;
+  const parsed = Number(v);
   return Number.isFinite(parsed) ? parsed : undefined;
 };
 
 export const parseEmployeesCsv = async (
-  file: File
+  file: File,
 ): Promise<{ rows: ParsedEmployeeRow[]; errors: ParseError[] }> => {
   const text = await file.text();
   const lines = text.split(/\r?\n/).filter((l) => l.trim().length > 0);
@@ -73,9 +89,9 @@ export const parseEmployeesCsv = async (
     "email",
     "cost_center_id",
   ];
-  const mappedHeaders = headers.map((h) => headerMap[h]);
+  const mappedHeaders = headers.map((h) => headerMap[h] ?? undefined);
   const missingRequired = requiredFields.filter(
-    (field) => !mappedHeaders.includes(field)
+    (field) => !mappedHeaders.includes(field),
   );
 
   if (missingRequired.length > 0) {
@@ -103,7 +119,8 @@ export const parseEmployeesCsv = async (
     headers.forEach((header, idx) => {
       const mapped = headerMap[header];
       if (!mapped) return;
-      const value = (columns[idx] ?? "").trim();
+      const rawValue = (columns[idx] ?? "").trim();
+      const value = rawValue.replace(/^"|"$/g, ""); // strip surrounding quotes
       if (mapped === "cost_center_id") {
         record.cost_center_id = toNumber(value) ?? 0;
       } else if (mapped === "full_name") {
@@ -142,7 +159,7 @@ import api from "./api";
 
 export const importEmployeesSequential = async (
   rows: ParsedEmployeeRow[],
-  onProgress?: (completed: number, total: number) => void
+  onProgress?: (completed: number, total: number) => void,
 ): Promise<ImportResult[]> => {
   const total = rows.length;
   const results: ImportResult[] = [];
@@ -182,7 +199,7 @@ export const importEmployeesSequential = async (
 // New: batch import using backend `/users/batch` endpoint
 export const importEmployeesBatch = async (
   rows: ParsedEmployeeRow[],
-  onProgress?: (completed: number, total: number) => void
+  onProgress?: (completed: number, total: number) => void,
 ): Promise<ImportResult[]> => {
   if (!rows.length) return [];
   const total = rows.length;
@@ -200,32 +217,50 @@ export const importEmployeesBatch = async (
   const lineMap = new Map<string, number>();
   rows.forEach((r) => lineMap.set(r.email, r.line));
 
-  const response = await api.post<{
-    summary: {
-      created: number;
-      conflicts: number;
-      errors: number;
-      total: number;
-    };
-    results: Array<{ email: string; status: string; message?: string }>;
-  }>("/users/batch", payload, {
-    onUploadProgress: (ev) => {
-      if (ev.total) {
-        const completed = Math.round((ev.loaded / ev.total) * total);
-        onProgress?.(completed, total);
-      }
-    },
-  });
+  try {
+    const response = await api.post<{
+      summary: {
+        created: number;
+        conflicts: number;
+        errors: number;
+        total: number;
+      };
+      results: Array<{ email: string; status: string; message?: string }>;
+    }>("/users/batch", payload, {
+      onUploadProgress: (ev) => {
+        if (ev.total) {
+          const completed = Math.round((ev.loaded / ev.total) * total);
+          onProgress?.(completed, total);
+        }
+      },
+    });
 
-  const batchResults = response.data.results || [];
+    const batchResults = response.data.results || [];
 
-  const results: ImportResult[] = batchResults.map((r, idx) => {
-    const line = lineMap.get(r.email) ?? idx + 1;
-    const success = r.status === "created";
-    const message = r.status === "conflict" ? "Registro já existe" : r.message;
-    return { line, email: r.email, success, message } as ImportResult;
-  });
+    const results: ImportResult[] = batchResults.map((r, idx) => {
+      const line = lineMap.get(r.email) ?? idx + 1;
+      const success = r.status === "created";
+      const message =
+        r.status === "conflict" ? "Registro já existe" : r.message;
+      return { line, email: r.email, success, message } as ImportResult;
+    });
 
-  onProgress?.(total, total);
-  return results;
+    onProgress?.(total, total);
+    return results;
+  } catch (err: unknown) {
+    // Se a chamada falhar, mapear todas as linhas como erro individual,
+    // mantendo a informação de linha/email para feedback ao usuário.
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "string"
+        ? err
+        : "Falha ao executar importação em lote";
+    return rows.map((r) => ({
+      line: r.line,
+      email: r.email,
+      success: false,
+      message,
+    }));
+  }
 };
