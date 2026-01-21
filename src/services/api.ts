@@ -281,7 +281,7 @@ export const fetchBillingRecords = async (
   } catch (error: unknown) {
     // If the endpoint is not yet implemented on the backend (404), treat as "no data yet" and return empty array.
     const axiosLike = error as {
-      response?: { status?: number; data?: any };
+      response?: { status?: number; data?: { detail?: string } };
       message?: string;
     };
     if (axiosLike.response?.status === 404) {
