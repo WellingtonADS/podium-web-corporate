@@ -17,8 +17,10 @@ jobs:
           node-version: "20"
           cache: "yarn"
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Install dependencies (verbose debug)
+        run: |
+          yarn --version
+          yarn install --frozen-lockfile --verbose
 
       - name: Build
         run: yarn build
