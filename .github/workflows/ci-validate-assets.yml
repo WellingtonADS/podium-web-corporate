@@ -21,8 +21,10 @@ jobs:
         run: |
           echo "Running yarn install (non-frozen) for debug (will not stop the build)"
           yarn install --verbose || true
+          echo "Git status:"
           git status --porcelain || true
-          git --no-pager diff --name-only yarn.lock || true
+          echo "Yarn.lock diff:"
+          git --no-pager diff -- yarn.lock || true
         continue-on-error: true
 
       - name: Install dependencies (verbose debug)
