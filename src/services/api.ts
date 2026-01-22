@@ -4,13 +4,23 @@ import axios, { InternalAxiosRequestConfig } from "axios";
 type ImportMetaWithEnv = ImportMeta & { env: { VITE_API_URL?: string } };
 const env = (import.meta as ImportMetaWithEnv).env;
 
-if (!env?.VITE_API_URL) {
-  throw new Error(
-    "VITE_API_URL não definido no arquivo .env. Adicione VITE_API_URL e reinicie o dev server.",
-  );
+// Fallback: use local backend in development; only throw in non-dev environments.
+let API_BASE: string | undefined = env?.VITE_API_URL;
+if (!API_BASE) {
+  // import.meta.env.MODE is set by Vite ("development"/"production")
+  if ((import.meta as any).env?.MODE === "development") {
+    API_BASE = "http://localhost:8000";
+    // eslint-disable-next-line no-console
+    console.warn(
+      "VITE_API_URL não definido — usando fallback http://localhost:8000 em desenvolvimento.",
+    );
+  } else {
+    throw new Error(
+      "VITE_API_URL não definido no arquivo .env. Adicione VITE_API_URL e reinicie o dev server.",
+    );
+  }
 }
 
-const API_BASE = env.VITE_API_URL;
 const API_URL = `${API_BASE}/api/v1`;
 
 // Variável para injetar LoadingContext (evita circular dependency)
