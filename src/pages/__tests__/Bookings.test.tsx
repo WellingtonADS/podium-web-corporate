@@ -7,12 +7,12 @@ describe("Bookings page", () => {
     renderWithProviders(<Bookings />);
 
     await waitFor(() =>
-      expect(screen.getByText(/Reservas/i)).toBeInTheDocument()
+      expect(screen.getByText(/Reservas/i)).toBeInTheDocument(),
     );
 
     // Create a new booking via the modal
     await waitFor(() =>
-      screen.getByRole("button", { name: /\+ Nova Reserva/i })
+      screen.getByRole("button", { name: /\+ Nova Reserva/i }),
     );
     fireEvent.click(screen.getByRole("button", { name: /\+ Nova Reserva/i }));
 
@@ -24,39 +24,43 @@ describe("Bookings page", () => {
       target: { value: "Rua Teste 2" },
     });
 
-    // Wait for employee options and select the first one
+    // Focus and type into employee search to reveal options, then select first
+    const passengerInput = screen.getByLabelText(/Passageiro/i);
+    fireEvent.focus(passengerInput);
+    fireEvent.change(passengerInput, { target: { value: "João" } });
     await waitFor(() =>
-      expect(screen.getByText(/João Silva/)).toBeInTheDocument()
+      expect(screen.getByText(/João Silva/)).toBeInTheDocument(),
     );
-    fireEvent.change(screen.getByLabelText(/Passageiro/i), {
-      target: { value: "1" },
-    });
+    const passengerOption = screen.getByText(/João Silva/);
+    fireEvent.click(passengerOption);
 
     // Select a cost center (required) using the same select pattern as Passageiro
     await waitFor(() =>
-      expect(screen.getByLabelText(/Centro de Custo/i)).toBeInTheDocument()
+      expect(screen.getByLabelText(/Centro de Custo/i)).toBeInTheDocument(),
     );
-    const ccSelect = screen.getByLabelText(
-      /Centro de Custo/i
-    ) as HTMLSelectElement;
+    const ccInput = screen.getByLabelText(/Centro de Custo/i);
+    // focus and type to reveal options
+    fireEvent.focus(ccInput);
+    fireEvent.change(ccInput, { target: { value: "Diretoria" } });
     const ccOption = await waitFor(() => screen.getByText(/Diretoria/), {
       timeout: 5000,
     });
-    fireEvent.change(ccSelect, {
-      target: { value: (ccOption as HTMLOptionElement).value },
-    });
+    // click the option to select
+    fireEvent.click(ccOption);
 
-    // Wait for the selection to reflect in the select
+    // Wait for the selection to reflect in the input
     await waitFor(
-      () => expect((ccSelect as HTMLSelectElement).value).not.toBe("0"),
-      { timeout: 5000 }
+      () => expect((ccInput as HTMLInputElement).value).not.toBe(""),
+      {
+        timeout: 5000,
+      },
     );
 
     fireEvent.click(screen.getByRole("button", { name: /Salvar/i }));
 
     // Table should show the newly created booking
     await waitFor(() =>
-      expect(screen.getByText(/Av Teste 1/)).toBeInTheDocument()
+      expect(screen.getByText(/Av Teste 1/)).toBeInTheDocument(),
     );
 
     // Click cancel for the newly created booking (find row by origin)
@@ -70,7 +74,7 @@ describe("Bookings page", () => {
 
     // After cancel, the status cell should show 'cancelled'
     await waitFor(() =>
-      expect(screen.getByText(/cancelled|cancelada/i)).toBeInTheDocument()
+      expect(screen.getByText(/cancelled|cancelada/i)).toBeInTheDocument(),
     );
   }, 20000);
 });

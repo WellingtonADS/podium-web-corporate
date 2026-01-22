@@ -19,22 +19,24 @@ describe("BookingForm", () => {
     await waitFor(() =>
       expect(
         screen.getByText(
-          /Preencha origem, destino, passageiro e centro de custo/i
-        )
-      ).toBeInTheDocument()
+          /Preencha origem, destino, passageiro e centro de custo/i,
+        ),
+      ).toBeInTheDocument(),
     );
 
     // Note: With AddressAutocomplete component, direct input changes won't work
     // The component handles its own state internally and calls onChange with AddressData
     // For this test, we'll focus on the employee/passenger selection and form structure
 
-    // Wait for employee options to load and pick one
+    // Focus and type into employee search to reveal options, then select the first
+    const passengerInput = screen.getByLabelText(/passageiro/i);
+    fireEvent.focus(passengerInput);
+    fireEvent.change(passengerInput, { target: { value: "João" } });
     await waitFor(() =>
-      expect(screen.getByText(/João Silva/i)).toBeInTheDocument()
+      expect(screen.getByText(/João Silva/i)).toBeInTheDocument(),
     );
-    fireEvent.change(screen.getByLabelText(/passageiro/i), {
-      target: { value: "1" },
-    });
+    const passengerOption = screen.getByText(/João Silva/i);
+    fireEvent.click(passengerOption);
 
     // In a real test environment, AddressAutocomplete would be populated
     // via user interaction with the Google Places API

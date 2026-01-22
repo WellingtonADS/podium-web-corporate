@@ -1,11 +1,16 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-// Base da API configurável via env, com fallback para localhost
-// Tipagem explícita para evitar any e problemas com ImportMeta
+// Base da API sempre definido via .env; erro claro se ausente em dev/prod
 type ImportMetaWithEnv = ImportMeta & { env: { VITE_API_URL?: string } };
-const API_BASE =
-  (import.meta as ImportMetaWithEnv).env?.VITE_API_URL ??
-  "http://localhost:8000";
+const env = (import.meta as ImportMetaWithEnv).env;
+
+if (!env?.VITE_API_URL) {
+  throw new Error(
+    "VITE_API_URL não definido no arquivo .env. Adicione VITE_API_URL e reinicie o dev server.",
+  );
+}
+
+const API_BASE = env.VITE_API_URL;
 const API_URL = `${API_BASE}/api/v1`;
 
 // Variável para injetar LoadingContext (evita circular dependency)
@@ -182,7 +187,7 @@ export interface CreateBookingData {
 }
 
 export const createBooking = async (
-  data: CreateBookingData
+  data: CreateBookingData,
 ): Promise<Booking> => {
   const response = await api.post<Booking>("/bookings", data);
   return response.data;
@@ -209,7 +214,7 @@ api.interceptors.request.use(
   (error) => {
     loadingContext?.stopLoading();
     return Promise.reject(error);
-  }
+  },
 );
 
 // Interceptor de resposta para tratamento de erro centralizado
@@ -246,7 +251,7 @@ api.interceptors.response.use(
       status,
       message: detail,
     });
-  }
+  },
 );
 
 export const fetchCurrentUser = async (): Promise<User> => {
@@ -263,17 +268,26 @@ export interface BillingFiltersPayload {
 }
 
 export const fetchBillingRecords = async (
-  filters?: BillingFiltersPayload
+  filters?: BillingFiltersPayload,
 ): Promise<BillingPeriod[]> => {
   try {
     const response = await api.get<BillingPeriod[]>(
       "/stats/corporate/billing",
       {
         params: filters,
-      }
+      },
     );
     return response.data;
   } catch (error: unknown) {
+    // If the endpoint is not yet implemented on the backend (404), treat as "no data yet" and return empty array.
+    const axiosLike = error as {
+      response?: { status?: number; data?: { detail?: string } };
+      message?: string;
+    };
+    if (axiosLike.response?.status === 404) {
+      return [];
+    }
+
     console.error("Erro ao buscar registros de faturamento:", error);
     throw error;
   }
@@ -282,7 +296,7 @@ export const fetchBillingRecords = async (
 // ========== EMPLOYEE ENDPOINTS ==========
 
 export const createEmployee = async (
-  data: CreateEmployeeData
+  data: CreateEmployeeData,
 ): Promise<User> => {
   try {
     const response = await api.post<User>("/corporate/employees", data);
@@ -306,12 +320,12 @@ export const fetchCostCenters = async (): Promise<CostCenter[]> => {
 };
 
 export const createCostCenter = async (
-  data: CreateCostCenterData
+  data: CreateCostCenterData,
 ): Promise<CostCenter> => {
   try {
     const response = await api.post<CostCenter>(
       "/corporate/cost-centers",
-      data
+      data,
     );
     return response.data;
   } catch (error: unknown) {
@@ -322,12 +336,12 @@ export const createCostCenter = async (
 
 export const updateCostCenter = async (
   id: string,
-  data: Partial<CreateCostCenterData>
+  data: Partial<CreateCostCenterData>,
 ): Promise<CostCenter> => {
   try {
     const response = await api.patch<CostCenter>(
       `/corporate/cost-centers/${id}`,
-      data
+      data,
     );
     return response.data;
   } catch (error: unknown) {

@@ -1,10 +1,17 @@
 import { rest } from "msw";
 import { Booking } from "../../services/api";
 
-// Mirror the default API base used in tests
-const API_BASE = "http://localhost:8000";
-// Production API URL
-const PROD_API_BASE = "https://podium-backend-api-production.up.railway.app";
+// Derive API bases from env for consistency with app code
+type ImportMetaWithEnv = ImportMeta & {
+  env: { VITE_API_URL?: string; VITE_API_PROD_URL?: string };
+};
+const API_BASE =
+  (import.meta as ImportMetaWithEnv).env?.VITE_API_URL ??
+  "http://localhost:8000";
+// Optional production override for CI/e2e
+const PROD_API_BASE =
+  (import.meta as ImportMetaWithEnv).env?.VITE_API_PROD_URL ??
+  "https://podium-backend-api-production.up.railway.app";
 
 const bookings: Booking[] = [
   {
@@ -43,7 +50,7 @@ const _employeeList = [
 
 export const handlers = [
   // Auth login
-  rest.post("/api/v1/login", async (_req, res, ctx) => {
+  rest.post("/api/v1/auth/login", async (_req, res, ctx) => {
     return res(ctx.json({ access_token: "test-token" }));
   }),
 
@@ -58,6 +65,11 @@ export const handlers = [
   // Absolute URL variants
   rest.get(`${API_BASE}/api/v1/bookings`, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json({ bookings }));
+  }),
+
+  // Absolute auth login variant
+  rest.post(`${API_BASE}/api/v1/auth/login`, async (_req, res, ctx) => {
+    return res(ctx.json({ access_token: "test-token" }));
   }),
   rest.get(`${API_BASE}/bookings`, (_req, res, ctx) => {
     return res(ctx.status(200), ctx.json({ bookings }));
@@ -302,7 +314,7 @@ export const handlers = [
           total: results.length,
         },
         results,
-      })
+      }),
     );
   }),
 
@@ -331,7 +343,7 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
   rest.get("/corporate/cost-centers", (_req, res, ctx) => {
@@ -358,7 +370,7 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
 
@@ -387,38 +399,41 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
 
   // Production API cost center variants
-  rest.get(`${PROD_API_BASE}/api/v1/corporate/cost-centers`, (_req, res, ctx) => {
-    return res(
-      ctx.status(200),
-      ctx.json([
-        {
-          id: "1",
-          name: "Diretoria",
-          code: "CC-DIR",
-          budget_limit: 50000.0,
-          current_spent: 0,
-          active: true,
-          allowed_categories: [],
-          spending_limit_per_ride: 1000,
-        },
-        {
-          id: "2",
-          name: "Financeiro",
-          code: "CC-FIN",
-          budget_limit: 30000.0,
-          current_spent: 0,
-          active: true,
-          allowed_categories: [],
-          spending_limit_per_ride: 1000,
-        },
-      ])
-    );
-  }),
+  rest.get(
+    `${PROD_API_BASE}/api/v1/corporate/cost-centers`,
+    (_req, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json([
+          {
+            id: "1",
+            name: "Diretoria",
+            code: "CC-DIR",
+            budget_limit: 50000.0,
+            current_spent: 0,
+            active: true,
+            allowed_categories: [],
+            spending_limit_per_ride: 1000,
+          },
+          {
+            id: "2",
+            name: "Financeiro",
+            code: "CC-FIN",
+            budget_limit: 30000.0,
+            current_spent: 0,
+            active: true,
+            allowed_categories: [],
+            spending_limit_per_ride: 1000,
+          },
+        ]),
+      );
+    },
+  ),
   rest.get(`${PROD_API_BASE}/corporate/cost-centers`, (_req, res, ctx) => {
     return res(
       ctx.status(200),
@@ -443,7 +458,7 @@ export const handlers = [
           allowed_categories: [],
           spending_limit_per_ride: 1000,
         },
-      ])
+      ]),
     );
   }),
 
@@ -469,7 +484,7 @@ export const handlers = [
             geometry: { coordinates: [-46.6333, -23.5505] },
           },
         ],
-      })
+      }),
     );
   }),
 ];

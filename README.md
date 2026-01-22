@@ -69,8 +69,14 @@ O build gera arquivos otimizados e inclui informações de tipo TypeScript para 
 Configure as seguintes variáveis no arquivo `.env`:
 
 ```env
-VITE_API_URL=http://localhost:8000  # URL da API backend
+# Base URL para o backend (usado em desenvolvimento e testes)
+VITE_API_URL=http://localhost:8000
+
+# URL de produção do backend (opcional, usado por testes CI/E2E quando necessário)
+VITE_API_PROD_URL=https://podium-backend-api-production.up.railway.app
 ```
+
+Dica: os mocks de teste (MSW) e os testes e2e detectam `VITE_API_URL` para apontar para o backend de teste. Se executar e2e contra um ambiente de staging/produção, defina `VITE_API_PROD_URL` conforme necessário.
 
 ## 🔐 Autenticação
 
