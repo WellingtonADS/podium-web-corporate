@@ -17,22 +17,8 @@ jobs:
           node-version: "20"
           cache: "yarn"
 
-      - name: Debug yarn resolution (non-frozen)
-        run: |
-          echo "Running yarn install (non-frozen) for debug (will not stop the build)"
-          yarn install --verbose || true
-          echo "Git status:"
-          git status --porcelain || true
-          echo "Yarn.lock diff (first 200 lines):"
-          git --no-pager diff -- yarn.lock | head -n 200 || true
-          echo "Yarn.lock diff line count:"
-          git --no-pager diff -- yarn.lock | wc -l || true
-        continue-on-error: true
-
-      - name: Install dependencies (verbose debug)
-        run: |
-          yarn --version
-          yarn install --frozen-lockfile --verbose
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Build
         run: yarn build
