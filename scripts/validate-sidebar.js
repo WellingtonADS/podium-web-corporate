@@ -35,3 +35,4 @@ if (found.length > 0) {
 }
 
 console.log("✅ Sidebar validation passed — no forbidden links found.");
+process.exit(0);

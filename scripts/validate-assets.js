@@ -38,3 +38,4 @@ if (missing.length > 0) {
 }
 
 console.log("All referenced assets exist in dist/assets. ✅");
+process.exit(0);
