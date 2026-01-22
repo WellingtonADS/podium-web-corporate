@@ -23,8 +23,10 @@ jobs:
           yarn install --verbose || true
           echo "Git status:"
           git status --porcelain || true
-          echo "Yarn.lock diff:"
-          git --no-pager diff -- yarn.lock || true
+          echo "Yarn.lock diff (first 200 lines):"
+          git --no-pager diff -- yarn.lock | head -n 200 || true
+          echo "Yarn.lock diff line count:"
+          git --no-pager diff -- yarn.lock | wc -l || true
         continue-on-error: true
 
       - name: Install dependencies (verbose debug)
