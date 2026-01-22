@@ -10,6 +10,7 @@ coverage/
 # Production
 dist/
 build/
+tests/
 
 # Environment variables
 .env
@@ -44,3 +45,4 @@ lerna-debug.log*
 
 # OS
 Thumbs.db
+
