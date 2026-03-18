@@ -90,10 +90,14 @@ yarn format:check  # Prettier check
 ## Pontos de Integração
 
 ### Backend API (FastAPI esperado)
-- Endpoints corporativos prefixados com `/stats/corporate/`
-- Login: `POST /api/v1/login` (form-urlencoded)
-- Stats: `GET /api/v1/stats/corporate/dashboard`
+- Endpoints corporativos prefixados com `/api/v1/stats/corporate/`
+- Login: `POST /api/v1/auth/login` (form-urlencoded) — **atenção: prefixo `/auth/` obrigatório**
+- Billing: `GET /api/v1/stats/corporate/billing` (suporta `?period=YYYY-MM`)
+- Cost Centers: `GET /api/v1/stats/corporate/cost-centers`
+- Recent Rides: `GET /api/v1/stats/corporate/recent-rides`
+- Cost Centers Usage: `GET /api/v1/stats/corporate/cost-centers-usage`
 - Sempre espera `company_id` do usuário autenticado no backend
+- Ver árvore completa de rotas em [ROUTES_TREE.md](../../podium-backend-api/ROUTES_TREE.md)
 
 ### Monorepo Context
 - TypeScript config herda de nível superior (`../tsconfig.base.json`)

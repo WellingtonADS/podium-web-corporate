@@ -66,12 +66,12 @@ export const BillingTable = ({ rides }: BillingTableProps) => {
                 bg={ride.policy_compliant ? rowBg : violationBg}
                 _hover={{ bg: hoverBg }}
               >
-                <Td fontWeight="medium">{ride.employee_name}</Td>
-                <Td>{ride.cost_center_name}</Td>
+                <Td fontWeight="medium">{ride.employee_name ?? "-"}</Td>
+                <Td>{ride.cost_center_name ?? "-"}</Td>
                 <Td fontSize="sm">{formatDate(ride.ride_date)}</Td>
                 <Td>
                   <Badge colorScheme="blue" variant="subtle">
-                    {ride.category}
+                    {ride.category ?? "-"}
                   </Badge>
                 </Td>
                 <Td fontWeight="bold" color="gold.600" textAlign="right">

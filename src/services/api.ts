@@ -150,23 +150,46 @@ export interface CreateCostCenterData {
 export interface RideRecord {
   id: number;
   employee_id: number;
-  employee_name: string;
-  cost_center_id: number;
-  cost_center_name: string;
+  employee_name: string | null;
+  cost_center_id: number | null;
+  cost_center_name: string | null;
   ride_date: string; // ISO datetime
-  distance_km: number;
+  distance_km: number | null;
   amount: number; // BRL
-  category: string;
+  category: string | null;
   policy_compliant: boolean;
-  violation_reason?: string;
+  violation_reason?: string | null;
+}
+
+export interface BillingBreakdownItem {
+  cost_center_id: number | null;
+  cost_center_name: string | null;
+  rides_count: number;
+  total_amount: number;
+  avg_amount: number;
+}
+
+export interface BillingDailyItem {
+  day: string;
+  rides_count: number;
+  total_amount: number;
+}
+
+export interface BillingMeta {
+  total: number;
+  limit: number;
+  offset: number;
 }
 
 export interface BillingPeriod {
   period: string; // "2025-12"
   rides_count: number;
   total_amount: number;
-  status: "pending" | "paid" | "disputed";
+  status: "ok" | "pending" | "paid" | "disputed";
   rides: RideRecord[];
+  breakdown?: BillingBreakdownItem[];
+  daily?: BillingDailyItem[];
+  meta?: BillingMeta;
 }
 
 // ===== BOOKING TYPES =====
