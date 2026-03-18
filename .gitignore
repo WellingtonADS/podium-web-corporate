@@ -46,3 +46,10 @@ lerna-debug.log*
 # OS
 Thumbs.db
 
+# Ensure these project folders are tracked in the repo (tests, scripts, reports, docs, github workflows)
+!tests/
+!scripts/
+!reports/
+!docs/
+!.github/
+
