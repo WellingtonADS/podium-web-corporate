@@ -1,10 +1,11 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 
-// Base da API sempre definido via .env; erro claro se ausente em dev/prod
+// Base da API via .env quando disponível.
+// Em produção, fallback para same-origin (Nginx proxy /api).
 type ImportMetaWithEnv = ImportMeta & { env: { VITE_API_URL?: string } };
 const env = (import.meta as ImportMetaWithEnv).env;
 
-// Fallback: use local backend in development; only throw in non-dev environments.
+// Fallback: localhost em desenvolvimento e same-origin em produção.
 let API_BASE: string | undefined = env?.VITE_API_URL;
 if (!API_BASE) {
   // import.meta.env.MODE is set by Vite ("development"/"production")
@@ -15,13 +16,11 @@ if (!API_BASE) {
       "VITE_API_URL não definido — usando fallback http://localhost:8000 em desenvolvimento.",
     );
   } else {
-    throw new Error(
-      "VITE_API_URL não definido no arquivo .env. Adicione VITE_API_URL e reinicie o dev server.",
-    );
+    API_BASE = "";
   }
 }
 
-const API_URL = `${API_BASE}/api/v1`;
+const API_URL = API_BASE ? `${API_BASE}/api/v1` : "/api/v1";
 
 // Variável para injetar LoadingContext (evita circular dependency)
 let loadingContext: {
