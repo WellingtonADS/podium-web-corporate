@@ -70,10 +70,10 @@ Configure as seguintes variáveis no arquivo `.env`:
 
 ```env
 # Base URL para o backend (usado em desenvolvimento e testes)
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=http://srv1316078.hstgr.cloud:8000
 
 # URL de produção do backend (opcional, usado por testes CI/E2E quando necessário)
-VITE_API_PROD_URL=https://podium-backend-api-production.up.railway.app
+VITE_API_PROD_URL=http://srv1316078.hstgr.cloud:8000
 ```
 
 Dica: os mocks de teste (MSW) e os testes e2e detectam `VITE_API_URL` para apontar para o backend de teste. Se executar e2e contra um ambiente de staging/produção, defina `VITE_API_PROD_URL` conforme necessário.
@@ -117,9 +117,37 @@ src/
 
 A aplicação espera um backend FastAPI com os seguintes endpoints:
 
-- `POST /api/v1/login` - Autenticação (form-urlencoded)
+- `POST /api/v1/auth/login` - Autenticação (form-urlencoded)
 - `GET /api/v1/stats/corporate/dashboard` - Estatísticas do dashboard
 - Endpoints corporativos prefixados com `/stats/corporate/`
+
+## 🚀 Deploy na Hostinger (hPanel)
+
+### 1) Ajustar variável de ambiente de produção
+
+No build de produção, a API é lida a partir de `VITE_API_URL`.
+
+Exemplo:
+
+```env
+VITE_API_URL=http://srv1316078.hstgr.cloud:8000
+```
+
+### 2) Gerar build
+
+```bash
+yarn build
+```
+
+### 3) Publicar conteúdo da pasta `dist/`
+
+- Faça upload do conteúdo de `dist/` para a pasta pública do domínio na Hostinger (normalmente `public_html/`).
+- O projeto já inclui fallback de SPA via `.htaccess` (copiado para `dist/`) para suportar rotas como `/billing` e `/employees` sem erro 404 em refresh.
+
+### 4) Atenção a HTTPS e login
+
+- Se o frontend estiver em `https://`, o backend também deve estar em `https://` para evitar bloqueio por mixed content.
+- O backend precisa liberar CORS para o domínio do frontend via `BACKEND_CORS_ORIGINS`.
 
 ## 📐 Padrões de Desenvolvimento
 
